@@ -55,23 +55,22 @@ const Create = () => {
 
   const handleUpload = async () => {
     try {
-      // Launch the image picker
-      let result = await ImagePicker.launchImageLibraryAsync({
+      let result;
+      result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       });
-
       if (!result.cancelled) {
-        // Set the selected image or video to the state
+        // Handle image or video upload
         setMedia(result.uri);
       }
     } catch (error) {
       console.error('Error picking an image or video', error);
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 20 }}>Welcome to Create!</Text>
@@ -81,13 +80,10 @@ const Create = () => {
         value={description}
         onChangeText={(text) => setDescription(text)}
       />
-      <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
+      <TouchableOpacity style={styles.uploadButton} onPress={() => handleUpload('photo')}>
         <Text style={{ color: 'white' }}>Upload Photo/Video</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.uploadButton} onPress={() => handleUpload()}>
-        <FontAwesome name="arrow-up" size={20} color="white" />
-      </TouchableOpacity>
-
+  
       <FooterButtons />
     </View>
   );
