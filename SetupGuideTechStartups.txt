@@ -1,0 +1,9 @@
+Setup Guide:
+	**Just Install Node if you can't run these commands**
+	npm install react-native
+	npm install -g expo-cli
+	npm ci
+
+To Run:
+	Go to phone app store and download "Expo Go"
+	npm start **this begins the server, to actually load onto the phone, scan the QR code it outputs**
