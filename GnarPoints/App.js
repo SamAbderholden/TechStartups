@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { FontAwesome } from '@expo/vector-icons';
@@ -89,12 +89,54 @@ const Create = () => {
   );
 };
 
-const HomeScreen = () => (
-  <View style={styles.container}>
-    <Text style={{ fontSize: 20 }}>Welcome to Home!</Text>
-    <FooterButtons />
-  </View>
-);
+const HomeScreen = ({ navigation, route }) => {
+  const { username } = route.params; // Corrected
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.resortsButton}
+        onPress={() => navigation.navigate('Resorts', { username })}
+      >
+        <Text style={{ color: 'white' }}>Resorts</Text>
+      </TouchableOpacity>
+      <Text style={{ fontSize: 20 }}>Welcome to Home!</Text>
+      <FooterButtons />
+    </View>
+  );
+};
+
+const Resorts = ({ navigation, route }) => {
+  const { username } = route.params;
+  return (
+    <ScrollView contentContainerStyle={styles.resortContainer}>
+      <TouchableOpacity
+        style={styles.resortsButton}
+        onPress={() => navigation.navigate('Home', { username })}
+      >
+        <Text style={{ color: 'white' }}>{`Home - ${username}`}</Text>
+      </TouchableOpacity>
+      <View style={styles.resort}>
+        <Text style={styles.boldResortName}>Eldora</Text>
+        <TouchableOpacity style={styles.resortButton}>
+          <Text style={styles.buttonText}>Join  </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.resort}>
+        <Text style={styles.boldResortName}>Copper</Text>
+        <TouchableOpacity style={styles.resortButton}>
+          <Text style={styles.buttonText}>Join  </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.resort}>
+        <Text style={styles.boldResortName}>Winter Park</Text>
+        <TouchableOpacity style={styles.resortButton}>
+          <Text style={styles.buttonText}>Join  </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+};
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -102,7 +144,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = () => {
     if (username !== '' && password !== '') {
-      navigation.replace('Home');
+      navigation.navigate('Home', {username});
     }
   };
 
@@ -148,12 +190,50 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Create" component={Create} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Resorts" component={Resorts} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
+  resortContainer: {
+    alignItems: 'center',
+    paddingVertical: 110,
+  },
+  resort: {
+    backgroundColor: 'black',
+    height: 100,
+    width: 400,
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center', 
+  },
+  boldResortName: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginLeft: 20
+  },
+  resortButton: {
+    backgroundColor: 'gray',
+    padding: 10,
+    marginRight: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+  },
+  resortsButton: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
