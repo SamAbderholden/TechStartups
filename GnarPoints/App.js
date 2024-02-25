@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView, FlatList } from 'react-native';
 import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { FontAwesome } from '@expo/vector-icons';
@@ -13,7 +13,7 @@ const FooterButtons = () => {
 
   const navigateOrReplace = (screenName) => {
     if (route.name !== screenName) {
-      navigation.replace(screenName);
+      navigation.replace(screenName, { username: route.params.username });
     }
   };
 
@@ -32,14 +32,14 @@ const FooterButtons = () => {
   );
 };
 
-const Profile = () => (
+const Profile = ({ route }) => (
   <View style={styles.container}>
-    <Text style={{ fontSize: 20 }}>Welcome to Profile!</Text>
+    <Text style={{ fontSize: 20 }}>Welcome to Profile, {route.params.username}!</Text>
     <FooterButtons />
   </View>
 );
 
-const Create = () => {
+const Create = ({ route }) => {
   const [description, setDescription] = useState('');
   const [media, setMedia] = useState(null);
 
@@ -73,7 +73,7 @@ const Create = () => {
   
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 20 }}>Welcome to Create!</Text>
+      <Text style={{ fontSize: 20 }}>Welcome to Create, {route.params.username}!</Text>
       <TextInput
         style={styles.input}
         placeholder="Description"
@@ -89,50 +89,148 @@ const Create = () => {
   );
 };
 
-const HomeScreen = ({ navigation, route }) => {
-  const { username } = route.params; // Corrected
-
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.resortsButton}
-        onPress={() => navigation.navigate('Resorts', { username })}
-      >
-        <Text style={{ color: 'white' }}>Resorts</Text>
-      </TouchableOpacity>
-      <Text style={{ fontSize: 20 }}>Welcome to Home!</Text>
-      <FooterButtons />
-    </View>
-  );
-};
+const HomeScreen = ({ navigation, route }) => (
+  <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.resortsButton}
+      onPress={() => navigation.navigate('Resorts', { username: route.params.username })}
+    >
+      <Text style={{ color: 'white' }}>Resorts</Text>
+    </TouchableOpacity>
+    <Text style={{ fontSize: 20 }}>Welcome to Home, {route.params.username}!</Text>
+    <FooterButtons />
+  </View>
+);
 
 const Resorts = ({ navigation, route }) => {
   const { username } = route.params;
+
+  // State to keep track of users and membership status for each resort
+  const [resortUsers, setResortUsers] = useState({
+    Eldora: [],
+    Copper: [],
+    'Winter Park': [],
+  });
+
+  // State to keep track of membership status for each resort
+  const [membershipStatus, setMembershipStatus] = useState({
+    Eldora: false,
+    Copper: false,
+    'Winter Park': false,
+  });
+
+  const addUserToResort = (resortName) => {
+    const isUsernameUnique = Object.values(resortUsers).every(
+      (resort) => !resort.includes(username)
+    );
+
+    if (isUsernameUnique) {
+      const updatedResortUsers = { ...resortUsers };
+      updatedResortUsers[resortName] = [...updatedResortUsers[resortName], username];
+
+      const updatedMembershipStatus = { ...membershipStatus };
+      updatedMembershipStatus[resortName] = true;
+
+      setResortUsers(updatedResortUsers);
+      setMembershipStatus(updatedMembershipStatus);
+    } else {
+      alert('Username already exists in another resort.');
+    }
+  };
+
+  const removeUserFromResort = (resortName) => {
+    const updatedResortUsers = { ...resortUsers };
+    const updatedMembershipStatus = { ...membershipStatus };
+
+    updatedResortUsers[resortName] = updatedResortUsers[resortName].filter(
+      (user) => user !== username
+    );
+
+    updatedMembershipStatus[resortName] = false;
+
+    setResortUsers(updatedResortUsers);
+    setMembershipStatus(updatedMembershipStatus);
+  };
+
+  const renderButtonLabel = (resortName) => {
+    return membershipStatus[resortName] ? 'Leave' : 'Join';
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.resortContainer}>
       <TouchableOpacity
         style={styles.resortsButton}
         onPress={() => navigation.navigate('Home', { username })}
       >
-        <Text style={{ color: 'white' }}>{`Home - ${username}`}</Text>
+        <Text style={{ color: 'white' }}>Home</Text>
       </TouchableOpacity>
-      <View style={styles.resort}>
-        <Text style={styles.boldResortName}>Eldora</Text>
-        <TouchableOpacity style={styles.resortButton}>
-          <Text style={styles.buttonText}>Join  </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.resort}>
-        <Text style={styles.boldResortName}>Copper</Text>
-        <TouchableOpacity style={styles.resortButton}>
-          <Text style={styles.buttonText}>Join  </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.resort}>
-        <Text style={styles.boldResortName}>Winter Park</Text>
-        <TouchableOpacity style={styles.resortButton}>
-          <Text style={styles.buttonText}>Join  </Text>
-        </TouchableOpacity>
+      <View style={styles.resortsContainer}> 
+        <View style={styles.resort}>
+          <Text style={styles.boldResortName}>Eldora</Text>
+          <View style={styles.people}>
+            {resortUsers['Eldora'].map((user, index) => (
+              <Text key={index} style={{ color: 'white' }}>
+                {user}
+              </Text>
+            ))}
+          </View>
+          <TouchableOpacity
+            style={styles.resortButton}
+            onPress={() => {
+              if (membershipStatus['Eldora']) {
+                removeUserFromResort('Eldora');
+              } else {
+                addUserToResort('Eldora');
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>{renderButtonLabel('Eldora')} </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.resort}>
+          <Text style={styles.boldResortName}>Copper</Text>
+          <View style={styles.people}>
+            {resortUsers['Copper'].map((user, index) => (
+              <Text key={index} style={{ color: 'white' }}>
+                {user}
+              </Text>
+            ))}
+          </View>
+          <TouchableOpacity
+            style={styles.resortButton}
+            onPress={() => {
+              if (membershipStatus['Copper']) {
+                removeUserFromResort('Copper');
+              } else {
+                addUserToResort('Copper');
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>{renderButtonLabel('Copper')} </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.resort}>
+          <Text style={styles.boldResortName}>Winter Park</Text>
+          <View style={styles.people}>
+            {resortUsers['Winter Park'].map((user, index) => (
+              <Text key={index} style={{ color: 'white' }}>
+                {user}
+              </Text>
+            ))}
+          </View>
+          <TouchableOpacity
+            style={styles.resortButton}
+            onPress={() => {
+              if (membershipStatus['Winter Park']) {
+                removeUserFromResort('Winter Park');
+              } else {
+                addUserToResort('Winter Park');
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>{renderButtonLabel('Winter Park')} </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -144,7 +242,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = () => {
     if (username !== '' && password !== '') {
-      navigation.navigate('Home', {username});
+      navigation.navigate('Home', { username });
     }
   };
 
@@ -199,28 +297,40 @@ export default function App() {
 const styles = StyleSheet.create({
   resortContainer: {
     alignItems: 'center',
-    paddingVertical: 110,
+    paddingVertical: 20, // Adjust as needed
+  },
+  resortsContainer: {
+    marginTop: 90
   },
   resort: {
     backgroundColor: 'black',
-    height: 100,
     width: 400,
-    marginTop: 10,
+    marginTop: 20, // Add margin for the first resort
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center', 
+    alignItems: 'center',
+    padding: 10,
+    height: 100,
+    borderRadius: 5,
   },
   boldResortName: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 18,
-    marginLeft: 20
   },
   resortButton: {
     backgroundColor: 'gray',
     padding: 10,
-    marginRight: 20,
     borderRadius: 5,
+  },
+  people: {
+    marginTop: 10, // Add margin to separate from the resort name
+    padding: 10,
+    borderRadius: 5,
+  },
+  person: {
+    color: 'black',
+    marginBottom: 5,
   },
   buttonText: {
     color: 'white',
