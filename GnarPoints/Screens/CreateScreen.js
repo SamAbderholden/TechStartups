@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import FooterButtons from './FooterButtons'; // Adjust the import path as needed
+import FooterButtons from './FooterButtons';
 
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
