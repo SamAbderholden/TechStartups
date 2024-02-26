@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Image, StyleSheet, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import FooterButtons from './FooterButtons';
+import Post from '../CustomComponents/Post';
 
 const ProfileScreen = ({ route }) => {
   const [editable, setEditable] = useState(false);
@@ -73,6 +74,9 @@ const ProfileScreen = ({ route }) => {
           />
         </View>
       </View>
+      <ScrollView style={styles.postsContainer}>
+        <Post imageUrl={require('../testProfileImage.png')} description={"bruh"}></Post>
+      </ScrollView>
       <FooterButtons style={styles.footerButtons}/>
     </View>
   );
@@ -148,6 +152,9 @@ const styles = StyleSheet.create({
     height: 150, // Set the height of the image
     resizeMode: 'cover', // Adjust the resizeMode based on your design needs
   },
+  postsContainer: {
+    margin: 20,
+  }
 });
 
 export default ProfileScreen;

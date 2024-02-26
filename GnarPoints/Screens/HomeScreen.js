@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import FooterButtons from './FooterButtons'; 
+import Post from '../CustomComponents/Post';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 
@@ -13,7 +15,9 @@ const HomeScreen = ({ navigation, route }) => (
       >
         <Text style={{ color: 'white' }}>Resorts</Text>
       </TouchableOpacity>
-      <Text style={{ fontSize: 20 }}>Welcome to Home, {route.params.username}!</Text>
+      <ScrollView style={styles.posts}>
+        <Post imageUrl={require('../testProfileImage.png')} description={"bruh"}></Post>
+      </ScrollView>
       <FooterButtons />
     </View>
   );
@@ -38,6 +42,9 @@ const styles = StyleSheet.create({
       borderRadius: 5,
       alignItems: 'center',
     },
+    posts: {
+      marginTop: 110,
+    }
   });
 
   
