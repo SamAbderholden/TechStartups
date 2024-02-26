@@ -35,87 +35,6 @@ export default FooterButtons;
 
 
 const styles = StyleSheet.create({
-    resortContainer: {
-      alignItems: 'center',
-      paddingVertical: 20, // Adjust as needed
-    },
-    resortsContainer: {
-      marginTop: 90
-    },
-    resort: {
-      backgroundColor: 'black',
-      width: 400,
-      marginTop: 20, // Add margin for the first resort
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: 10,
-      height: 100,
-      borderRadius: 5,
-    },
-    boldResortName: {
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 18,
-    },
-    resortButton: {
-      backgroundColor: 'gray',
-      padding: 10,
-      borderRadius: 5,
-    },
-    people: {
-      marginTop: 10, // Add margin to separate from the resort name
-      padding: 10,
-      borderRadius: 5,
-    },
-    person: {
-      color: 'black',
-      marginBottom: 5,
-    },
-    buttonText: {
-      color: 'white',
-    },
-    resortsButton: {
-      position: 'absolute',
-      top: 60,
-      right: 20,
-      backgroundColor: 'black',
-      padding: 10,
-      borderRadius: 5,
-      alignItems: 'center',
-    },
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: 'gray',
-      padding: 10,
-      marginBottom: 20,
-      width: 200,
-    },
-    button: {
-      backgroundColor: 'black',
-      padding: 10,
-      borderRadius: 5,
-      alignItems: 'center',
-    },
-    uploadButton: {
-      backgroundColor: 'black', // Change color as needed
-      padding: 10,
-      borderRadius: 5,
-      alignItems: 'center',
-      marginTop: 10,
-    },
-    buttons: {
-      display: 'flex',
-      alignItems: 'center',
-      flexDirection: 'column',
-      justifyContent: 'space-evenly',
-    },
     footer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
@@ -130,10 +49,6 @@ const styles = StyleSheet.create({
     footerButton: {
       flexDirection: 'row',
       alignItems: 'center',
-    },
-    buttonText: {
-      color: 'black',
-      marginLeft: 10,
     },
   });
   
