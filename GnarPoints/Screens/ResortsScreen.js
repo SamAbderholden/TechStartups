@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import FooterButtons from './FooterButtons'; // Adjust the import path as needed
+//import FooterButtons from './FooterButtons'; // Adjust the import path as needed
 
 const ResortsScreen = ({ navigation, route }) => {
     const { username } = route.params;

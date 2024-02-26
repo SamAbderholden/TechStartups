@@ -1,4 +1,3 @@
-// FooterButtons.js
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';

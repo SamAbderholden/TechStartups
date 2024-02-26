@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import FooterButtons from './FooterButtons'; // Adjust the import path as needed
+import FooterButtons from './FooterButtons'; 
 
 const ProfileScreen = ({ route }) => {
   return (
