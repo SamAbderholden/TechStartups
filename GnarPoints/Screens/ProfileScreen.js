@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Image, StyleSheet, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import FooterButtons from './FooterButtons';
 
 const ProfileScreen = ({ route }) => {
   const [editable, setEditable] = useState(false);
@@ -19,7 +20,7 @@ const ProfileScreen = ({ route }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.username}>@{route.params.username}</Text>
         <TouchableOpacity style={styles.editBt} onPress={editable ? handleSave : handleEditPress}>
@@ -72,21 +73,22 @@ const ProfileScreen = ({ route }) => {
           />
         </View>
       </View>
-    </ScrollView>
+      <FooterButtons style={styles.footerButtons}/>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 60,
-    marginRight: 30,
-    marginLeft: 30,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    marginTop: 60,
+    marginRight: 30,
+    marginLeft: 30,
   },
   username: {
     fontWeight: 'bold',
@@ -102,7 +104,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   contentContainer: {
-    marginTop: 20, // Add margin at the top
+    marginTop: 50,
+    marginRight: 30,
+    marginLeft: 30,
   },
   rowContainer: {
     flexDirection: 'row',
