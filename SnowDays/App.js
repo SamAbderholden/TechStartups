@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { Text, TextInput } from 'react-native';
 import LoginScreen from './Screens/LoginScreen.js';
 import HomeScreen from './Screens/HomeScreen.js';
 import CreateScreen from './Screens/CreateScreen.js';
@@ -7,6 +8,12 @@ import ProfileScreen from './Screens/ProfileScreen.js';
 import ResortsScreen from './Screens/ResortsScreen.js';
 
 const Stack = createStackNavigator();
+
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+
+TextInput.defaultProps = TextInput.defaultProps || {};
+TextInput.defaultProps.allowFontScaling = false;
 
 
 export default function App() {

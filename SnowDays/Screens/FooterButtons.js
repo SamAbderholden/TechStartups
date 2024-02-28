@@ -16,13 +16,13 @@ const FooterButtons = () => {
   return (
     <View style={styles.footer}>
       <TouchableOpacity style={styles.footerButton} onPress={() => navigateOrReplace('Home')}>
-        <FontAwesome name="home" size={35} color="black" />
+        <FontAwesome name="home" size={45} color='#0173f9'/>
       </TouchableOpacity>
       <TouchableOpacity style={styles.footerButton} onPress={() => navigateOrReplace('Create')}>
-        <FontAwesome name="plus" size={35} color="black" />
+        <FontAwesome name="plus" size={45} color='white'/>
       </TouchableOpacity>
       <TouchableOpacity style={styles.footerButton} onPress={() => navigateOrReplace('Profile')}>
-        <FontAwesome name="user" size={35} color="black" />
+        <FontAwesome name="user" size={45} color='#0173f9' />
       </TouchableOpacity>
     </View>
   );
