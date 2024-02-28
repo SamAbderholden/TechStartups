@@ -60,7 +60,7 @@ const ProfileScreen = ({ route }) => {
               <TextInput
                 style={styles.textField}
                 placeholder=""
-                editable={editable}
+                editable={false}
               />
             </View>
           </View>
