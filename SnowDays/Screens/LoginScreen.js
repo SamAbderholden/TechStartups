@@ -17,7 +17,7 @@ const LoginScreen = ({ navigation }) => {
       // Parent container that holds everything
       <View style={styles.parentContainer}>
           {/* Container for the title */}
-          <Text style={styles.title}>SnowTies</Text>
+          <Text style={styles.title}>SnowDays</Text>
           {/* Container for the image */}
           <Image
               source={require(IMAGE_PATH)}
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around', // Space around items
   },
   title: {
-    marginTop: 100, // Space on top of the title
+    marginTop: 80, // Space on top of the title
     marginBottom: -20, // Space on bottom of the title
     fontSize: 60,
     color: '#fff', // Title color
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginTop: -15,
-    marginBottom: -130,
+    marginBottom: -70,
     width: 400,
     height: 370,
     resizeMode: 'contain',
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   inputButton: {
     marginTop: 12, // Space on top of the button
-    marginBottom: 220, // Space on bottom of the button
+    marginBottom: 240, // Space on bottom of the button
     backgroundColor: 'white', // Button background color
     padding: 13,
     borderRadius: 5,
