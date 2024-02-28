@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Align items in a row
     justifyContent: 'space-between', // Push the button and text to opposite sides
     alignItems: 'center', // Center items vertically
-    paddingTop: 40, // Add padding at the top for status bar
+    paddingTop: 60, // Add padding at the top for status bar
     paddingBottom: 4, // Add padding at the bottom
     paddingHorizontal: 10, // Add some horizontal padding
   },

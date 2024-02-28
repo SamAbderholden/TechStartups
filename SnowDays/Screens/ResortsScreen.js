@@ -57,20 +57,25 @@ const ResortsScreen = ({ navigation, route }) => {
     };
   
     return (
-      <ScrollView contentContainerStyle={styles.resortContainer}>
+      <View style={styles.container}>
+      {/* Header container */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Ski Directory</Text>
         <TouchableOpacity
-          style={styles.resortsButton}
+          style={styles.homeButton}
           onPress={() => navigation.navigate('Home', { username })}
         >
-          <Text style={{ color: 'white' }}>Home</Text>
+          <Text style={styles.homeButtonText}>Home</Text>
         </TouchableOpacity>
-        <View style={styles.resortsContainer}> 
-          <View style={styles.resort}>
-            <Text style={styles.boldResortName}>Eldora</Text>
-            <View style={styles.people}>
+      </View>
+      <ScrollView contentContainerStyle={styles.ScrollContainer}>
+        <View style={styles.resortsListContainer}> 
+          <View style={styles.resortItemContainer}>
+              <Text style={styles.resortName}>Eldora</Text>
+            <View style={styles.userNameContainer}>
               {resortUsers['Eldora'].map((user, index) => (
-                <Text key={index} style={{ color: 'white' }}>
-                  {user}
+                <Text key={index} style={styles.userName}>
+                  @{user}
                 </Text>
               ))}
             </View>
@@ -84,15 +89,15 @@ const ResortsScreen = ({ navigation, route }) => {
                 }
               }}
             >
-              <Text style={styles.buttonText}>{renderButtonLabel('Eldora')} </Text>
+              <Text style={styles.resortButtonText}>{renderButtonLabel('Eldora')} </Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.resort}>
-            <Text style={styles.boldResortName}>Copper</Text>
-            <View style={styles.people}>
+          <View style={styles.resortItemContainer}>
+            <Text style={styles.resortName}>Copper</Text>
+            <View style={styles.userNameContainer}>
               {resortUsers['Copper'].map((user, index) => (
-                <Text key={index} style={{ color: 'white' }}>
-                  {user}
+                <Text key={index} style={styles.userName}>
+                  @{user}
                 </Text>
               ))}
             </View>
@@ -106,15 +111,15 @@ const ResortsScreen = ({ navigation, route }) => {
                 }
               }}
             >
-              <Text style={styles.buttonText}>{renderButtonLabel('Copper')} </Text>
+              <Text style={styles.resortButtonText}>{renderButtonLabel('Copper')} </Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.resort}>
-            <Text style={styles.boldResortName}>Winter Park</Text>
-            <View style={styles.people}>
+          <View style={styles.resortItemContainer}>
+            <Text style={styles.resortName}>Winter Park</Text>
+            <View style={styles.userNameContainer}>
               {resortUsers['Winter Park'].map((user, index) => (
-                <Text key={index} style={{ color: 'white' }}>
-                  {user}
+                <Text key={index} style={styles.userName}>
+                  @{user}
                 </Text>
               ))}
             </View>
@@ -128,27 +133,54 @@ const ResortsScreen = ({ navigation, route }) => {
                 }
               }}
             >
-              <Text style={styles.buttonText}>{renderButtonLabel('Winter Park')} </Text>
+              <Text style={styles.resortButtonText}>{renderButtonLabel('Winter Park')} </Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+    </View>
     );
   };
 
-  export default ResortsScreen;
+export default ResortsScreen;
 
 
 const styles = StyleSheet.create({
-  resortContainer: {
-    alignItems: 'center',
-    paddingVertical: 20, // Adjust as needed
-  },
-  resortsContainer: {
-    marginTop: 90,
-  },
-  resort: {
+  container: {
+    flex: 1,
     backgroundColor: 'black',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    paddingTop: 60, // Adjust this for status bar height
+    paddingHorizontal: 10, // Add some horizontal padding
+    width: '100%',
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 34,
+    fontWeight: 'bold',
+  },
+  homeButton: {
+    backgroundColor: '#0173f9',
+    padding: 10,
+    borderRadius: 5,
+  },
+  homeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  ScrollContainer: {
+    alignItems: 'center',
+  },
+  resortsListContainer: { //container for all the resort items
+    marginTop: 20,
+  },
+  resortItemContainer: {
+    backgroundColor: 'white',
     width: 400,
     marginTop: 20, // Add margin for the first resort
     flexDirection: 'row',
@@ -158,32 +190,33 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 5,
   },
-  boldResortName: {
-    color: 'white',
+  resortName: {
+    color: 'black',
     fontWeight: 'bold',
     fontSize: 18,
   },
-  resortButton: {
-    backgroundColor: 'gray',
+  resortButton: {     //button to join or leave the resort
+    backgroundColor: 'white',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 5, // Rounded corners of the button
+    borderColor: 'black', // Color of the border
+    borderWidth: 1, // Width of the border, making it visible
   },
-  people: {
-    marginTop: 10, // Add margin to separate from the resort name
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
+  resortButtonText: {
+    color: 'black',
     fontWeight: 'bold',
   },
-  resortsButton: {
-    position: 'absolute',
-    top: 60,
-    right: 20,
-    backgroundColor: 'black',
+  userNameContainer: {
+    flex: 1,
+    justifyContent: 'center', // Center username text vertically if needed
+    alignItems: 'center', // Center username text horizontally
     padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
+    borderRadius: 15,
   },
+  userName: {
+    color: '#0173f9',
+    fontWeight: 'bold',
+  },
+
+
 });
