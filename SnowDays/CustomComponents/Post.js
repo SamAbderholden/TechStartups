@@ -9,12 +9,14 @@ const Post = ({ imageUrl, description }) => {
     setLiked(!liked);
   };
 
+  const IconComponent = liked ? FontAwesome : FontAwesome;
+
   return (
     <View style={styles.container}>
       <Image source={imageUrl} style={styles.image} />
       <Text style={styles.description}>{description}</Text>
       <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
-        <FontAwesome name={liked ? 'heart' : 'heart-o'} size={24} color={liked ? 'red' : 'black'} />
+        <IconComponent name="thumbs-up" size={32} color={liked ? '#0173f9' : 'white'} solid={liked} />
       </TouchableOpacity>
     </View>
   );
@@ -23,7 +25,7 @@ const Post = ({ imageUrl, description }) => {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: 'white',
     marginBottom: 20,
     padding: 10,
     position: 'relative', // Add position relative to allow absolute positioning within
@@ -36,10 +38,11 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
+    color: 'white',
   },
   likeButton: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 6,
     right: 10,
   },
 });
