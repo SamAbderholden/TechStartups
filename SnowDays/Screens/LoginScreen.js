@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-const IMAGE_PATH = '/Users/jacksigler/Library/CloudStorage/OneDrive-ColoradoSchoolofMines/Mines/Spring_2024/CSCI-498/TechStartups/SnowDays/StylingImages/Login.png';
+const IMAGE_PATH = '../StylingImages/Login.png';
 
 
 const LoginScreen = ({ navigation }) => {
