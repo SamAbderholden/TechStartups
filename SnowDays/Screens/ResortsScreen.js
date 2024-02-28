@@ -7,17 +7,41 @@ const ResortsScreen = ({ navigation, route }) => {
   
     // State to keep track of users and membership status for each resort
     const [resortUsers, setResortUsers] = useState({
-      Eldora: [],
-      Copper: [],
+      'Eldora': [],
+      'Copper': [],
       'Winter Park': [],
     });
   
     // State to keep track of membership status for each resort
     const [membershipStatus, setMembershipStatus] = useState({
-      Eldora: false,
-      Copper: false,
+      'Eldora': false,
+      'Copper': false,
       'Winter Park': false,
     });
+    const renderResortItem = (resortName) => (
+      <View style={styles.resortNameContainer}>
+        <Text style={styles.resortName}>{resortName}</Text>
+        <View style={styles.userNameContainer}>
+          {resortUsers[resortName].map((user, index) => (
+            <Text key={index} style={styles.userName}>
+              @{user}
+            </Text>
+          ))}
+        </View>
+        <TouchableOpacity
+          style={styles.resortButtonContainer}
+          onPress={() => {
+            if (membershipStatus[resortName]) {
+              removeUserFromResort(resortName);
+            } else {
+              addUserToResort(resortName);
+            }
+          }}
+        >
+          <Text style={styles.resortButtonText}>{renderButtonLabel(resortName)}</Text>
+        </TouchableOpacity>
+      </View>
+    );
   
     const addUserToResort = (resortName) => {
       const isUsernameUnique = Object.values(resortUsers).every(
@@ -58,89 +82,24 @@ const ResortsScreen = ({ navigation, route }) => {
   
     return (
       <View style={styles.container}>
-      {/* Header container */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Ski Directory</Text>
-        <TouchableOpacity
-          style={styles.homeButton}
-          onPress={() => navigation.navigate('Home', { username })}
-        >
-          <Text style={styles.homeButtonText}>Home</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView contentContainerStyle={styles.ScrollContainer}>
-        <View style={styles.resortsListContainer}> 
-          <View style={styles.resortItemContainer}>
-              <Text style={styles.resortName}>Eldora</Text>
-            <View style={styles.userNameContainer}>
-              {resortUsers['Eldora'].map((user, index) => (
-                <Text key={index} style={styles.userName}>
-                  @{user}
-                </Text>
-              ))}
-            </View>
-            <TouchableOpacity
-              style={styles.resortButton}
-              onPress={() => {
-                if (membershipStatus['Eldora']) {
-                  removeUserFromResort('Eldora');
-                } else {
-                  addUserToResort('Eldora');
-                }
-              }}
-            >
-              <Text style={styles.resortButtonText}>{renderButtonLabel('Eldora')} </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.resortItemContainer}>
-            <Text style={styles.resortName}>Copper</Text>
-            <View style={styles.userNameContainer}>
-              {resortUsers['Copper'].map((user, index) => (
-                <Text key={index} style={styles.userName}>
-                  @{user}
-                </Text>
-              ))}
-            </View>
-            <TouchableOpacity
-              style={styles.resortButton}
-              onPress={() => {
-                if (membershipStatus['Copper']) {
-                  removeUserFromResort('Copper');
-                } else {
-                  addUserToResort('Copper');
-                }
-              }}
-            >
-              <Text style={styles.resortButtonText}>{renderButtonLabel('Copper')} </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.resortItemContainer}>
-            <Text style={styles.resortName}>Winter Park</Text>
-            <View style={styles.userNameContainer}>
-              {resortUsers['Winter Park'].map((user, index) => (
-                <Text key={index} style={styles.userName}>
-                  @{user}
-                </Text>
-              ))}
-            </View>
-            <TouchableOpacity
-              style={styles.resortButton}
-              onPress={() => {
-                if (membershipStatus['Winter Park']) {
-                  removeUserFromResort('Winter Park');
-                } else {
-                  addUserToResort('Winter Park');
-                }
-              }}
-            >
-              <Text style={styles.resortButtonText}>{renderButtonLabel('Winter Park')} </Text>
-            </TouchableOpacity>
-          </View>
+        {/* Header container */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Ski Directory</Text>
+          <TouchableOpacity
+            style={styles.homeButton}
+            onPress={() => navigation.navigate('Home', { username })}
+          >
+            <Text style={styles.homeButtonText}>Home</Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+        <ScrollView contentContainerStyle={styles.ScrollContainer}>
+          <View style={styles.resortsListContainer}>
+            {Object.keys(resortUsers).map((resortName) => renderResortItem(resortName))}
+          </View>
+        </ScrollView>
+      </View>
     );
-  };
+};
 
 export default ResortsScreen;
 
@@ -179,7 +138,8 @@ const styles = StyleSheet.create({
   resortsListContainer: { //container for all the resort items
     marginTop: 20,
   },
-  resortItemContainer: {
+  resortNameContainer: {
+    flex: 1,
     backgroundColor: 'white',
     width: 400,
     marginTop: 20, // Add margin for the first resort
@@ -189,25 +149,27 @@ const styles = StyleSheet.create({
     padding: 10,
     height: 100,
     borderRadius: 5,
+    marginLeft: 5,
   },
   resortName: {
     color: 'black',
     fontWeight: 'bold',
     fontSize: 18,
   },
-  resortButton: {     //button to join or leave the resort
+  resortButtonContainer: {
+    alignItems: 'right',
     backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 5, // Rounded corners of the button
-    borderColor: 'black', // Color of the border
-    borderWidth: 1, // Width of the border, making it visible
+    padding: 9,
+    //borderRadius: 5, // Rounded corners of the button
+    //borderColor: 'black', // Color of the border
+    //borderWidth: 1, // Width of the border, making it visible
+    marginRight: 5,
   },
   resortButtonText: {
     color: 'black',
     fontWeight: 'bold',
   },
   userNameContainer: {
-    flex: 1,
     justifyContent: 'center', // Center username text vertically if needed
     alignItems: 'center', // Center username text horizontally
     padding: 10,
