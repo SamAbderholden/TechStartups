@@ -22,12 +22,12 @@ const ResortsScreen = ({ navigation, route }) => {
       <View style={styles.resortNameContainer}>
         <Text style={styles.resortName}>{resortName}</Text>
         <View style={styles.userNameContainer}>
-          {resortUsers[resortName].map((user, index) => (
-            <Text key={index} style={styles.userName}>
-              @{user}
-            </Text>
-          ))}
-        </View>
+            {resortUsers[resortName].map((user) => (
+              <Text key={`${resortName}-${user}`} style={styles.userName}>
+                @{user}
+              </Text>
+            ))}
+          </View>
         <TouchableOpacity
           style={styles.resortButtonContainer}
           onPress={() => {
@@ -141,33 +141,20 @@ const styles = StyleSheet.create({
   resortNameContainer: {
     flex: 1,
     backgroundColor: 'white',
-    width: 400,
+    width: 380,
     marginTop: 20, // Add margin for the first resort
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
     height: 100,
-    borderRadius: 5,
+    borderRadius: 7,
     marginLeft: 5,
   },
   resortName: {
     color: 'black',
     fontWeight: 'bold',
     fontSize: 18,
-  },
-  resortButtonContainer: {
-    alignItems: 'right',
-    backgroundColor: 'white',
-    padding: 9,
-    //borderRadius: 5, // Rounded corners of the button
-    //borderColor: 'black', // Color of the border
-    //borderWidth: 1, // Width of the border, making it visible
-    marginRight: 5,
-  },
-  resortButtonText: {
-    color: 'black',
-    fontWeight: 'bold',
   },
   userNameContainer: {
     justifyContent: 'center', // Center username text vertically if needed
@@ -179,6 +166,20 @@ const styles = StyleSheet.create({
     color: '#0173f9',
     fontWeight: 'bold',
   },
+  resortButtonContainer: {
+    alignItems: 'right',
+    backgroundColor: 'white',
+    padding: 9,
+    borderRadius: 5, // Rounded corners of the button
+    borderColor: 'black', // Color of the border
+    borderWidth: 1, // Width of the border, making it visible
+    marginRight: 5,
+  },
+  resortButtonText: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+
 
 
 });
