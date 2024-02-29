@@ -1,36 +1,55 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+// Assuming FooterButtons and Post are your custom components
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
-import { ScrollView } from 'react-native-gesture-handler';
+import { firestore } from '../firebase';
+import { getDoc, doc } from 'firebase/firestore';
 
-{/* <TouchableOpacity style={styles.inputButton} onPress={handleLogin}>
-<Text style={styles.inputButtonText}>Log In</Text>
-</TouchableOpacity> */}
+const HomeScreen = ({ navigation, route }) => {
+  const [resortData, setResortData] = useState({});
 
+  const fetchResortData = async (resortName) => {
+    try {
+      const resortDocRef = doc(firestore, 'resorts', resortName);
+      const resortDocSnapshot = await getDoc(resortDocRef);
+  
+      if (resortDocSnapshot.exists()) {
+        const resortInfo = resortDocSnapshot.data();
+        setResortData(prev => ({...prev, [resortName]: resortInfo}));
+      } else {
+        console.log(`${resortName} document does not exist.`);
+      }
+    } catch (error) {
+      console.error('Error fetching resort data:', error);
+    }
+  };
 
-const HomeScreen = ({ navigation, route }) => (
-  <View style={styles.container}>
-    {/* Header container */}
-    <View style={styles.header}>
-      <Text style={styles.headerTitle}>SnowDays</Text>
-      <TouchableOpacity
-        style={styles.resortsButton}     
-        onPress={() => navigation.navigate('Resorts', { username: route.params.username })}
-      >
-        <Text style={styles.resortsButtonText}>Resorts</Text>   
-      </TouchableOpacity>
+  useEffect(() => {
+    const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
+    resorts.forEach(fetchResortData);
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>SnowDays</Text>
+        <TouchableOpacity
+          style={styles.resortsButton}     
+          onPress={() => navigation.navigate('Resorts', { resortData: resortData, username: route.params.username })}
+        >
+          <Text style={styles.resortsButtonText}>Resorts</Text>   
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={styles.posts}>
+      <Post imageUrl={require('../testProfileImage.png')} description={"The alignSelf property is used to align the image within its container. By setting it to 'center', it will center the image horizontally. The marginVertical property adds equal top and bottom margins, pushing the image away from the borders of the container, creating a little space as "}></Post>
+      </ScrollView>
+      <FooterButtons style={styles.footerButtons}/>
     </View>
+  );
+};
 
-    <ScrollView style={styles.posts}>
-        <Post imageUrl={require('../testProfileImage.png')} description={"The alignSelf property is used to align the image within its container. By setting it to 'center', it will center the image horizontally. The marginVertical property adds equal top and bottom margins, pushing the image away from the borders of the container, creating a little space as "}></Post>
-    </ScrollView>
-    <FooterButtons style={styles.footerButtons}/>
-  </View>
-);
-
-
-export default HomeScreen;
+export default HomeScreen;  
 
 
 const styles = StyleSheet.create({

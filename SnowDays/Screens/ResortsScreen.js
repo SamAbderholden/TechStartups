@@ -5,8 +5,8 @@ import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove} f
 //import FooterButtons from './FooterButtons'; // Adjust the import path as needed
 
 const ResortsScreen = ({ navigation, route }) => {
-    const { username } = route.params;
-  
+    const username = route.params.username;
+    const resortData = route.params.resortData; // Receive the pre-fetched data
 
     // State to keep track of users and membership status for each resort
     const [resortUsers, setResortUsers] = useState({
@@ -32,42 +32,35 @@ const ResortsScreen = ({ navigation, route }) => {
       'Steamboat': false,
     });
 
-    const fetchResortData = async (resortName) => {
-      try {
-        const resortDocRef = doc(firestore, 'resorts', resortName);
-        const resortDocSnapshot = await getDoc(resortDocRef);
-  
-        if (resortDocSnapshot.exists()) {
-          const resortData = resortDocSnapshot.data();
-          const usersArray = resortData.users || [];
-          setResortUsers((prevResortUsers) => ({
-            ...prevResortUsers,
-            [resortName]: usersArray,
+    useEffect(() => {
+      // Initialize your state here based on the passed resortData
+      // This assumes resortData contains all necessary info
+      // Adjust according to the actual structure of your data
+      if (resortData) {
+        // Process and set your state based on the received data
+        Object.keys(resortData).forEach(resortName => {
+          const usersArray = resortData[resortName].users || [];
+          // Assuming you have a way to determine membership status, adjust as necessary
+          // For example, if you need the username from route.params
+          const { username } = route.params;
+          setResortUsers(prev => ({ ...prev, [resortName]: usersArray }));
+          setMembershipStatus(prev => ({
+            ...prev,
+            [resortName]: usersArray.includes(username)
           }));
-          setMembershipStatus((prevMembershipStatus) => ({
-            ...prevMembershipStatus,
-            [resortName]: usersArray.includes(username),
-          }));
-        } else {
-          console.log('Resort document does not exist.');
-        }
-      } catch (error) {
-        console.error('Error fetching resort data:', error);
+        });
       }
-    };
+    }, [resortData]);
   
     const addUserToResort = async (resortName) => {
       try {
         const isUsernameUnique = Object.values(resortUsers).every(
           (resort) => !resort.includes(username)
         );
-  
+    
         if (isUsernameUnique) {
           const resortDocRef = doc(firestore, 'resorts', resortName);
-          await updateDoc(resortDocRef, {
-            users: arrayUnion(username),
-          });
-  
+          // Update local state to reflect the change
           setResortUsers((prevResortUsers) => ({
             ...prevResortUsers,
             [resortName]: [...prevResortUsers[resortName], username],
@@ -76,6 +69,9 @@ const ResortsScreen = ({ navigation, route }) => {
             ...prevMembershipStatus,
             [resortName]: true,
           }));
+          await updateDoc(resortDocRef, {
+            users: arrayUnion(username),
+          });
         } else {
           alert('Username already exists in another resort.');
         }
@@ -83,14 +79,11 @@ const ResortsScreen = ({ navigation, route }) => {
         console.error('Error adding user to resort:', error);
       }
     };
+    
   
     const removeUserFromResort = async (resortName) => {
       try {
         const resortDocRef = doc(firestore, 'resorts', resortName);
-        await updateDoc(resortDocRef, {
-          users: arrayRemove(username),
-        });
-  
         setResortUsers((prevResortUsers) => ({
           ...prevResortUsers,
           [resortName]: prevResortUsers[resortName].filter((user) => user !== username),
@@ -99,17 +92,14 @@ const ResortsScreen = ({ navigation, route }) => {
           ...prevMembershipStatus,
           [resortName]: false,
         }));
+        await updateDoc(resortDocRef, {
+          users: arrayRemove(username),
+        });
       } catch (error) {
         console.error('Error removing user from resort:', error);
       }
     };
-  
-    // Fetch resort data when the component mounts
-    useEffect(() => {
-      Object.keys(resortUsers).forEach((resortName) => {
-        fetchResortData(resortName);
-      });
-    }, []);
+
 
     const renderResortItem = (resortName) => (
       <View key={resortName} style={styles.resortContainer}>
