@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native'
 // Assuming FooterButtons and Post are your custom components
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
@@ -25,8 +26,20 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
-  const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
-  resorts.forEach(fetchResortData);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        // Your data fetching logic here
+        const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
+        resorts.forEach(fetchResortData);
+      };
+  
+      fetchData();
+  
+      return () => {
+      };
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
