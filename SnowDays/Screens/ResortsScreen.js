@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { firestore } from '../firebase.js';
-import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion } from 'firebase/firestore';
+import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove} from 'firebase/firestore';
 //import FooterButtons from './FooterButtons'; // Adjust the import path as needed
 
 const ResortsScreen = ({ navigation, route }) => {
@@ -112,7 +112,7 @@ const ResortsScreen = ({ navigation, route }) => {
     }, []);
 
     const renderResortItem = (resortName) => (
-      <View style={styles.resortContainer}>
+      <View key={resortName} style={styles.resortContainer}>
         <View style={styles.resortHeader}>
           <Text style={styles.resortName}>{resortName}</Text>
           <TouchableOpacity
