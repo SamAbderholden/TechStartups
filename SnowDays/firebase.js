@@ -7,6 +7,7 @@ import { getAnalytics } from "firebase/analytics";
 import {getAuth} from "firebase/auth";
 
 import {getStorage} from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
 
  
 
@@ -48,8 +49,10 @@ const analytics = getAnalytics(app);
 
 const db = getStorage(app);
 
+const firestore = getFirestore(app);
+
 const FIREBASE_AUTH = getAuth(app);
 
  
 
-export { FIREBASE_AUTH, db };
+export { FIREBASE_AUTH, db, firestore };

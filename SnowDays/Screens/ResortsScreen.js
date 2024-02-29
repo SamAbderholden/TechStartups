@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { firestore } from '../firebase.js';
+import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion } from 'firebase/firestore';
 //import FooterButtons from './FooterButtons'; // Adjust the import path as needed
 
 const ResortsScreen = ({ navigation, route }) => {
     const { username } = route.params;
   
+
     // State to keep track of users and membership status for each resort
     const [resortUsers, setResortUsers] = useState({
       'Eldora': [],
@@ -18,6 +21,86 @@ const ResortsScreen = ({ navigation, route }) => {
       'Copper': false,
       'Winter Park': false,
     });
+
+    const fetchResortData = async (resortName) => {
+      try {
+        const resortDocRef = doc(firestore, 'resorts', resortName);
+        const resortDocSnapshot = await getDoc(resortDocRef);
+  
+        if (resortDocSnapshot.exists()) {
+          const resortData = resortDocSnapshot.data();
+          const usersArray = resortData.users || [];
+          setResortUsers((prevResortUsers) => ({
+            ...prevResortUsers,
+            [resortName]: usersArray,
+          }));
+          setMembershipStatus((prevMembershipStatus) => ({
+            ...prevMembershipStatus,
+            [resortName]: usersArray.includes(username),
+          }));
+        } else {
+          console.log('Resort document does not exist.');
+        }
+      } catch (error) {
+        console.error('Error fetching resort data:', error);
+      }
+    };
+  
+    const addUserToResort = async (resortName) => {
+      try {
+        const isUsernameUnique = Object.values(resortUsers).every(
+          (resort) => !resort.includes(username)
+        );
+  
+        if (isUsernameUnique) {
+          const resortDocRef = doc(firestore, 'resorts', resortName);
+          await updateDoc(resortDocRef, {
+            users: arrayUnion(username),
+          });
+  
+          setResortUsers((prevResortUsers) => ({
+            ...prevResortUsers,
+            [resortName]: [...prevResortUsers[resortName], username],
+          }));
+          setMembershipStatus((prevMembershipStatus) => ({
+            ...prevMembershipStatus,
+            [resortName]: true,
+          }));
+        } else {
+          alert('Username already exists in another resort.');
+        }
+      } catch (error) {
+        console.error('Error adding user to resort:', error);
+      }
+    };
+  
+    const removeUserFromResort = async (resortName) => {
+      try {
+        const resortDocRef = doc(firestore, 'resorts', resortName);
+        await updateDoc(resortDocRef, {
+          users: arrayRemove(username),
+        });
+  
+        setResortUsers((prevResortUsers) => ({
+          ...prevResortUsers,
+          [resortName]: prevResortUsers[resortName].filter((user) => user !== username),
+        }));
+        setMembershipStatus((prevMembershipStatus) => ({
+          ...prevMembershipStatus,
+          [resortName]: false,
+        }));
+      } catch (error) {
+        console.error('Error removing user from resort:', error);
+      }
+    };
+  
+    // Fetch resort data when the component mounts
+    useEffect(() => {
+      Object.keys(resortUsers).forEach((resortName) => {
+        fetchResortData(resortName);
+      });
+    }, []);
+
     const renderResortItem = (resortName) => (
       <View key={resortName} style={styles.resortNameContainer}>
         <Text style={styles.resortName}>{resortName}</Text>
@@ -42,39 +125,6 @@ const ResortsScreen = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
     );
-  
-    const addUserToResort = (resortName) => {
-      const isUsernameUnique = Object.values(resortUsers).every(
-        (resort) => !resort.includes(username)
-      );
-  
-      if (isUsernameUnique) {
-        const updatedResortUsers = { ...resortUsers };
-        updatedResortUsers[resortName] = [...updatedResortUsers[resortName], username];
-  
-        const updatedMembershipStatus = { ...membershipStatus };
-        updatedMembershipStatus[resortName] = true;
-  
-        setResortUsers(updatedResortUsers);
-        setMembershipStatus(updatedMembershipStatus);
-      } else {
-        alert('Username already exists in another resort.');
-      }
-    };
-  
-    const removeUserFromResort = (resortName) => {
-      const updatedResortUsers = { ...resortUsers };
-      const updatedMembershipStatus = { ...membershipStatus };
-  
-      updatedResortUsers[resortName] = updatedResortUsers[resortName].filter(
-        (user) => user !== username
-      );
-  
-      updatedMembershipStatus[resortName] = false;
-  
-      setResortUsers(updatedResortUsers);
-      setMembershipStatus(updatedMembershipStatus);
-    };
   
     const renderButtonLabel = (resortName) => {
       return membershipStatus[resortName] ? 'Leave' : 'Join';
