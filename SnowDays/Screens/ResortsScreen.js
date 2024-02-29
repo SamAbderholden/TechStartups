@@ -19,11 +19,11 @@ const ResortsScreen = ({ navigation, route }) => {
       'Winter Park': false,
     });
     const renderResortItem = (resortName) => (
-      <View style={styles.resortNameContainer}>
+      <View key={resortName} style={styles.resortNameContainer}>
         <Text style={styles.resortName}>{resortName}</Text>
         <View style={styles.userNameContainer}>
           {resortUsers[resortName].map((user, index) => (
-            <Text key={index} style={styles.userName}>
+            <Text key={user} style={styles.userName}>
               @{user}
             </Text>
           ))}

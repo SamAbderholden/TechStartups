@@ -18,7 +18,7 @@ const LoginScreen = ({ navigation }) => {
       const user = userCredential.user;
       console.log(user);
       setLoading(false);
-      navigation.navigate('Home');
+      navigation.navigate('Home', {username: username.split('@')[0]});
     } catch (e) {
       console.log(e);
       setLoading(false);
