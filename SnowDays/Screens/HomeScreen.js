@@ -25,10 +25,8 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
-  useEffect(() => {
-    const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
-    resorts.forEach(fetchResortData);
-  }, []);
+  const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
+  resorts.forEach(fetchResortData);
 
   return (
     <View style={styles.container}>
