@@ -7,41 +7,54 @@ const ResortsScreen = ({ navigation, route }) => {
   
     // State to keep track of users and membership status for each resort
     const [resortUsers, setResortUsers] = useState({
-      'Eldora': [],
       'Copper': [],
       'Winter Park': [],
+      'Eldora': [],
+      'Vail': [],
+      'Breckenridge': [],
+      'Keystone': [],
+      'Arapahoe Basin': [],
+      'Steamboat': [],
     });
   
     // State to keep track of membership status for each resort
     const [membershipStatus, setMembershipStatus] = useState({
-      'Eldora': false,
       'Copper': false,
       'Winter Park': false,
+      'Eldora': false,
+      'Vail': false,
+      'Breckenridge': false,
+      'Keystone': false,
+      'Arapahoe Basin': false,
+      'Steamboat': false,
     });
     const renderResortItem = (resortName) => (
-      <View key={resortName} style={styles.resortNameContainer}>
-        <Text style={styles.resortName}>{resortName}</Text>
+      <View style={styles.resortContainer}>
+        <View style={styles.resortHeader}>
+          <Text style={styles.resortName}>{resortName}</Text>
+          <TouchableOpacity
+            style={styles.resortButtonContainer}
+            onPress={() => {
+              if (membershipStatus[resortName]) {
+                removeUserFromResort(resortName);
+              } else {
+                addUserToResort(resortName);
+              }
+            }}
+          >
+            <Text style={styles.resortButtonText}>{renderButtonLabel(resortName)}</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.userNameContainer}>
-          {resortUsers[resortName].map((user, index) => (
-            <Text key={user} style={styles.userName}>
+          {resortUsers[resortName].map((user) => (
+            <Text key={`${resortName}-${user}`} style={styles.userName}>
               @{user}
             </Text>
           ))}
         </View>
-        <TouchableOpacity
-          style={styles.resortButtonContainer}
-          onPress={() => {
-            if (membershipStatus[resortName]) {
-              removeUserFromResort(resortName);
-            } else {
-              addUserToResort(resortName);
-            }
-          }}
-        >
-          <Text style={styles.resortButtonText}>{renderButtonLabel(resortName)}</Text>
-        </TouchableOpacity>
       </View>
     );
+    
   
     const addUserToResort = (resortName) => {
       const isUsernameUnique = Object.values(resortUsers).every(
@@ -134,52 +147,57 @@ const styles = StyleSheet.create({
   },
   ScrollContainer: {
     alignItems: 'center',
+    width: '100%', // Ensure the ScrollView takes up full width
   },
-  resortsListContainer: { //container for all the resort items
+  resortsListContainer: {
     marginTop: 20,
+    width: '100%', // Ensure the container takes up full width
+    alignItems: 'center', // Center the resort containers
   },
-  resortNameContainer: {
-    flex: 1,
+  resortContainer: {
     backgroundColor: 'white',
-    width: 380,
-    marginTop: 20, // Add margin for the first resort
+    width: '90%', // Adjust width as necessary, e.g., 90% of the screen width
+    marginTop: 20,
+    borderRadius: 7,
+    padding: 10,
+    alignSelf: 'center',
+    // Add shadow or other styling to match your screenshot
+  },
+  resortHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
-    height: 100,
-    borderRadius: 7,
-    marginLeft: 5,
+    marginBottom: 10, // Add space between header and username list
   },
   resortName: {
     color: 'black',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 24,
   },
   userNameContainer: {
-    justifyContent: 'center', // Center username text vertically if needed
-    alignItems: 'center', // Center username text horizontally
-    padding: 10,
-    borderRadius: 15,
+    // This will hold the list of usernames
   },
   userName: {
-    color: '#0173f9',
+    color: '#0173f9', // The username color
     fontWeight: 'bold',
+    // Add margins for spacing if needed
   },
   resortButtonContainer: {
-    alignItems: 'right',
-    backgroundColor: 'white',
-    padding: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 5, // Rounded corners of the button
     borderColor: 'black', // Color of the border
     borderWidth: 1, // Width of the border, making it visible
-    marginRight: 5,
+    backgroundColor: 'white', // Button background color
   },
   resortButtonText: {
     color: 'black',
     fontWeight: 'bold',
   },
-
-
-
 });
+
+
+
+

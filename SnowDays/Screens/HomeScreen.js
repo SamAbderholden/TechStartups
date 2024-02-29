@@ -23,7 +23,7 @@ const HomeScreen = ({ navigation, route }) => (
     </View>
 
     <ScrollView style={styles.posts}>
-        <Post imageUrl={require('../testProfileImage.png')} description={"bruh"}></Post>
+        <Post imageUrl={require('../testProfileImage.png')} description={"The alignSelf property is used to align the image within its container. By setting it to 'center', it will center the image horizontally. The marginVertical property adds equal top and bottom margins, pushing the image away from the borders of the container, creating a little space as "}></Post>
     </ScrollView>
     <FooterButtons style={styles.footerButtons}/>
   </View>
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   },
   posts: {
     marginTop: 10, // Adjust the top margin to give space below the header
+    alignContent: 'center',
   },
   });
 

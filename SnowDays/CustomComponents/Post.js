@@ -9,15 +9,17 @@ const Post = ({ imageUrl, description }) => {
     setLiked(!liked);
   };
 
-  const IconComponent = liked ? FontAwesome : FontAwesome;
+  const IconComponent = FontAwesome;
 
   return (
     <View style={styles.container}>
       <Image source={imageUrl} style={styles.image} />
-      <Text style={styles.description}>{description}</Text>
-      <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
-        <IconComponent name="thumbs-up" size={32} color={liked ? '#0173f9' : 'white'} solid={liked} />
-      </TouchableOpacity>
+      <View style={styles.textContainer}>
+        <Text style={styles.description}>{description}</Text>
+        <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+          <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -27,23 +29,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'white',
     marginBottom: 20,
-    padding: 10,
-    position: 'relative', // Add position relative to allow absolute positioning within
+    backgroundColor: 'black', // Assuming you want a black background for the text
   },
   image: {
-    width: 350,
-    height: 300,
+    width: '97%',
+    height: '97%',
+    height: undefined,
+    aspectRatio: 1.5, // Adjusted aspect ratio for a wide image
     resizeMode: 'cover',
-    marginBottom: 10,
+    alignSelf: 'center', // Center the image
+  },
+  textContainer: {
+    padding: 10, // Add some padding around the text and button
   },
   description: {
     fontSize: 16,
     color: 'white',
   },
   likeButton: {
-    position: 'absolute',
-    bottom: 6,
-    right: 10,
+    marginTop: -20, // Add some space above the like button
+    alignSelf: 'flex-end', // Align button to the right
+    flexDirection: 'row', // Align icon with text horizontally
+    alignItems: 'center', // Align icon with text vertically
   },
 });
 
