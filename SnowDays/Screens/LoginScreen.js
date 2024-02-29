@@ -1,16 +1,35 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { FIREBASE_AUTH } from '../firebase.js';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 const IMAGE_PATH = '../StylingImages/Login.png';
 
-
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-      if (username !== '' && password !== '') {
-          navigation.navigate('Home', { username });
+  const [username, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const auth = FIREBASE_AUTH;
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      const user = userCredential.user;
+      console.log(user);
+      setLoading(false);
+      navigation.navigate('Home');
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+      if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password') {
+        window.alert('Invalid credentials. Please try again.');
       }
+    } finally {
+      setLoading(false);
+
+    }
+
   };
 
   return (
@@ -29,7 +48,7 @@ const LoginScreen = ({ navigation }) => {
                   style={styles.inputFieldBox}
                   placeholder="Username"
                   value={username}
-                  onChangeText={setUsername}
+                  onChangeText={setEmail}
               />
               <TextInput
                   style={styles.inputFieldBox}
