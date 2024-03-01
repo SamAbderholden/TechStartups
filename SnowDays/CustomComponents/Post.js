@@ -13,7 +13,7 @@ const Post = ({ imageUrl, description }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={imageUrl} style={styles.image} />
+      <Image source={{ uri: imageUrl }} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
@@ -32,10 +32,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black', // Assuming you want a black background for the text
   },
   image: {
-    width: '97%',
-    height: '97%',
-    height: undefined,
-    aspectRatio: 1.5, // Adjusted aspect ratio for a wide image
+    width: '100%', // Adjusted width to fit the container
+    height: 200, // Adjusted height for better display
     resizeMode: 'cover',
     alignSelf: 'center', // Center the image
   },

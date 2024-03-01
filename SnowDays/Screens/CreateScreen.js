@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import FooterButtons from './FooterButtons';
-import { storageRef, db} from '../firebase';
-import {ref, uploadBytes} from "firebase/storage";
+import { storageRef, db, firestore} from '../firebase';
+import {ref, uploadBytes, uploadBytesResumable} from "firebase/storage";
+import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, addDoc, setDoc} from 'firebase/firestore';
 
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
@@ -35,9 +36,22 @@ const CreateScreen = ({ route }) => {
         const blob = await response.blob();
         const fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
         const imageRef = ref(db, `content/${fileName}`);
-        uploadBytes(imageRef, blob).then((snapshot) => {
-          console.log("success");
-        })
+        await uploadBytesResumable(imageRef, blob);
+  
+        // Get timestamp
+        const timestamp = new Date().toISOString();
+  
+        const docName = `${timestamp}_${route.params.username}`;
+
+        // Add new document to "posts" collection with the combined docName as the document ID
+        await setDoc(doc(collection(firestore, 'posts'), docName), {
+          text: description,
+          filename: fileName,
+          username: route.params.username,
+          // You can add more fields as needed
+        });
+  
+        console.log("Image/Video uploaded and post added successfully!");
       }
     } catch (error) {
       console.error('Error picking an image or video', error);

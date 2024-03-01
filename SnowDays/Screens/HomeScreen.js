@@ -1,14 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native'
-// Assuming FooterButtons and Post are your custom components
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
-import { firestore } from '../firebase';
-import { getDoc, doc } from 'firebase/firestore';
+import { firestore, db } from '../firebase';
+import { getDoc, doc, collection, getDocs } from 'firebase/firestore';
+import { getDownloadURL, ref } from "firebase/storage";
 
 const HomeScreen = ({ navigation, route }) => {
   const [resortData, setResortData] = useState({});
+  const [fetchedPosts, setFetchedPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    try {
+      const postsCollectionRef = collection(firestore, 'posts');
+      const querySnapshot = await getDocs(postsCollectionRef);
+      const posts = [];
+
+      for (const doc of querySnapshot.docs) {
+        const postData = doc.data();
+        const fileName = postData.filename; // Assuming the filename is stored in the 'filename' field of each post
+        const imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
+        posts.push({ id: doc.id, ...postData, imageUrl });
+      }
+
+      setFetchedPosts(posts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
+  
+  // Call fetchPosts when the component mounts
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const fetchResortData = async (resortName) => {
     try {
@@ -53,7 +78,9 @@ const HomeScreen = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.posts}>
-      <Post imageUrl={require('../testProfileImage.png')} description={"The alignSelf property is used to align the image within its container. By setting it to 'center', it will center the image horizontally. The marginVertical property adds equal top and bottom margins, pushing the image away from the borders of the container, creating a little space as "}></Post>
+      {fetchedPosts.map(post => (
+          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} />
+        ))}
       </ScrollView>
       <FooterButtons style={styles.footerButtons}/>
     </View>
@@ -67,21 +94,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'black',
-    // alignItems: 'center', // Remove this to allow header to use full width
-    // justifyContent: 'center', // Adjust this as needed
   },
   header: {
-    width: '100%', // Make sure header container uses full width
-    flexDirection: 'row', // Align items in a row
-    justifyContent: 'space-between', // Push the button and text to opposite sides
-    alignItems: 'center', // Center items vertically
-    paddingTop: 60, // Add padding at the top for status bar
-    paddingBottom: 4, // Add padding at the bottom
-    paddingHorizontal: 10, // Add some horizontal padding
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 60,
+    paddingBottom: 4,
+    paddingHorizontal: 10,
   },
   headerTitle: {
     color: 'white',
-    fontSize: 34, // Adjust the size as needed
+    fontSize: 34,
     fontWeight: 'bold',
   },
   resortsButton: {
@@ -96,9 +121,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   posts: {
-    marginTop: 10, // Adjust the top margin to give space below the header
+    marginTop: 10,
     alignContent: 'center',
   },
-  });
-
-  
+});
