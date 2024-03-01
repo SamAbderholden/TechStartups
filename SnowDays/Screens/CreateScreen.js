@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import FooterButtons from './FooterButtons';
+import { storageRef, db} from '../firebase';
+import {ref, uploadBytes} from "firebase/storage";
 
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
@@ -25,14 +27,23 @@ const CreateScreen = ({ route }) => {
         aspect: [4, 3],
         quality: 1,
       });
-
+  
       if (!result.cancelled) {
-        setMedia(result.uri);
+        const fileUri = result.assets[0].uri; // Access the file URI from the assets array
+  
+        const response = await fetch(fileUri);
+        const blob = await response.blob();
+        const fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
+        const imageRef = ref(db, `content/${fileName}`);
+        uploadBytes(imageRef, blob).then((snapshot) => {
+          console.log("success");
+        })
       }
     } catch (error) {
       console.error('Error picking an image or video', error);
     }
   };
+  
 
   return (
     <View style={styles.container}>
