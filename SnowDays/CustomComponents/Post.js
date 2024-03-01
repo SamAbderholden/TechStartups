@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { Video } from 'expo-av';// Import the Video component
 
 const Post = ({ imageUrl, description }) => {
   const [liked, setLiked] = useState(false);
@@ -11,9 +12,30 @@ const Post = ({ imageUrl, description }) => {
 
   const IconComponent = FontAwesome;
 
+  // Function to determine if the URL is a video based on its extension
+  const isVideo = (url) => {
+    return /\.(mp4|mov)(\?.*)?(#.*)?$/i.test(url);
+  };
+
+
   return (
     <View style={styles.container}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
+      {
+        isVideo(imageUrl) ? (
+          <Video
+            source={{ uri: imageUrl }}
+            style={styles.media}
+            resizeMode="cover"
+            useNativeControls
+            isLooping
+          />
+        ) : (
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.media}
+          />
+        )
+      }
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
@@ -29,26 +51,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'white',
     marginBottom: 20,
-    backgroundColor: 'black', // Assuming you want a black background for the text
+    backgroundColor: 'black',
   },
-  image: {
-    width: '100%', // Adjusted width to fit the container
-    height: 200, // Adjusted height for better display
-    resizeMode: 'cover',
-    alignSelf: 'center', // Center the image
+  media: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
   },
   textContainer: {
-    padding: 10, // Add some padding around the text and button
+    padding: 10,
   },
   description: {
     fontSize: 16,
     color: 'white',
   },
   likeButton: {
-    marginTop: -20, // Add some space above the like button
-    alignSelf: 'flex-end', // Align button to the right
-    flexDirection: 'row', // Align icon with text horizontally
-    alignItems: 'center', // Align icon with text vertically
+    marginTop: -20,
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
