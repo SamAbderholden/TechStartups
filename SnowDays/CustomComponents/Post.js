@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Video } from 'expo-av';// Import the Video component
+import { Video } from 'expo-av'; // Import the Video component
 
 const Post = ({ imageUrl, description }) => {
   const [liked, setLiked] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
+  const videoRef = useRef(null); // Reference to the video for playback control
 
   const handleLikePress = () => {
     setLiked(!liked);
@@ -12,23 +14,34 @@ const Post = ({ imageUrl, description }) => {
 
   const IconComponent = FontAwesome;
 
-  // Function to determine if the URL is a video based on its extension
   const isVideo = (url) => {
     return /\.(mp4|mov)(\?.*)?(#.*)?$/i.test(url);
   };
 
+  // Toggle video playback state
+  const handleVideoPress = () => {
+    if (isPlaying) {
+      videoRef.current?.pauseAsync();
+    } else {
+      videoRef.current?.playAsync();
+    }
+    setIsPlaying(!isPlaying); // Toggle play state
+  };
 
   return (
     <View style={styles.container}>
       {
         isVideo(imageUrl) ? (
-          <Video
-            source={{ uri: imageUrl }}
-            style={styles.media}
-            resizeMode="cover"
-            useNativeControls
-            isLooping
-          />
+          <TouchableOpacity onPress={handleVideoPress}>
+            <Video
+              ref={videoRef} // Use the ref for direct control over video playback
+              source={{ uri: imageUrl }}
+              style={styles.media}
+              resizeMode="cover"
+              isLooping
+              shouldPlay={isPlaying} // Control the playback based on state
+            />
+          </TouchableOpacity>
         ) : (
           <Image
             source={{ uri: imageUrl }}
@@ -54,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   media: {
-    width: 200,
+    width: 200, // Adjusted for consistency
     height: 200,
     alignSelf: 'center',
   },

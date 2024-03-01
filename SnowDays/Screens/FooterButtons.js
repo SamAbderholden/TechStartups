@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
       right: 0,
       height: 60,
       paddingBottom: 26,
+      backgroundColor: 'black'
     },
     footerButton: {
       flexDirection: 'row',
