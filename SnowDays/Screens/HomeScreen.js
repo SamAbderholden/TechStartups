@@ -5,11 +5,13 @@ import FooterButtons from './FooterButtons';
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
 import { getDoc, doc, collection, getDocs } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDownloadURL, ref } from "firebase/storage";
 
 const HomeScreen = ({ navigation, route }) => {
   const [resortData, setResortData] = useState({});
   const [fetchedPosts, setFetchedPosts] = useState([]);
+  const [fetchedPostIds, setFetchedPostIds] = useState([]);
 
   const fetchPosts = async () => {
     try {
@@ -21,6 +23,7 @@ const HomeScreen = ({ navigation, route }) => {
         const postData = doc.data();
         const fileName = postData.filename; // Assuming the filename is stored in the 'filename' field of each post
         const imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
+
         posts.push({ id: doc.id, ...postData, imageUrl });
       }
 
@@ -29,11 +32,39 @@ const HomeScreen = ({ navigation, route }) => {
       console.error('Error fetching posts:', error);
     }
   };
-  
-  // Call fetchPosts when the component mounts
+
   useEffect(() => {
+    // Load fetched posts from AsyncStorage when component mounts
+    loadFetchedPosts();
+    // Fetch fresh posts from Firestore
     fetchPosts();
   }, []);
+
+  // Function to load fetched posts from AsyncStorage
+  const loadFetchedPosts = async () => {
+    try {
+      const storedPosts = await AsyncStorage.getItem('fetchedPosts');
+      if (storedPosts) {
+        setFetchedPosts(JSON.parse(storedPosts));
+      }
+    } catch (error) {
+      console.error('Error loading fetched posts from AsyncStorage:', error);
+    }
+  };
+
+  // Function to save fetched posts to AsyncStorage
+  const saveFetchedPosts = async (posts) => {
+    try {
+      await AsyncStorage.setItem('fetchedPosts', JSON.stringify(posts));
+    } catch (error) {
+      console.error('Error saving fetched posts to AsyncStorage:', error);
+    }
+  };
+
+  // Call saveFetchedPosts whenever fetchedPosts state changes
+  useEffect(() => {
+    saveFetchedPosts(fetchedPosts);
+  }, [fetchedPosts]);
 
   const fetchResortData = async (resortName) => {
     try {
