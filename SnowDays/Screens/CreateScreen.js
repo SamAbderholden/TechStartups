@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import FooterButtons from './FooterButtons';
 import { storageRef, db, firestore} from '../firebase';
 import {ref, uploadBytes, uploadBytesResumable} from "firebase/storage";
-import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, addDoc, setDoc} from 'firebase/firestore';
+import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, addDoc, setDoc, serverTimestamp} from 'firebase/firestore';
 
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
@@ -38,16 +38,15 @@ const CreateScreen = ({ route }) => {
         const imageRef = ref(db, `content/${fileName}`);
         await uploadBytesResumable(imageRef, blob);
   
-        // Get timestamp
-        const timestamp = new Date().toISOString();
+        // No need to manually generate a timestamp anymore
+        const docName = `${new Date().toISOString()}_${route.params.username}`;
   
-        const docName = `${timestamp}_${route.params.username}`;
-
         // Add new document to "posts" collection with the combined docName as the document ID
         await setDoc(doc(collection(firestore, 'posts'), docName), {
           text: description,
           filename: fileName,
           username: route.params.username,
+          timestamp: serverTimestamp(), // Use Firebase server timestamp
           // You can add more fields as needed
         });
   

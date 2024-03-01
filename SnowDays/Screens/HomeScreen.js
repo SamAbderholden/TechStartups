@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
   },
   posts: {
     marginTop: 10,
+    marginBottom: 50,
     alignContent: 'center',
   },
 });
