@@ -75,7 +75,6 @@ const ProfileScreen = ({ route }) => {
         </View>
       </View>
       <ScrollView style={styles.postsContainer}>
-        <Post imageUrl={require('../testProfileImage.png')} description={"bruh"}></Post>
       </ScrollView>
       <FooterButtons style={styles.footerButtons}/>
     </View>

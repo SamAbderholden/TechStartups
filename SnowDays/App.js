@@ -6,6 +6,7 @@ import HomeScreen from './Screens/HomeScreen.js';
 import CreateScreen from './Screens/CreateScreen.js';
 import ProfileScreen from './Screens/ProfileScreen.js';
 import ResortsScreen from './Screens/ResortsScreen.js';
+import GhostProfile from './Screens/GhostProfile.js'
 
 const Stack = createStackNavigator();
 
@@ -36,6 +37,7 @@ export default function App() {
         <Stack.Screen name="Create" component={CreateScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Resorts" component={ResortsScreen} />
+        <Stack.Screen name="GhostProfile" component={GhostProfile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

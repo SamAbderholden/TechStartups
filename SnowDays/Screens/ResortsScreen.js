@@ -120,9 +120,11 @@ const ResortsScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.userNameContainer}>
           {resortUsers[resortName].map((user) => (
-            <Text key={`${resortName}-${user}`} style={styles.userName}>
-              @{user}
-            </Text>
+            <TouchableOpacity key={`${resortName}-${user}`} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: user , username: username})}>
+              <Text style={styles.userName}>
+                @{user}
+              </Text>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
