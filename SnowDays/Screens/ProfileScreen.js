@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { View, Text, TextInput, Image, StyleSheet, ScrollView} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { firestore, db } from '../firebase';
+import { firestore, db, storageRef } from '../firebase';
 import * as ImagePicker from 'expo-image-picker';
 import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
 import ProfilePost from '../CustomComponents/ProfilePost';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -45,11 +45,13 @@ const ProfileScreen = ({ route }) => {
 
   useEffect(() => {
     // Fetch fresh posts from Firestore
+    fetchProfileData();
     fetchPosts();
   }, []);
   const [instagramHandle, setInstagramHandle] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [bio, setBio] = useState('');
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
 
   const handleSave = async () => {
     let fileName = '';
@@ -97,6 +99,25 @@ const ProfileScreen = ({ route }) => {
     setEditable(false);
   };
 
+  const fetchProfileData = async () => {
+    const profileDocRef = doc(firestore, 'profiles', route.params.username);
+    const profileDocSnap = await getDoc(profileDocRef);
+  
+    if (profileDocSnap.exists()) {
+      const data = profileDocSnap.data();
+      console.log(data);
+      const imageUrl = await getDownloadURL(ref(db, `content/${data.profileImage}`));
+      setProfileImageUrl(imageUrl);
+  
+      // Set the Instagram handle and associated values
+      setInstagramHandle(data.instagram); // Adjust the state variable as per your component's state
+      setEmailAddress(data.email); // Adjust the state variable as per your component's state
+      setBio(data.bio); // Adjust the state variable as per your component's state
+    } else {
+      console.log("No such profile!");
+    }
+  };
+
   const [media, setMedia] = useState(null); // Add media state
 
   useEffect(() => {
@@ -140,7 +161,10 @@ const ProfileScreen = ({ route }) => {
         <View style={styles.rowContainer}>
           {/* Image space */}
           <View style={styles.imageContainer}>
-            <Image style={styles.image} source={require('../testProfileImage.png')} />
+          <Image
+            style={styles.image}
+            source={profileImageUrl ? { uri: profileImageUrl } : require('../testProfileImage.png')}
+          />
             {editable && (
               <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
                 <Text style={styles.uploadText}>Upload</Text>
