@@ -59,13 +59,17 @@ const ProfileScreen = ({ route }) => {
   const handleSave = async () => {
     // Toggle back to "Edit" mode after saving
     setEditable(false);
+  
+    let updatedPrevImage = prevImage; // Store the updated prevImage
+  
     // Upload new profile image if available
     if (media) {
       const fileUri = media.assets[0].uri;
       const response = await fetch(fileUri);
       const blob = await response.blob();
-      setPrevImage(fileUri.substring(fileUri.lastIndexOf('/') + 1));
-      const imageRef = ref(db, `content/${prevImage}`);
+      updatedPrevImage = fileUri.substring(fileUri.lastIndexOf('/') + 1);
+      setPrevImage(updatedPrevImage);
+      const imageRef = ref(db, `content/${updatedPrevImage}`);
       await uploadBytesResumable(imageRef, blob);
     }
   
@@ -80,19 +84,18 @@ const ProfileScreen = ({ route }) => {
         await updateDoc(userDocRef, {
           instagram: instagramHandle,
           email: emailAddress,
-          profileImage: prevImage, // Assuming the profile image is stored as a field named 'profileImage'
+          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
         });
   
         alert('Profile successfully updated!');
         fetchProfileData();
       } else {
-        console.log(instagramHandle + " " + emailAddress);
         // Create a new user profile
         await setDoc(userDocRef, {
           instagram: instagramHandle,
           email: emailAddress,
-          profileImage: prevImage, // Assuming the profile image is stored as a field named 'profileImage'
-          gnarPoints: 0
+          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
+          gnarPoints: 0,
         });
         alert('Profile successfully updated!');
         fetchProfileData();
