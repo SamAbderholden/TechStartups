@@ -57,7 +57,8 @@ const ProfileScreen = ({ route }) => {
   const [prevImage, setPrevImage] = useState('');
 
   const handleSave = async () => {
-  
+    // Toggle back to "Edit" mode after saving
+    setEditable(false);
     // Upload new profile image if available
     if (media) {
       const fileUri = media.assets[0].uri;
@@ -83,7 +84,7 @@ const ProfileScreen = ({ route }) => {
         });
   
         alert('Profile successfully updated!');
-        //fetchProfileData();
+        fetchProfileData();
       } else {
         console.log(instagramHandle + " " + emailAddress);
         // Create a new user profile
@@ -94,14 +95,11 @@ const ProfileScreen = ({ route }) => {
           gnarPoints: 0
         });
         alert('Profile successfully updated!');
-        //fetchProfileData();
+        fetchProfileData();
       }
     } catch (error) {
       alert('Error updating/creating profile. Please try again.');
     }
-  
-    // Toggle back to "Edit" mode after saving
-    setEditable(false);
   };
 
   const fetchProfileData = async () => {
