@@ -53,17 +53,17 @@ const ProfileScreen = ({ route }) => {
   const [emailAddress, setEmailAddress] = useState('');
   const [bio, setBio] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const [prevImage, setPrevImage] = useState('');
 
   const handleSave = async () => {
-    let fileName = profileImageUrl;
   
     // Upload new profile image if available
     if (media) {
       const fileUri = media.assets[0].uri;
       const response = await fetch(fileUri);
       const blob = await response.blob();
-      fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
-      const imageRef = ref(db, `content/${fileName}`);
+      setPrevImage(fileUri.substring(fileUri.lastIndexOf('/') + 1));
+      const imageRef = ref(db, `content/${prevImage}`);
       await uploadBytesResumable(imageRef, blob);
     }
   
@@ -78,7 +78,7 @@ const ProfileScreen = ({ route }) => {
         await updateDoc(userDocRef, {
           instagram: instagramHandle,
           email: emailAddress,
-          profileImage: fileName, // Assuming the profile image is stored as a field named 'profileImage'
+          profileImage: prevImage, // Assuming the profile image is stored as a field named 'profileImage'
         });
   
         alert('Profile successfully updated!');
@@ -88,7 +88,7 @@ const ProfileScreen = ({ route }) => {
         await setDoc(userDocRef, {
           instagram: instagramHandle,
           email: emailAddress,
-          profileImage: fileName, // Assuming the profile image is stored as a field named 'profileImage'
+          profileImage: prevImage, // Assuming the profile image is stored as a field named 'profileImage'
           gnarPoints: 0
         });
         alert('Profile successfully updated!');
@@ -108,6 +108,7 @@ const ProfileScreen = ({ route }) => {
   
     if (profileDocSnap.exists()) {
       const data = profileDocSnap.data();
+      setPrevImage(data.profileImage);
       const imageUrl = await getDownloadURL(ref(db, `content/${data.profileImage}`));
       setProfileImageUrl(imageUrl);
   
