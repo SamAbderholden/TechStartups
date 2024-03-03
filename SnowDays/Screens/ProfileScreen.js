@@ -24,56 +24,66 @@ const ProfileScreen = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.username}>@{route.params.username}</Text>
-        <TouchableOpacity style={styles.editBt} onPress={editable ? handleSave : handleEditPress}>
+        <TouchableOpacity style={styles.editButton} onPress={editable ? handleSave : handleEditPress}>
           <Text style={styles.edit}>{editable ? 'Save' : 'Edit'}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.contentContainer}>
-        <View style={styles.rowContainer}>
-          {/* Image space */}
-          <View style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={require('../testProfileImage.png')}
-          />
-          </View>
-          {/* Three text fields */}
-          <View style={styles.textFieldsContainer}>
-            <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Instagram:</Text>
-              <TextInput
-                style={styles.textField}
-                placeholder=""
-                editable={editable}
-              />
-            </View>
-            <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Email:</Text>
-              <TextInput
-                style={styles.textField}
-                placeholder=""
-                editable={editable}
-              />
-            </View>
-            <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Gnar Points:</Text>
-              <TextInput
-                style={styles.textField}
-                placeholder=""
-                editable={false}
-              />
-            </View>
-          </View>
-        </View>
-        {/* Large text box */}
-        <View style={styles.largeTextBoxContainer}>
-          <TextInput
-            style={styles.largeTextBox}
-            multiline
-            editable={editable}
-          />
-        </View>
+  <View style={styles.rowContainer}>
+    {/* Image space */}
+    <View style={styles.imageContainer}>
+      <Image
+        style={styles.image}
+        source={require('../testProfileImage.png')}
+      />
+    </View>
+    {/* Three text fields */}
+    <View style={styles.textFieldsContainer}>
+      <View style={styles.textFieldContainer}>
+        <Text style={styles.label}>Instagram:</Text>
+        <TextInput
+          style={styles.textField}
+          placeholder="handle"
+          editable={editable}
+          placeholderTextColor="grey" // Make sure the placeholder is visible
+          autoCapitalize='none'
+        />
       </View>
+      <View style={styles.textFieldContainer}>
+        <Text style={styles.label}>Email:</Text>
+        <TextInput
+          style={styles.textField}
+          placeholder="Email address"
+          editable={editable}
+          placeholderTextColor="grey" // Make sure the placeholder is visible
+          autoCapitalize='none'
+
+        />
+      </View>
+      <View style={styles.textFieldContainer}>
+        <Text style={styles.label}>Gnar Points:</Text>
+        <TextInput
+          style={styles.textField}
+          placeholder="Gnar Points" // Since this field is not editable, you might want to indicate this or leave it empty
+          editable={false}
+          placeholderTextColor="grey" // Make sure the placeholder is visible
+        />
+      </View>
+    </View>
+  </View>
+  {/* Large text box */}
+  <View style={styles.largeTextBoxContainer}>
+    <TextInput
+      style={styles.largeTextBox}
+      multiline
+      editable={editable}
+      placeholder="Write your bio or personal message here"
+      placeholderTextColor="grey" // Make sure the placeholder is visible
+      autoCapitalize='none'
+    />
+  </View>
+</View>
+
       <ScrollView style={styles.postsContainer}>
       </ScrollView>
       <FooterButtons style={styles.footerButtons}/>
@@ -84,6 +94,7 @@ const ProfileScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'black',
   },
   header: {
     flexDirection: 'row',
@@ -95,15 +106,18 @@ const styles = StyleSheet.create({
   },
   username: {
     fontWeight: 'bold',
-    fontSize: 25,
+    fontSize: 34,
+    color: '#0173f9',
   },
-  editBt: {
-    backgroundColor: 'gray',
+  editButton: {
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
+    width: 55,
+    alignItems: 'center',
   },
   edit: {
-    color: 'white',
+    color: 'black',
     fontSize: 16,
   },
   contentContainer: {
@@ -131,11 +145,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginRight: 10,
+    color: 'white'
   },
   textField: {
     flex: 1,
     borderWidth: 1,
     padding: 10,
+    borderColor: 'white', // Change border color to white
+    color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
     marginTop: 20,
@@ -144,7 +161,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     minHeight: 100,
-    // Additional styling for large text box
+    borderColor: 'white', // Change border color to white
+    color: 'white', // Add this to ensure text inside the box is visible
+    // Additional styling for large text box remains unchanged
   },
   image: {
     width: 150, // Set the width of the image
@@ -157,3 +176,6 @@ const styles = StyleSheet.create({
 });
 
 export default ProfileScreen;
+
+
+
