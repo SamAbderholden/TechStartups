@@ -119,7 +119,7 @@ const ProfileScreen = ({ route }) => {
       <FontAwesome name="instagram" size={28} color="white" />
         <TextInput
           style={styles.textField}
-          placeholder="handle"
+          placeholder="Instagram Handle"
           editable={editable}
           placeholderTextColor="grey" // Make sure the placeholder is visible
           autoCapitalize='none'
@@ -129,7 +129,7 @@ const ProfileScreen = ({ route }) => {
       <FontAwesome name="envelope" size={26} color="white" />
         <TextInput
           style={styles.textField}
-          placeholder="Email address"
+          placeholder="Email Address"
           editable={editable}
           placeholderTextColor="grey" // Make sure the placeholder is visible
           autoCapitalize='none'
