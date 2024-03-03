@@ -38,7 +38,7 @@ const GhostProfile = ({ route }) => {
                 const fileName = postData.filename;
                 const imageUrl = await getDownloadURL(storageRef(db, `content/${fileName}`));
 
-                posts.push({ id: doc.id, ...postData, imageUrl });
+                posts.push({ id: doc.id, ...postData, imageUrl, timestamp: postData.timestamp });
             }
 
             setUserPosts(posts);
@@ -83,6 +83,7 @@ const GhostProfile = ({ route }) => {
                     key={post.id}
                     imageUrl={post.imageUrl}
                     description={post.text}
+                    timestamp={post.timestamp}
                     />
                 ))}
             </ScrollView>

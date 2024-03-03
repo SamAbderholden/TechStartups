@@ -125,9 +125,8 @@ const ProfileScreen = ({ route }) => {
           id={post.id}
           imageUrl={post.imageUrl}
           description={post.text}
-          usernameToDisplay={post.username}
-          username={route.params.username}
           onDelete={fetchPosts}
+          timestamp={post.timestamp}
         />
       ))}
       </ScrollView>

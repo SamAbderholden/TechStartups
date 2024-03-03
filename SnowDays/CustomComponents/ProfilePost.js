@@ -5,7 +5,7 @@ import { Video } from 'expo-av'; // Import the Video component
 import { collection, deleteDoc, doc } from 'firebase/firestore';
 import { firestore, db } from '../firebase'; // Import your firebase configurations
 
-const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, onDelete }) => {
+const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, onDelete, timestamp }) => {
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const [forceUpdate, setForceUpdate] = useState(false); // State to force re-render
@@ -69,6 +69,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
+        <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
         <View style={styles.likeButton}>
           <TouchableOpacity onPress={handleLikePress}>
             <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
