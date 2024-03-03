@@ -47,6 +47,7 @@ const LoginScreen = ({ navigation }) => {
                   placeholder="Username"
                   value={username}
                   onChangeText={setEmail}
+                  autoCapitalize='none'
               />
               <TextInput
                   style={styles.inputFieldBox}
@@ -54,6 +55,7 @@ const LoginScreen = ({ navigation }) => {
                   secureTextEntry
                   value={password}
                   onChangeText={setPassword}
+                  autoCapitalize='none'
               />
               <TouchableOpacity style={styles.inputButton} onPress={handleLogin}>
                   <Text style={styles.inputButtonText}>Log In</Text>
