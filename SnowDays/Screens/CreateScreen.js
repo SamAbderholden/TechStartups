@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import FooterButtons from './FooterButtons';
 import { storageRef, db, firestore} from '../firebase';
@@ -9,7 +9,6 @@ import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, a
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
   const [media, setMedia] = useState(null); // Add media state
-
   useEffect(() => {
     // Request permission to access the photo library
     (async () => {

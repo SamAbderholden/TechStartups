@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { firestore } from '../firebase.js';
 import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove} from 'firebase/firestore';
 //import FooterButtons from './FooterButtons'; // Adjust the import path as needed
 
-const ResortsScreen = ({ navigation, route }) => {
+const ResortsScreen = ({route }) => {
+    const navigation = useNavigation();
     const username = route.params.username;
     const resortData = route.params.resortData; // Receive the pre-fetched data
 

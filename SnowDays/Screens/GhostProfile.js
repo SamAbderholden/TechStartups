@@ -12,7 +12,6 @@ const GhostProfile = ({ route }) => {
     const [profileData, setProfileData] = useState(null);
     const [profileImageUrl, setProfileImageUrl] = useState(null);
     const [userPosts, setUserPosts] = useState([]);
-
     useEffect(() => {
         const fetchProfileData = async () => {
             const profileDocRef = doc(firestore, 'profiles', userInView);

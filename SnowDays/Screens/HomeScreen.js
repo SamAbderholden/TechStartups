@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
@@ -8,7 +8,8 @@ import { getDoc, doc, collection, getDocs, query, orderBy } from 'firebase/fires
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDownloadURL, ref } from "firebase/storage";
 
-const HomeScreen = ({ navigation, route }) => {
+const HomeScreen = ({route}) => {
+  const navigation = useNavigation();
   const [resortData, setResortData] = useState({});
   const [fetchedPosts, setFetchedPosts] = useState([]);
   const [fetchedPostIds, setFetchedPostIds] = useState([]);
@@ -115,7 +116,7 @@ const HomeScreen = ({ navigation, route }) => {
       </View>
       <ScrollView style={styles.posts}>
       {fetchedPosts.map(post => (
-          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} usernameToDisplay={post.username} username={route.params.username} navigation={navigation} timestamp={post.timestamp}/>
+          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} usernameToDisplay={post.username} username={route.params.username} timestamp={post.timestamp}/>
         ))}
       </ScrollView>
       <FooterButtons style={styles.footerButtons}/>

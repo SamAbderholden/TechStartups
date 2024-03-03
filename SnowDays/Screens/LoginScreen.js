@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { FIREBASE_AUTH } from '../firebase.js';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 const IMAGE_PATH = '../StylingImages/Login.png';

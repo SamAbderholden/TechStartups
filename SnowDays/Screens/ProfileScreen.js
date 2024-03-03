@@ -34,7 +34,6 @@ const ProfileScreen = ({ route }) => {
   
         posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username, timestamp: postData.timestamp });
       }
-      console.log(posts);
       setFetchedPosts(posts);
     } catch (error) {
       console.error('Error fetching posts:', error);

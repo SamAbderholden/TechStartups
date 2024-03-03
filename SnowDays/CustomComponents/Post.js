@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
 
-const Post = ({ imageUrl, description, usernameToDisplay, username, navigation,timestamp}) => {
+const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) => {
+  const navigation = useNavigation();
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const videoRef = useRef(null); // Reference to the video for playback control
