@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   username: {
+    marginBottom: -15,
     color: '#0173f9', // The username color
     fontWeight: 'bold',
   }
