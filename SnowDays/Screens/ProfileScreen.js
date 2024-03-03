@@ -52,6 +52,7 @@ const ProfileScreen = ({ route }) => {
   const [instagramHandle, setInstagramHandle] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [bio, setBio] = useState('');
+  const [gnarPoints, setGnarPoints] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [prevImage, setPrevImage] = useState('');
 
@@ -84,6 +85,7 @@ const ProfileScreen = ({ route }) => {
         alert('Profile successfully updated!');
         //fetchProfileData();
       } else {
+        console.log(instagramHandle + " " + emailAddress);
         // Create a new user profile
         await setDoc(userDocRef, {
           instagram: instagramHandle,
@@ -111,13 +113,13 @@ const ProfileScreen = ({ route }) => {
       setPrevImage(data.profileImage);
       const imageUrl = await getDownloadURL(ref(db, `content/${data.profileImage}`));
       setProfileImageUrl(imageUrl);
-  
+      setGnarPoints(data.gnarPoints)
       // Set the Instagram handle and associated values
       setInstagramHandle(data.instagram); // Adjust the state variable as per your component's state
       setEmailAddress(data.email); // Adjust the state variable as per your component's state
       setBio(data.bio); // Adjust the state variable as per your component's state
     } else {
-      console.log("No such profile!");
+      console.log("Please setup your profile!");
     }
   };
 
@@ -184,6 +186,8 @@ const ProfileScreen = ({ route }) => {
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
+                value={instagramHandle}
+                onChangeText={(text) => setInstagramHandle(text)}
               />
             </View>
             <View style={styles.textFieldContainer}>
@@ -194,16 +198,17 @@ const ProfileScreen = ({ route }) => {
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
-
+                value={emailAddress}
+                onChangeText={(text) => setEmailAddress(text)}
               />
             </View>
             <View style={styles.textFieldContainer}>
               <FontAwesome name="star" size={26} color="white" />
               <TextInput
-                style={styles.textField}
-                placeholder="Gnar Points" // Since this field is not editable, you might want to indicate this or leave it empty
+                style={styles.textField} // Since this field is not editable, you might want to indicate this or leave it empty
                 editable={false}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
+                value={gnarPoints.toString()}
               />
             </View>
           </View>
