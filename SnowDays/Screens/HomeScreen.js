@@ -23,8 +23,8 @@ const HomeScreen = ({ navigation, route }) => {
         const postData = doc.data();
         const fileName = postData.filename; // Assuming the filename is stored in the 'filename' field of each post
         const imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
-
-        posts.push({ id: doc.id, ...postData, imageUrl });
+        const username = postData.username;
+        posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username});
       }
 
       setFetchedPosts(posts);
@@ -110,7 +110,7 @@ const HomeScreen = ({ navigation, route }) => {
       </View>
       <ScrollView style={styles.posts}>
       {fetchedPosts.map(post => (
-          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} />
+          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} username={post.username} navigation={navigation}/>
         ))}
       </ScrollView>
       <FooterButtons style={styles.footerButtons}/>
