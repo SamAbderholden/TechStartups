@@ -48,6 +48,7 @@ const ProfileScreen = ({ route }) => {
     fetchProfileData();
     fetchPosts();
   }, []);
+
   const [instagramHandle, setInstagramHandle] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [bio, setBio] = useState('');
@@ -81,6 +82,7 @@ const ProfileScreen = ({ route }) => {
         });
   
         alert('Profile successfully updated!');
+        fetchProfileData();
       } else {
         // Create a new user profile
         await setDoc(userDocRef, {
@@ -90,6 +92,7 @@ const ProfileScreen = ({ route }) => {
           gnarPoints: 0
         });
         alert('Profile successfully updated!');
+        fetchProfileData();
       }
     } catch (error) {
       alert('Error updating/creating profile. Please try again.');
@@ -105,7 +108,6 @@ const ProfileScreen = ({ route }) => {
   
     if (profileDocSnap.exists()) {
       const data = profileDocSnap.data();
-      console.log(data);
       const imageUrl = await getDownloadURL(ref(db, `content/${data.profileImage}`));
       setProfileImageUrl(imageUrl);
   
@@ -163,7 +165,7 @@ const ProfileScreen = ({ route }) => {
           <View style={styles.imageContainer}>
           <Image
             style={styles.image}
-            source={profileImageUrl ? { uri: profileImageUrl } : require('../testProfileImage.png')}
+            source={profileImageUrl ? { uri: profileImageUrl } : null}
           />
             {editable && (
               <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
