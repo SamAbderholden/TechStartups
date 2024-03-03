@@ -52,7 +52,6 @@ const db = getStorage(app);
 
 const firestore = getFirestore(app);
 
-
 const FIREBASE_AUTH = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
