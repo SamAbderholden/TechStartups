@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
 
-const Post = ({ imageUrl, description, usernameToDisplay, username, navigation}) => {
+const Post = ({ imageUrl, description, usernameToDisplay, username, navigation,timestamp}) => {
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const videoRef = useRef(null); // Reference to the video for playback control
@@ -51,6 +51,7 @@ const Post = ({ imageUrl, description, usernameToDisplay, username, navigation})
       )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
+        <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
         {usernameToDisplay && (
           <View style={styles.userNameContainer}>
             <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: usernameToDisplay, username: username })}>
@@ -95,7 +96,11 @@ const styles = StyleSheet.create({
     marginBottom: -15,
     color: '#0173f9', // The username color
     fontWeight: 'bold',
-  }
+  },
+  timestamp: {
+    color: 'white',
+  },
+
 });
 
 export default Post;
