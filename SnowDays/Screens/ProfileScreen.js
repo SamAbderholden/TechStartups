@@ -82,7 +82,7 @@ const ProfileScreen = ({ route }) => {
         });
   
         alert('Profile successfully updated!');
-        fetchProfileData();
+        //fetchProfileData();
       } else {
         // Create a new user profile
         await setDoc(userDocRef, {
@@ -92,7 +92,7 @@ const ProfileScreen = ({ route }) => {
           gnarPoints: 0
         });
         alert('Profile successfully updated!');
-        fetchProfileData();
+        //fetchProfileData();
       }
     } catch (error) {
       alert('Error updating/creating profile. Please try again.');
