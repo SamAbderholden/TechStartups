@@ -112,7 +112,7 @@ const HomeScreen = ({ navigation, route }) => {
       </View>
       <ScrollView style={styles.posts}>
       {fetchedPosts.map(post => (
-          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} username={post.username} navigation={navigation}/>
+          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} usernameToDisplay={post.username} username={route.params.username} navigation={navigation}/>
         ))}
       </ScrollView>
       <FooterButtons style={styles.footerButtons}/>

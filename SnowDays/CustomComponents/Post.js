@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
 
-const Post = ({ imageUrl, description, username, navigation}) => {
+const Post = ({ imageUrl, description, usernameToDisplay, username, navigation}) => {
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const videoRef = useRef(null); // Reference to the video for playback control
@@ -52,8 +52,8 @@ const Post = ({ imageUrl, description, username, navigation}) => {
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         <View style={styles.userNameContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: username, username: username })}>
-            <Text style={styles.username}>@{username}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: usernameToDisplay, username: username })}>
+            <Text style={styles.username}>@{usernameToDisplay}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
