@@ -174,31 +174,28 @@ const ProfileScreen = ({ route }) => {
           {/* Three text fields */}
           <View style={styles.textFieldsContainer}>
             <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Instagram:</Text>
+            <FontAwesome name="instagram" size={28} color="white" />
               <TextInput
                 style={styles.textField}
-                placeholder="handle"
+                placeholder="Instagram Handle"
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
-                autoCapitalize="none"
-                value={instagramHandle}
-                onChangeText={(text) => setInstagramHandle(text)}
+                autoCapitalize='none'
               />
             </View>
             <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Email:</Text>
+            <FontAwesome name="envelope" size={26} color="white" />
               <TextInput
                 style={styles.textField}
-                placeholder="Email address"
+                placeholder="Email Address"
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
-                autoCapitalize="none"
-                value={emailAddress}
-                onChangeText={(text) => setEmailAddress(text)}
+                autoCapitalize='none'
+
               />
             </View>
             <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Gnar Points:</Text>
+              <FontAwesome name="star" size={26} color="white" />
               <TextInput
                 style={styles.textField}
                 placeholder="Gnar Points" // Since this field is not editable, you might want to indicate this or leave it empty
