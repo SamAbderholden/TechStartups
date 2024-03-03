@@ -22,8 +22,10 @@ const HomeScreen = ({ navigation, route }) => {
       for (const doc of querySnapshot.docs) {
         const postData = doc.data();
         const fileName = postData.filename; // Assuming the filename is stored in the 'filename' field of each post
-        const imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
-        const username = postData.username;
+        let imageUrl = "";
+        if(fileName != ""){
+          imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
+        }
         posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username});
       }
 

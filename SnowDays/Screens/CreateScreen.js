@@ -40,30 +40,32 @@ const CreateScreen = ({ route }) => {
 
 
   const handlePost = async () => {
-    if (!media) {
-      console.error('No media selected for post');
-      return;
+    let fileName = "";
+  
+    if (media) {
+      const fileUri = media.assets[0].uri;
+      const response = await fetch(fileUri);
+      const blob = await response.blob();
+      fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
+      const imageRef = ref(db, `content/${fileName}`);
+      await uploadBytesResumable(imageRef, blob);
     }
-    const fileUri = media.assets[0].uri; // Access the file URI from the assets array
-    console.log(fileUri);
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
-    const fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
-    const imageRef = ref(db, `content/${fileName}`);
-    await uploadBytesResumable(imageRef, blob);
-
-    // No need to manually generate a timestamp anymore
+  
     const docName = `${new Date().toISOString()}_${route.params.username}`;
-
-    // Add new document to "posts" collection with the combined docName as the document ID
-    await setDoc(doc(collection(firestore, 'posts'), docName), {
-      text: description,
-      filename: fileName,
-      username: route.params.username,
-      timestamp: serverTimestamp(), // Use Firebase server timestamp
-      // You can add more fields as needed
-    });  
+  
+    try {
+      await setDoc(doc(collection(firestore, 'posts'), docName), {
+        text: description,
+        filename: fileName,
+        username: route.params.username,
+        timestamp: serverTimestamp(),
+      });
+      alert('Post successfully added!');
+    } catch (error) {
+      alert('Error adding post. Please try again.');
+    }
   };
+  
   
 
   return (

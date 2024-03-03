@@ -30,16 +30,16 @@ const Post = ({ imageUrl, description, username, navigation}) => {
 
   return (
     <View style={styles.container}>
-      {
+      {imageUrl !== "" && (
         isVideo(imageUrl) ? (
           <TouchableOpacity onPress={handleVideoPress}>
             <Video
-              ref={videoRef} // Use the ref for direct control over video playback
+              ref={videoRef}
               source={{ uri: imageUrl }}
               style={styles.media}
               resizeMode="cover"
               isLooping
-              shouldPlay={isPlaying} // Control the playback based on state
+              shouldPlay={isPlaying}
             />
           </TouchableOpacity>
         ) : (
@@ -48,11 +48,11 @@ const Post = ({ imageUrl, description, username, navigation}) => {
             style={styles.media}
           />
         )
-      }
+      )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         <View style={styles.userNameContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: username , username: username})}>
+          <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: username, username: username })}>
             <Text style={styles.username}>@{username}</Text>
           </TouchableOpacity>
         </View>
