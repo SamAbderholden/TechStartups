@@ -55,7 +55,7 @@ const ProfileScreen = ({ route }) => {
   const [profileImageUrl, setProfileImageUrl] = useState(null);
 
   const handleSave = async () => {
-    let fileName = '';
+    let fileName = profileImageUrl;
   
     // Upload new profile image if available
     if (media) {
