@@ -1,11 +1,11 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { View, Text, TextInput, Image, StyleSheet, ScrollView} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { firestore, db } from '../firebase';
 import * as ImagePicker from 'expo-image-picker';
-import { getDoc, doc, collection, getDocs, query, where } from 'firebase/firestore';
+import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import ProfilePost from '../CustomComponents/ProfilePost';
 
 const ProfileScreen = ({ route }) => {
@@ -45,12 +45,51 @@ const ProfileScreen = ({ route }) => {
     // Fetch fresh posts from Firestore
     fetchPosts();
   }, []);
+  const [instagramHandle, setInstagramHandle] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
+  const [bio, setBio] = useState('');
 
-  const handleSave = () => {
-    // Add your logic here for saving/updating the data to the database
-    // This function will be called when the "Save" button is pressed
-    console.log('Data saved to the database');
-
+  const handleSave = async () => {
+    let fileName = '';
+  
+    // Upload new profile image if available
+    if (media) {
+      const fileUri = media.assets[0].uri;
+      const response = await fetch(fileUri);
+      const blob = await response.blob();
+      fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
+      const imageRef = ref(db, `content/${fileName}`);
+      await uploadBytesResumable(imageRef, blob);
+    }
+  
+    const userDocRef = doc(collection(firestore, 'profiles'), route.params.username);
+  
+    try {
+      // Check if the user profile already exists
+      const userDoc = await getDoc(userDocRef);
+  
+      if (userDoc.exists()) {
+        // Update user profile fields in Firestore
+        await updateDoc(userDocRef, {
+          instagram: instagramHandle,
+          email: emailAddress,
+          profileImage: fileName, // Assuming the profile image is stored as a field named 'profileImage'
+        });
+  
+        alert('Profile successfully updated!');
+      } else {
+        // Create a new user profile
+        await setDoc(userDocRef, {
+          instagram: instagramHandle,
+          email: emailAddress,
+          profileImage: fileName, // Assuming the profile image is stored as a field named 'profileImage'
+        });
+        alert('Profile successfully updated!');
+      }
+    } catch (error) {
+      alert('Error updating/creating profile. Please try again.');
+    }
+  
     // Toggle back to "Edit" mode after saving
     setEditable(false);
   };
@@ -85,9 +124,6 @@ const ProfileScreen = ({ route }) => {
     }
   };
 
-  const handleUploadPress = () => {
-
-  }
 
   return (
     <View style={styles.container}>
@@ -98,79 +134,74 @@ const ProfileScreen = ({ route }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.contentContainer}>
-  <View style={styles.rowContainer}>
-    {/* Image space */}
-    <View style={styles.imageContainer}>
-      <Image
-        style={styles.image}
-        source={require('../testProfileImage.png')}
-      />
-      {editable && (
-          <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
-            <Text style={styles.uploadText}>Upload</Text>
-          </TouchableOpacity>
-        )}
-    </View>
-    {/* Three text fields */}
-    <View style={styles.textFieldsContainer}>
-      <View style={styles.textFieldContainer}>
-        <Text style={styles.label}>Instagram:</Text>
-        <TextInput
-          style={styles.textField}
-          placeholder="handle"
-          editable={editable}
-          placeholderTextColor="grey" // Make sure the placeholder is visible
-          autoCapitalize='none'
-        />
+        <View style={styles.rowContainer}>
+          {/* Image space */}
+          <View style={styles.imageContainer}>
+            <Image style={styles.image} source={require('../testProfileImage.png')} />
+            {editable && (
+              <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
+                <Text style={styles.uploadText}>Upload</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          {/* Three text fields */}
+          <View style={styles.textFieldsContainer}>
+            <View style={styles.textFieldContainer}>
+              <Text style={styles.label}>Instagram:</Text>
+              <TextInput
+                style={styles.textField}
+                placeholder="handle"
+                editable={editable}
+                placeholderTextColor="grey" // Make sure the placeholder is visible
+                autoCapitalize="none"
+                value={instagramHandle}
+                onChangeText={(text) => setInstagramHandle(text)}
+              />
+            </View>
+            <View style={styles.textFieldContainer}>
+              <Text style={styles.label}>Email:</Text>
+              <TextInput
+                style={styles.textField}
+                placeholder="Email address"
+                editable={editable}
+                placeholderTextColor="grey" // Make sure the placeholder is visible
+                autoCapitalize="none"
+                value={emailAddress}
+                onChangeText={(text) => setEmailAddress(text)}
+              />
+            </View>
+            <View style={styles.textFieldContainer}>
+              <Text style={styles.label}>Gnar Points:</Text>
+              <TextInput
+                style={styles.textField}
+                placeholder="Gnar Points" // Since this field is not editable, you might want to indicate this or leave it empty
+                editable={false}
+                placeholderTextColor="grey" // Make sure the placeholder is visible
+              />
+            </View>
+          </View>
+        </View>
+        {/* Large text box */}
+        <View style={styles.largeTextBoxContainer}>
+          <TextInput
+            style={styles.largeTextBox}
+            multiline
+            editable={editable}
+            placeholder="Write your bio or personal message here"
+            placeholderTextColor="grey" // Make sure the placeholder is visible
+            autoCapitalize="none"
+            value={bio}
+            onChangeText={(text) => setBio(text)}
+          />
+        </View>
       </View>
-      <View style={styles.textFieldContainer}>
-        <Text style={styles.label}>Email:</Text>
-        <TextInput
-          style={styles.textField}
-          placeholder="Email address"
-          editable={editable}
-          placeholderTextColor="grey" // Make sure the placeholder is visible
-          autoCapitalize='none'
-
-        />
-      </View>
-      <View style={styles.textFieldContainer}>
-        <Text style={styles.label}>Gnar Points:</Text>
-        <TextInput
-          style={styles.textField}
-          placeholder="Gnar Points" // Since this field is not editable, you might want to indicate this or leave it empty
-          editable={false}
-          placeholderTextColor="grey" // Make sure the placeholder is visible
-        />
-      </View>
-    </View>
-  </View>
-  {/* Large text box */}
-  <View style={styles.largeTextBoxContainer}>
-    <TextInput
-      style={styles.largeTextBox}
-      multiline
-      editable={editable}
-      placeholder="Write your bio or personal message here"
-      placeholderTextColor="grey" // Make sure the placeholder is visible
-      autoCapitalize='none'
-    />
-  </View>
-</View>
 
       <ScrollView style={styles.postsContainer}>
-      {fetchedPosts.map(post => (
-        <ProfilePost
-          key={post.id}
-          id={post.id}
-          imageUrl={post.imageUrl}
-          description={post.text}
-          onDelete={fetchPosts}
-          timestamp={post.timestamp}
-        />
-      ))}
+        {fetchedPosts.map((post) => (
+          <ProfilePost key={post.id} id={post.id} imageUrl={post.imageUrl} description={post.text} onDelete={fetchPosts} timestamp={post.timestamp} />
+        ))}
       </ScrollView>
-      <FooterButtons style={styles.footerButtons}/>
+      <FooterButtons style={styles.footerButtons} />
     </View>
   );
 };
