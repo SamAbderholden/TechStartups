@@ -29,7 +29,7 @@ const HomeScreen = ({ navigation, route }) => {
           imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
         }
   
-        posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username });
+        posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username, timestamp: postData.timestamp });
       }
   
       setFetchedPosts(posts);
