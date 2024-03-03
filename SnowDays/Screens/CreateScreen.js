@@ -8,7 +8,7 @@ import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, a
 
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
-  const [media, setMedia] = useState(null);
+  const [media, setMedia] = useState(null); // Add media state
 
   useEffect(() => {
     // Request permission to access the photo library
@@ -28,10 +28,10 @@ const CreateScreen = ({ route }) => {
         aspect: [4, 3],
         quality: 1,
       });
-  
+
       if (!result.cancelled) {
-        handlePost();  
-        console.log("Image/Video uploaded and post added successfully!");
+        setMedia(result); 
+        console.log("Image/Video uploaded successfully!");
       }
     } catch (error) {
       console.error('Error picking an image or video', error);
@@ -40,9 +40,12 @@ const CreateScreen = ({ route }) => {
 
 
   const handlePost = async () => {
-  
-    const fileUri = result.assets[0].uri; // Access the file URI from the assets array
-
+    if (!media) {
+      console.error('No media selected for post');
+      return;
+    }
+    const fileUri = media.assets[0].uri; // Access the file URI from the assets array
+    console.log(fileUri);
     const response = await fetch(fileUri);
     const blob = await response.blob();
     const fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
@@ -80,7 +83,7 @@ const CreateScreen = ({ route }) => {
         <Text style={ styles.uploadButtonText }>Upload Photo/Video</Text>
       </TouchableOpacity>
       {/* New Post Button */}
-      <TouchableOpacity style={styles.postButton} onPress={handlePost}>
+      <TouchableOpacity style={styles.postButton} onPress={() => handlePost()}>
         <Text style={ styles.postButtonText }>Post</Text>
       </TouchableOpacity>
       <FooterButtons />
