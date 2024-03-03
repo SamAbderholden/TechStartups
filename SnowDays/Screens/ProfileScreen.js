@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Image, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { View, Text, TextInput, Image, StyleSheet, ScrollView} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { firestore, db } from '../firebase';
+import { getDoc, doc, collection, getDocs, query, where } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
-import Post from '../CustomComponents/Post';
+import { getDownloadURL, ref } from "firebase/storage";
+import ProfilePost from '../CustomComponents/ProfilePost';
 
 const ProfileScreen = ({ route }) => {
   const [editable, setEditable] = useState(false);
@@ -10,6 +13,38 @@ const ProfileScreen = ({ route }) => {
   const handleEditPress = () => {
     setEditable(!editable);
   };
+
+  const [fetchedPosts, setFetchedPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    try {
+      const postsCollectionRef = collection(firestore, 'posts');
+      const querySnapshot = await getDocs(query(postsCollectionRef, where('username', '==', route.params.username)));
+  
+      const posts = [];
+  
+      for (const doc of querySnapshot.docs) {
+        const postData = doc.data();
+        const fileName = postData.filename;
+        let imageUrl = "";
+  
+        if (fileName !== "") {
+          imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
+        }
+  
+        posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username, timestamp: postData.timestamp });
+      }
+      console.log(posts);
+      setFetchedPosts(posts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch fresh posts from Firestore
+    fetchPosts();
+  }, []);
 
   const handleSave = () => {
     // Add your logic here for saving/updating the data to the database
@@ -85,6 +120,17 @@ const ProfileScreen = ({ route }) => {
 </View>
 
       <ScrollView style={styles.postsContainer}>
+      {fetchedPosts.map(post => (
+        <ProfilePost
+          key={post.id}
+          id={post.id}
+          imageUrl={post.imageUrl}
+          description={post.text}
+          usernameToDisplay={post.username}
+          username={route.params.username}
+          onDelete={fetchPosts}
+        />
+      ))}
       </ScrollView>
       <FooterButtons style={styles.footerButtons}/>
     </View>
@@ -172,6 +218,7 @@ const styles = StyleSheet.create({
   },
   postsContainer: {
     margin: 20,
+    marginBottom: 60
   }
 });
 
