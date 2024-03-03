@@ -85,6 +85,7 @@ const ProfileScreen = ({ route }) => {
           instagram: instagramHandle,
           email: emailAddress,
           profileImage: fileName, // Assuming the profile image is stored as a field named 'profileImage'
+          gnarPoints: 0
         });
         alert('Profile successfully updated!');
       }
