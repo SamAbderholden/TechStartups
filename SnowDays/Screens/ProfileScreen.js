@@ -7,6 +7,8 @@ import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc } fro
 import FooterButtons from './FooterButtons';
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import ProfilePost from '../CustomComponents/ProfilePost';
+import { FontAwesome } from '@expo/vector-icons';
+
 
 const ProfileScreen = ({ route }) => {
   const [editable, setEditable] = useState(false);
@@ -255,18 +257,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    marginLeft: 25, // Increase the left margin to push the content to the right
+    // You can also use paddingHorizontal if you want to add padding instead
   },
   label: {
     fontWeight: 'bold',
     fontSize: 16,
-    marginRight: 10,
-    color: 'white'
+    color: 'white',
   },
   textField: {
     flex: 1,
     borderWidth: 1,
     padding: 10,
-    borderColor: 'white', // Change border color to white
     color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
@@ -275,10 +277,11 @@ const styles = StyleSheet.create({
   largeTextBox: {
     borderWidth: 1,
     padding: 10,
-    minHeight: 100,
+    minHeight: 50,
+    maxHeight: 100,
     borderColor: 'white', // Change border color to white
     color: 'white', // Add this to ensure text inside the box is visible
-    // Additional styling for large text box remains unchanged
+    margin: -10,
   },
   image: {
     width: 150, // Set the width of the image
