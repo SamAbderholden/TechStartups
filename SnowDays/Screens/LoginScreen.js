@@ -16,11 +16,9 @@ const LoginScreen = ({ navigation }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, username, password);
       const user = userCredential.user;
-      console.log(user);
       setLoading(false);
       navigation.navigate('Home', {username: username.split('@')[0].toLowerCase()});
     } catch (e) {
-      console.log(e);
       setLoading(false);
       if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password') {
         window.alert('Invalid credentials. Please try again.');
