@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { View, Text, TextInput, Image, StyleSheet, ScrollView} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { firestore, db } from '../firebase';
+import * as ImagePicker from 'expo-image-picker';
 import { getDoc, doc, collection, getDocs, query, where } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
 import { getDownloadURL, ref } from "firebase/storage";
@@ -56,6 +57,40 @@ const ProfileScreen = ({ route }) => {
     setEditable(false);
   };
 
+  const [media, setMedia] = useState(null); // Add media state
+
+  useEffect(() => {
+    // Request permission to access the photo library
+    (async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+      }
+    })();
+  }, []);
+
+  const handleUpload = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        setMedia(result); 
+        console.log("Image/Video uploaded successfully!");
+      }
+    } catch (error) {
+      console.error('Error picking an image or video', error);
+    }
+  };
+
+  const handleUploadPress = () => {
+
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -72,6 +107,11 @@ const ProfileScreen = ({ route }) => {
         style={styles.image}
         source={require('../testProfileImage.png')}
       />
+      {editable && (
+          <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
+            <Text style={styles.uploadText}>Upload</Text>
+          </TouchableOpacity>
+        )}
     </View>
     {/* Three text fields */}
     <View style={styles.textFieldsContainer}>
@@ -220,7 +260,18 @@ const styles = StyleSheet.create({
   postsContainer: {
     margin: 20,
     marginBottom: 60
-  }
+  },
+  uploadButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  uploadText: {
+    color: 'white',
+    fontSize: 16,
+  },
 });
 
 export default ProfileScreen;

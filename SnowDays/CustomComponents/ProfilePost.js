@@ -70,11 +70,6 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
-        <View style={styles.likeButton}>
-          <TouchableOpacity onPress={handleLikePress}>
-            <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
-          </TouchableOpacity>
-        </View>
         <View style={styles.deleteButtonContainer}>
           <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
             <Text style={styles.deleteButtonText}>Delete</Text>
