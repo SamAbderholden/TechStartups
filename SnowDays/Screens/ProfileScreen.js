@@ -95,7 +95,7 @@ const ProfileScreen = ({ route }) => {
   const handleSave = async () => {
     // Toggle back to "Edit" mode after saving
     setEditable(false);
-
+    let updatedPrevImage = ''
     // Upload new profile image if available
     if (media) {
       const fileUri = media.assets[0].uri;
