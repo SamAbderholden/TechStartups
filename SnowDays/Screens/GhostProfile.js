@@ -36,8 +36,9 @@ const GhostProfile = ({ route }) => {
       for (const doc of querySnapshot.docs) {
         const postData = doc.data();
         const fileName = postData.filename;
+        let imageUrl = "";
         if(fileName != ""){
-          const imageUrl = await getDownloadURL(storageRef(db, `content/${fileName}`));
+          imageUrl = await getDownloadURL(storageRef(db, `content/${fileName}`));
         }
 
         posts.push({ id: doc.id, ...postData, imageUrl, timestamp: postData.timestamp });
