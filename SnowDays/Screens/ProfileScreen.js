@@ -16,40 +16,38 @@ const ProfileScreen = ({ route }) => {
     instagramHandle: '',
     emailAddress: '',
     bio: '',
-    gnarPoints: '',
-    profileImageUrl: '',
+    gnarPoints: 0,
+    profileImageUrl: '', // Will store the full URL for display
+    profileImageFilename: '', // New field to store just the filename
   });
   
 
   useEffect(() => {
-    // Assuming firestore, route.params.username, db are defined elsewhere in your component
-    const profileRef = doc(firestore, 'profiles', route.params.username);
-  
-    const unsubscribeProfile = onSnapshot(profileRef, async (docSnapshot) => {
+    const unsubscribeProfile = onSnapshot(doc(firestore, 'profiles', route.params.username), async (docSnapshot) => {
       if (docSnapshot.exists()) {
         const data = docSnapshot.data();
-        
-        // If profileImage is present, extract the filename and fetch the URL
+  
         let profileImageUrl = '';
-        if (data.profileImage) {
-          profileImageUrl = await getDownloadURL(ref(db, `content/${data.profileImage}`));
+        let profileImageFilename = data.profileImage || ''; // Assuming this is the filename stored in Firestore
+  
+        if (profileImageFilename) {
+          profileImageUrl = await getDownloadURL(ref(db, `content/${profileImageFilename}`));
         }
   
-        // Update state with the new profile data
-        setProfileData({
+        setProfileData(prevState => ({
+          ...prevState,
           instagramHandle: data.instagram,
           emailAddress: data.email,
           bio: data.bio,
           gnarPoints: data.gnarPoints,
-          profileImageUrl: profileImageUrl, // Use the fetched or default empty string
-        });
-
+          profileImageUrl,
+          profileImageFilename
+        }));
       }
     });
   
-    // Cleanup function to unsubscribe from the profile observer when the component unmounts
     return () => unsubscribeProfile();
-  }, []); // Empty dependency array means this effect runs only once on mount
+  }, []);
   
   
 
@@ -96,10 +94,9 @@ const ProfileScreen = ({ route }) => {
 
 
   const handleSave = async () => {
-    // Toggle back to "Edit" mode after saving
     setEditable(false);
-    let updatedPrevImage = profileData.profileImageUrl;
-    // Upload new profile image if available
+  
+    let updatedPrevImage = profileData.profileImageFilename; // Use filename for saving
     if (media) {
       const fileUri = media.assets[0].uri;
       const response = await fetch(fileUri);
@@ -107,42 +104,31 @@ const ProfileScreen = ({ route }) => {
       updatedPrevImage = fileUri.substring(fileUri.lastIndexOf('/') + 1);
       const imageRef = ref(db, `content/${updatedPrevImage}`);
       await uploadBytesResumable(imageRef, blob);
+  
+      // Update the profileImageUrl with the new full URL after upload
+      const newProfileImageUrl = await getDownloadURL(imageRef);
+      setProfileData(prevState => ({
+        ...prevState,
+        profileImageUrl: newProfileImageUrl,
+        profileImageFilename: updatedPrevImage,
+      }));
     }
   
-    const userDocRef = doc(collection(firestore, 'profiles'), route.params.username);
-    
+    // Use setDoc with { merge: true } to update or create the document
+    const userDocRef = doc(firestore, 'profiles', route.params.username);
     try {
-      // Check if the user profile already exists
-      const userDoc = await getDoc(userDocRef);
+      await setDoc(userDocRef, {
+        instagram: profileData.instagramHandle,
+        email: profileData.emailAddress,
+        profileImage: updatedPrevImage, // Save filename
+        bio: profileData.bio,
+        gnarPoints: profileData.gnarPoints
+      }, { merge: true });
   
-      if (userDoc.exists()) {
-        // Update user profile fields in Firestore
-        await updateDoc(userDocRef, {
-          instagram: profileData.instagramHandle,
-          email: profileData.emailAddress,
-          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
-          bio: profileData.bio
-        });
-  
-        alert('Profile successfully updated!');
-      } else {
-        // Create a new user profile
-        if(profileData.instagramHandle != '' && profileData.bio != '' && profileData.emailAddress != '' && profileData.profileImageUrl != ''){
-          await setDoc(userDocRef, {
-            instagram: profileData.instagramHandle,
-            email: profileData.emailAddress,
-            profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
-            gnarPoints: 0,
-            bio: profileData.bio
-          });
-          alert('Profile successfully created!');
-        }
-        else{
-          alert('Please fill in all fields!');
-        }
-      }
+      alert('Profile successfully updated!');
     } catch (error) {
-      alert('Error updating/creating profile. Please try again.' + error);
+      console.error("Error updating/creating profile:", error);
+      alert('Error updating/creating profile. Please try again.');
     }
   };
 
@@ -201,22 +187,11 @@ const ProfileScreen = ({ route }) => {
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.rowContainer}>
-          {/* Image space */}
           <View style={styles.imageContainer}>
-            {editable ? (
-              // Wrap the Image in a TouchableOpacity when editable
-              <TouchableOpacity onPress={handleUpload}>
-                <Image
-                  style={styles.image}
-                  source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
-                />
-              </TouchableOpacity>
-            ) : (
               <Image
                 style={styles.image}
                 source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
               />
-            )}
             {editable && (
               <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
                 <FontAwesome name="pencil" size={24} color="white" />
