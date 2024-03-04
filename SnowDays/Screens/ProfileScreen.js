@@ -201,9 +201,9 @@ const ProfileScreen = ({ route }) => {
           />
             {editable && (
               <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
-                <Text style={styles.uploadText}>Upload</Text>
-              </TouchableOpacity>
-            )}
+                <FontAwesome name="pencil" size={24} color="white" />
+            </TouchableOpacity>
+          )}
           </View>
           {/* Three text fields */}
           <View style={styles.textFieldsContainer}>
@@ -352,11 +352,16 @@ const styles = StyleSheet.create({
     marginBottom: 60
   },
   uploadButton: {
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 5,
+    // Adjust padding as needed for the icon to be centered and look good
+    padding: 1,
+    // Keep your borderRadius and backgroundColor or adjust as needed
+    borderRadius: 4,
+    backgroundColor: '#0173f9', // Example background color
+    // Align items to center if not already set
     alignItems: 'center',
+    justifyContent: 'center', // Add this to center the icon vertically
   },
+  
   uploadText: {
     color: 'white',
     fontSize: 16,
