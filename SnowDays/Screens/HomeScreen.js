@@ -84,20 +84,15 @@ const HomeScreen = ({route}) => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
-        // Your data fetching logic here
-        const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
-        resorts.forEach(fetchResortData);
-      };
-  
-      fetchData();
-  
-      return () => {
-      };
-    }, [])
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      // Your data fetching logic here
+      const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
+      resorts.forEach(fetchResortData);
+    };
+
+    fetchData();
+  }, []);
 
   const renderPost = ({ item }) => (
     <Post
@@ -116,7 +111,7 @@ const HomeScreen = ({route}) => {
         <Text style={styles.headerTitle}>SnowDays</Text>
         <TouchableOpacity
           style={styles.resortsButton}     
-          onPress={() => navigation.navigate('Resorts', { resortData: resortData, username: route.params.username })}
+          onPress={() => navigation.navigate('Resorts', { resortData: resortData })}
         >
           <Text style={styles.resortsButtonText}>Resorts</Text>   
         </TouchableOpacity>

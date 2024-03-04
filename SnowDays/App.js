@@ -32,10 +32,10 @@ export default function App() {
           },
         }}
       >
+        <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Create" component={CreateScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Resorts" component={ResortsScreen} />
         <Stack.Screen name="GhostProfile" component={GhostProfile} />
       </Stack.Navigator>

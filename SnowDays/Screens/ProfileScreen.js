@@ -1,61 +1,93 @@
 import React, { useState, useEffect, useRef} from 'react';
-import { View, Text, TextInput, Image, StyleSheet, ScrollView, FlatList} from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { firestore, db, storageRef } from '../firebase';
-import * as ImagePicker from 'expo-image-picker';
-import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, orderBy } from 'firebase/firestore';
-import FooterButtons from './FooterButtons';
-import { getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
+import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firestore, db } from '../firebase';
+import { doc, onSnapshot, query, collection, where, orderBy} from 'firebase/firestore';
+import {ref, getDownloadURL} from 'firebase/storage'
 import ProfilePost from '../CustomComponents/ProfilePost';
+import FooterButtons from './FooterButtons';
+import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 
-
 const ProfileScreen = ({ route }) => {
+  // State hooks
+  const [test, testing] = useState(false);
   const [editable, setEditable] = useState(false);
+  const [fetchedPostsProfile, setFetchedPostsProfile] = useState([]);
+  const [profileData, setProfileData] = useState({
+    instagramHandle: '',
+    emailAddress: '',
+    bio: '',
+    gnarPoints: '',
+    profileImageUrl: '',
+  });
+
+  useEffect(() => {
+    // Fetch and observe profile information
+    const profileRef = doc(firestore, 'profiles', route.params.username);
+    const unsubscribeProfile = onSnapshot(profileRef, async (doc) => {
+      if (doc.exists()) {
+        const data = doc.data();
+        const profileImageUrl = data.profileImage ? await getDownloadURL(ref(db, `content/${data.profileImage}`)) : '';
+        setProfileData({
+          instagramHandle: data.instagram,
+          emailAddress: data.email,
+          bio: data.bio,
+          gnarPoints: data.gnarPoints,
+          profileImageUrl,
+        });
+        // Store profile data in AsyncStorage
+        await AsyncStorage.setItem('profileData', JSON.stringify({
+          ...data,
+          profileImageUrl,
+        }));
+      }
+    });
+    return () => {
+      unsubscribeProfile();
+    };
+  }, [profileData]);
+  
+
+  useEffect(() => {
+    const postsRef = query(collection(firestore, 'posts'), where('username', '==', route.params.username));
+    const unsubscribePosts = onSnapshot(postsRef, async (querySnapshot) => {
+      const postsPromises = querySnapshot.docs.map(async (doc) => {
+        const postData = doc.data();
+        let imageUrl = ''; // Assume no image URL initially
+
+        // Fetch the image URL if a filename is provided
+        if (postData.filename) {
+          imageUrl = await getDownloadURL(ref(db, `content/${postData.filename}`));
+        }
+
+        return {
+          id: doc.id,
+          ...postData,
+          imageUrl, // Include the imageUrl in the postData
+        };
+      });
+
+      // Resolve all promises to get posts with their images
+      const postsWithImages = await Promise.all(postsPromises);
+
+      // Optionally, sort the posts by timestamp if needed
+      const sortedPosts = postsWithImages.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
+
+      setFetchedPostsProfile(sortedPosts);
+      // Store posts data in AsyncStorage
+      await AsyncStorage.setItem('userPosts', JSON.stringify(sortedPosts));
+    });
+
+    return () => {
+      unsubscribePosts();
+    }
+  }, [fetchedPostsProfile])
+  
 
   const handleEditPress = () => {
     setEditable(!editable);
   };
-
-  const [fetchedPosts, setFetchedPosts] = useState([]);
-
-  const fetchPosts = async () => {
-    try {
-      const postsCollectionRef = collection(firestore, 'posts');
-      const querySnapshot = await getDocs(query(postsCollectionRef, where('username', '==', route.params.username)));
-  
-      const posts = [];
-  
-      for (const doc of querySnapshot.docs) {
-        const postData = doc.data();
-        const fileName = postData.filename;
-        let imageUrl = "";
-  
-        if (fileName !== "") {
-          imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
-        }
-  
-        posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username, timestamp: postData.timestamp });
-      }
-      posts.reverse();
-      setFetchedPosts(posts);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
-  };
-
-  useEffect(() => {
-    // Fetch fresh posts from Firestore
-    fetchProfileData();
-    fetchPosts();
-  }, []);
-
-  const [instagramHandle, setInstagramHandle] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [bio, setBio] = useState('');
-  const [gnarPoints, setGnarPoints] = useState('');
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
-  const [prevImage, setPrevImage] = useState('');
 
   const handleSave = async () => {
     // Toggle back to "Edit" mode after saving
@@ -83,10 +115,10 @@ const ProfileScreen = ({ route }) => {
       if (userDoc.exists()) {
         // Update user profile fields in Firestore
         await updateDoc(userDocRef, {
-          instagram: instagramHandle,
-          email: emailAddress,
-          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
-          bio: bio
+          instagram: profileData.instagramHandle,
+          email: profileData.emailAddress,
+          profileImage: profileData.profileImageUrl, // Assuming the profile image is stored as a field named 'profileImage'
+          bio: profileData.bio
         });
   
         alert('Profile successfully updated!');
@@ -94,11 +126,11 @@ const ProfileScreen = ({ route }) => {
       } else {
         // Create a new user profile
         await setDoc(userDocRef, {
-          instagram: instagramHandle,
-          email: emailAddress,
-          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
+          instagram: profileData.instagramHandle,
+          email: profileData.emailAddress,
+          profileImage: profileData.profileImageUrl, // Assuming the profile image is stored as a field named 'profileImage'
           gnarPoints: 0,
-          bio: bio
+          bio: profileData.bio
         });
         alert('Profile successfully updated!');
         fetchProfileData();
@@ -108,24 +140,6 @@ const ProfileScreen = ({ route }) => {
     }
   };
 
-  const fetchProfileData = async () => {
-    const profileDocRef = doc(firestore, 'profiles', route.params.username);
-    const profileDocSnap = await getDoc(profileDocRef);
-  
-    if (profileDocSnap.exists()) {
-      const data = profileDocSnap.data();
-      setPrevImage(data.profileImage);
-      const imageUrl = await getDownloadURL(ref(db, `content/${data.profileImage}`));
-      setProfileImageUrl(imageUrl);
-      setGnarPoints(data.gnarPoints)
-      // Set the Instagram handle and associated values
-      setInstagramHandle(data.instagram); // Adjust the state variable as per your component's state
-      setEmailAddress(data.email); // Adjust the state variable as per your component's state
-      setBio(data.bio); // Adjust the state variable as per your component's state
-    } else {
-      console.log("Please setup your profile!");
-    }
-  };
 
   const [media, setMedia] = useState(null); // Add media state
 
@@ -166,7 +180,6 @@ const ProfileScreen = ({ route }) => {
       usernameToDisplay={item.username}
       username={route.params.username}
       timestamp={item.timestamp}
-      onDelete={fetchPosts}
     />
   );
 
@@ -185,7 +198,7 @@ const ProfileScreen = ({ route }) => {
           <View style={styles.imageContainer}>
           <Image
             style={styles.image}
-            source={profileImageUrl ? { uri: profileImageUrl } : null}
+            source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
           />
             {editable && (
               <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
@@ -203,7 +216,7 @@ const ProfileScreen = ({ route }) => {
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
-                value={instagramHandle}
+                value={profileData.instagramHandle}
                 onChangeText={(text) => setInstagramHandle(text)}
               />
             </View>
@@ -215,7 +228,7 @@ const ProfileScreen = ({ route }) => {
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
-                value={emailAddress}
+                value={profileData.emailAddress}
                 onChangeText={(text) => setEmailAddress(text)}
               />
             </View>
@@ -225,7 +238,7 @@ const ProfileScreen = ({ route }) => {
                 style={styles.textField} // Since this field is not editable, you might want to indicate this or leave it empty
                 editable={false}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
-                value={gnarPoints.toString()}
+                value={profileData.gnarPoints.toString()}
               />
             </View>
           </View>
@@ -239,13 +252,13 @@ const ProfileScreen = ({ route }) => {
             placeholder="Write your bio or personal message here"
             placeholderTextColor="grey" // Make sure the placeholder is visible
             autoCapitalize="none"
-            value={bio}
+            value={profileData.bio}
             onChangeText={(text) => setBio(text)}
           />
         </View>
       </View>
       <FlatList style={styles.postsContainer}
-        data={fetchedPosts}
+        data={fetchedPostsProfile}
         renderItem={renderPost}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.posts}

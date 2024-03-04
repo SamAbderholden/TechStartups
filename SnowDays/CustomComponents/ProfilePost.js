@@ -39,8 +39,6 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       Alert.alert('Post Deleted', 'The post has been successfully deleted.');
       // Trigger a re-render by changing the forceUpdate state
       setForceUpdate(!forceUpdate);
-      // Trigger the callback to refresh the posts
-      onDelete();
     } catch (error) {
       console.error('Error deleting post:', error);
       Alert.alert('Error', 'An error occurred while deleting the post. Please try again.');

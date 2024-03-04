@@ -7,7 +7,6 @@ import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove} f
 
 const ResortsScreen = ({route }) => {
     const navigation = useNavigation();
-    const username = route.params.username;
     const resortData = route.params.resortData; // Receive the pre-fetched data
 
     // State to keep track of users and membership status for each resort
@@ -44,11 +43,10 @@ const ResortsScreen = ({route }) => {
           const usersArray = resortData[resortName].users || [];
           // Assuming you have a way to determine membership status, adjust as necessary
           // For example, if you need the username from route.params
-          const { username } = route.params;
           setResortUsers(prev => ({ ...prev, [resortName]: usersArray }));
           setMembershipStatus(prev => ({
             ...prev,
-            [resortName]: usersArray.includes(username)
+            [resortName]: usersArray.includes(route.params.username)
           }));
         });
       }
@@ -57,7 +55,7 @@ const ResortsScreen = ({route }) => {
     const addUserToResort = async (resortName) => {
       try {
         const isUsernameUnique = Object.values(resortUsers).every(
-          (resort) => !resort.includes(username)
+          (resort) => !resort.includes(route.params.username)
         );
     
         if (isUsernameUnique) {
@@ -65,14 +63,14 @@ const ResortsScreen = ({route }) => {
           // Update local state to reflect the change
           setResortUsers((prevResortUsers) => ({
             ...prevResortUsers,
-            [resortName]: [...prevResortUsers[resortName], username],
+            [resortName]: [...prevResortUsers[resortName], route.params.username],
           }));
           setMembershipStatus((prevMembershipStatus) => ({
             ...prevMembershipStatus,
             [resortName]: true,
           }));
           await updateDoc(resortDocRef, {
-            users: arrayUnion(username),
+            users: arrayUnion(route.params.username),
           });
         } else {
           alert('Username already exists in another resort.');
@@ -88,14 +86,14 @@ const ResortsScreen = ({route }) => {
         const resortDocRef = doc(firestore, 'resorts', resortName);
         setResortUsers((prevResortUsers) => ({
           ...prevResortUsers,
-          [resortName]: prevResortUsers[resortName].filter((user) => user !== username),
+          [resortName]: prevResortUsers[resortName].filter((user) => user !== route.params.username),
         }));
         setMembershipStatus((prevMembershipStatus) => ({
           ...prevMembershipStatus,
           [resortName]: false,
         }));
         await updateDoc(resortDocRef, {
-          users: arrayRemove(username),
+          users: arrayRemove(route.params.username),
         });
       } catch (error) {
         console.error('Error removing user from resort:', error);
@@ -122,7 +120,7 @@ const ResortsScreen = ({route }) => {
         </View>
         <View style={styles.userNameContainer}>
           {resortUsers[resortName].map((user) => (
-            <TouchableOpacity key={`${resortName}-${user}`} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: user , username: username})}>
+            <TouchableOpacity key={`${resortName}-${user}`} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: user })}>
               <Text style={styles.userName}>
                 @{user}
               </Text>
