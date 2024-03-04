@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
 import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc } from 'firebase/firestore';
-import {firestore} from '../firebase'
+import {firestore} from '../firebase';
 
 const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) => {
   const navigation = useNavigation();

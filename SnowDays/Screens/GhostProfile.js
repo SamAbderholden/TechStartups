@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import { getDoc, doc, getDocs, query, collection, where } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
@@ -51,6 +51,17 @@ const GhostProfile = ({ route }) => {
     fetchUserPosts();
   }, [userInView]);
 
+  const renderPost = ({ item }) => (
+    <Post
+      key={item.id}
+      imageUrl={item.imageUrl}
+      description={item.text}
+      usernameToDisplay={item.username}
+      username={route.params.username}
+      timestamp={item.timestamp}
+    />
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -80,16 +91,12 @@ const GhostProfile = ({ route }) => {
           </View>
         </View>
       </View>
-      <ScrollView style={styles.postsContainer}>
-        {userPosts.map((post) => (
-          <Post
-            key={post.id}
-            imageUrl={post.imageUrl}
-            description={post.text}
-            timestamp={post.timestamp}
-          />
-        ))}
-      </ScrollView>
+      <FlatList style={styles.postsContainer}
+        data={userPosts}
+        renderItem={renderPost}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.posts}
+      />
       <FooterButtons style={styles.footerButtons} />
     </View>
   );

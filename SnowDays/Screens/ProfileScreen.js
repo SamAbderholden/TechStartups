@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react';
-import { View, Text, TextInput, Image, StyleSheet, ScrollView} from 'react-native';
+import { View, Text, TextInput, Image, StyleSheet, ScrollView, FlatList} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { firestore, db, storageRef } from '../firebase';
 import * as ImagePicker from 'expo-image-picker';
@@ -156,6 +156,17 @@ const ProfileScreen = ({ route }) => {
     }
   };
 
+  const renderPost = ({ item }) => (
+    <ProfilePost
+      key={item.id}
+      imageUrl={item.imageUrl}
+      description={item.text}
+      usernameToDisplay={item.username}
+      username={route.params.username}
+      timestamp={item.timestamp}
+    />
+  );
+
 
   return (
     <View style={styles.container}>
@@ -230,12 +241,12 @@ const ProfileScreen = ({ route }) => {
           />
         </View>
       </View>
-
-      <ScrollView style={styles.postsContainer}>
-        {fetchedPosts.map((post) => (
-          <ProfilePost key={post.id} id={post.id} imageUrl={post.imageUrl} description={post.text} onDelete={fetchPosts} timestamp={post.timestamp} />
-        ))}
-      </ScrollView>
+      <FlatList style={styles.postsContainer}
+        data={fetchedPosts}
+        renderItem={renderPost}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.posts}
+      />
       <FooterButtons style={styles.footerButtons} />
     </View>
   );

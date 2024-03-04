@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
@@ -12,7 +12,7 @@ const HomeScreen = ({route}) => {
   const navigation = useNavigation();
   const [resortData, setResortData] = useState({});
   const [fetchedPosts, setFetchedPosts] = useState([]);
-  const [fetchedPostIds, setFetchedPostIds] = useState([]);
+  const [fetchedData, setFetchedData] = useState([]);
 
   const fetchPosts = async () => {
     try {
@@ -103,6 +103,17 @@ const HomeScreen = ({route}) => {
     }, [])
   );
 
+  const renderPost = ({ item }) => (
+    <Post
+      key={item.id}
+      imageUrl={item.imageUrl}
+      description={item.text}
+      usernameToDisplay={item.username}
+      username={route.params.username}
+      timestamp={item.timestamp}
+    />
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -114,11 +125,12 @@ const HomeScreen = ({route}) => {
           <Text style={styles.resortsButtonText}>Resorts</Text>   
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.posts}>
-      {fetchedPosts.map(post => (
-          <Post key={post.id} imageUrl={post.imageUrl} description={post.text} usernameToDisplay={post.username} username={route.params.username} timestamp={post.timestamp}/>
-        ))}
-      </ScrollView>
+      <FlatList style={styles.posts}
+        data={fetchedPosts}
+        renderItem={renderPost}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.posts}
+      />
       <FooterButtons style={styles.footerButtons}/>
     </View>
   );
