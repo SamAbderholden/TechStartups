@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
-import { getDoc, doc, collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { getDoc, doc, collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDownloadURL, ref } from "firebase/storage";
 
@@ -13,12 +13,19 @@ const HomeScreen = ({route}) => {
   const [resortData, setResortData] = useState({});
   const [fetchedPosts, setFetchedPosts] = useState([]);
   const [fetchedData, setFetchedData] = useState([]);
+  const [latestTimestamp, setLatestTimestamp] = useState(null);
 
   const fetchPosts = async () => {
     try {
       const postsCollectionRef = collection(firestore, 'posts');
-      const querySnapshot = await getDocs(query(postsCollectionRef, orderBy('timestamp', 'desc')));
+      let q;
+      if (latestTimestamp) {
+        q = query(postsCollectionRef, where('timestamp', '>', latestTimestamp), orderBy('timestamp', 'desc'));
+      } else {
+        q = query(postsCollectionRef, orderBy('timestamp', 'desc'));
+      }
   
+      const querySnapshot = await getDocs(q);
       const posts = [];
   
       for (const doc of querySnapshot.docs) {
@@ -33,30 +40,21 @@ const HomeScreen = ({route}) => {
         posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username, timestamp: postData.timestamp });
       }
   
-      setFetchedPosts(posts);
+      if (posts.length > 0) {
+        setLatestTimestamp(posts[0].timestamp); // Update the latest timestamp with the newest post
+      }
+      setFetchedPosts(prevPosts => [...posts, ...prevPosts]);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
 
-  useEffect(() => {
-    // Load fetched posts from AsyncStorage when component mounts
-    loadFetchedPosts();
-    // Fetch fresh posts from Firestore
-    fetchPosts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchPosts(); // This will fetch new posts based on the latest timestamp
+    }, [latestTimestamp]) // Depends on the latest timestamp to fetch new posts
+  );
 
-  // Function to load fetched posts from AsyncStorage
-  const loadFetchedPosts = async () => {
-    try {
-      const storedPosts = await AsyncStorage.getItem('fetchedPosts');
-      if (storedPosts) {
-        setFetchedPosts(JSON.parse(storedPosts));
-      }
-    } catch (error) {
-      console.error('Error loading fetched posts from AsyncStorage:', error);
-    }
-  };
 
   // Function to save fetched posts to AsyncStorage
   const saveFetchedPosts = async (posts) => {

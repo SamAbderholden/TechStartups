@@ -9,7 +9,7 @@ const FooterButtons = () => {
 
   const navigateOrReplace = (screenName) => {
     if (route.name !== screenName) {
-      navigation.replace(screenName, { username: route.params.username });
+      navigation.navigate(screenName, { username: route.params.username });
     }
   };
 

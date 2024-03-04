@@ -33,6 +33,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
 
   const handleDeletePress = async () => {
     try {
+      console.log(id);
       // Delete the post based on the provided id
       await deleteDoc(doc(collection(firestore, 'posts'), id));
       Alert.alert('Post Deleted', 'The post has been successfully deleted.');

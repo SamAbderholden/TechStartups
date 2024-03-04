@@ -3,7 +3,7 @@ import { View, Text, TextInput, Image, StyleSheet, ScrollView, FlatList} from 'r
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { firestore, db, storageRef } from '../firebase';
 import * as ImagePicker from 'expo-image-picker';
-import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc } from 'firebase/firestore';
+import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, orderBy } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
 import { getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
 import ProfilePost from '../CustomComponents/ProfilePost';
@@ -37,6 +37,7 @@ const ProfileScreen = ({ route }) => {
   
         posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username, timestamp: postData.timestamp });
       }
+      posts.reverse();
       setFetchedPosts(posts);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -159,6 +160,7 @@ const ProfileScreen = ({ route }) => {
   const renderPost = ({ item }) => (
     <ProfilePost
       key={item.id}
+      id={item.id}
       imageUrl={item.imageUrl}
       description={item.text}
       usernameToDisplay={item.username}
