@@ -17,13 +17,11 @@ const HomeScreen = ({route}) => {
     const q = query(postsCollectionRef, orderBy('timestamp', 'desc'));
   
     const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-      console.log("stuff");
       const postsPromises = querySnapshot.docs.map(async (doc) => {
         const postData = doc.data();
         if (!postData.timestamp) {
           return null;
         }
-        console.log(postData);
         let imageUrl = ''; // Assume no image URL initially
         // Check if filename exists and attempt to fetch the image URL only if needed
         if (postData.filename) {

@@ -1,14 +1,15 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import React from 'react';
 import { Text, TextInput } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import LoginScreen from './Screens/LoginScreen.js';
 import HomeScreen from './Screens/HomeScreen.js';
 import CreateScreen from './Screens/CreateScreen.js';
 import ProfileScreen from './Screens/ProfileScreen.js';
 import ResortsScreen from './Screens/ResortsScreen.js';
-import GhostProfile from './Screens/GhostProfile.js'
+import GhostProfile from './Screens/GhostProfile.js';
 
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
@@ -16,30 +17,17 @@ Text.defaultProps.allowFontScaling = false;
 TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
-
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{
-          headerShown: false,
-          gestureEnabled: false,
-          cardStyleInterpolator: TransitionPresets.SlideFromRightIOS.cardStyleInterpolator,
-          transitionSpec: {
-            open: { animation: 'timing', config: { duration: 0.0001 } },
-            close: { animation: 'timing', config: { duration: 0.0001 } },
-          },
-        }}
-      >
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Create" component={CreateScreen} />
-        <Stack.Screen name="Resorts" component={ResortsScreen} />
-        <Stack.Screen name="GhostProfile" component={GhostProfile} />
-      </Stack.Navigator>
+      <Drawer.Navigator initialRouteName="Login" screenOptions={{ swipeEnabled: false, headerShown: false }}>
+        <Drawer.Screen name="Login" component={LoginScreen} />
+        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Create" component={CreateScreen} />
+        <Drawer.Screen name="Profile" component={ProfileScreen} />
+        <Drawer.Screen name="Resorts" component={ResortsScreen} />
+        <Drawer.Screen name="GhostProfile" component={GhostProfile} />
+      </Drawer.Navigator>
     </NavigationContainer>
   );
 }
-

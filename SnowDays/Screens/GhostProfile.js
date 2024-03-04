@@ -1,32 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
 import { getDownloadURL, ref as storageRef } from "firebase/storage";
-import { getDoc, doc, getDocs, query, collection, where } from 'firebase/firestore';
+import { getDoc, doc, getDocs, query, collection, where, onSnapshot } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
 
 const GhostProfile = ({ route }) => {
   const userInView = route.params.usertodisplay;
-  const [profileData, setProfileData] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      const profileDocRef = doc(firestore, 'profiles', userInView);
-      const profileDocSnap = await getDoc(profileDocRef);
+  const [profileData, setProfileData] = useState({
+    instagramHandle: '',
+    emailAddress: '',
+    bio: '',
+    gnarPoints: '',
+    profileImageUrl: '',
+  });
+  
 
-      if (profileDocSnap.exists()) {
-        const data = profileDocSnap.data();
-        setProfileData(data);
-        console.log(data);
-        const imageUrl = await getDownloadURL(storageRef(db, `content/${data.profileImage}`));
-        setProfileImageUrl(imageUrl);
-      } else {
-        console.log("No such profile!");
+  useEffect(() => {
+    // Assuming firestore, route.params.username, db are defined elsewhere in your component
+    const profileRef = doc(firestore, 'profiles', userInView);
+  
+    const unsubscribeProfile = onSnapshot(profileRef, async (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data();
+        
+        // If profileImage is present, extract the filename and fetch the URL
+        let profileImageUrl = '';
+        if (data.profileImage) {
+          profileImageUrl = await getDownloadURL(storageRef(db, `content/${data.profileImage}`));
+        }
+  
+        // Update state with the new profile data
+        setProfileData({
+          instagramHandle: data.instagram,
+          emailAddress: data.email,
+          bio: data.bio,
+          gnarPoints: data.gnarPoints,
+          profileImageUrl, // Use the fetched or default empty string
+        });
+
       }
-    };
+    });
+  
+    // Cleanup function to unsubscribe from the profile observer when the component unmounts
+    return () => unsubscribeProfile();
+  }, []); // Empty dependency array means this effect runs only once on mount
+
+  useEffect(() => {
 
     const fetchUserPosts = async () => {
       const postsQuery = query(collection(firestore, 'posts'), where('username', '==', userInView));
@@ -47,7 +71,6 @@ const GhostProfile = ({ route }) => {
       setUserPosts(posts);
     };
 
-    fetchProfileData();
     fetchUserPosts();
   }, [userInView]);
 
@@ -72,23 +95,26 @@ const GhostProfile = ({ route }) => {
           <View style={styles.imageContainer}>
             <Image
               style={styles.image}
-              source={profileImageUrl ? { uri: profileImageUrl } : null}
+              source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
             />
           </View>
           <View style={styles.textFieldsContainer}>
             <View style={styles.textFieldContainer}>
               <Text style={styles.label}>Instagram:</Text>
-              <Text style={styles.textField}>{profileData?.instagram}</Text>
+              <Text style={styles.textField}>{profileData?.instagramHandle}</Text>
             </View>
             <View style={styles.textFieldContainer}>
               <Text style={styles.label}>Email:</Text>
-              <Text style={styles.textField}>{profileData?.email}</Text>
+              <Text style={styles.textField}>{profileData?.emailAddress}</Text>
             </View>
             <View style={styles.textFieldContainer}>
               <Text style={styles.label}>Gnar Points:</Text>
               <Text style={styles.textField}>{profileData?.gnarPoints}</Text>
             </View>
           </View>
+        </View>
+        <View style={styles.textFieldContainer}>
+              <Text style={styles.textField}>{profileData?.bio}</Text>
         </View>
       </View>
       <FlatList style={styles.postsContainer}
