@@ -11,6 +11,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
   const [forceUpdate, setForceUpdate] = useState(false); // State to force re-render
   const videoRef = useRef(null); // Reference to the video for playback control
   const [comments, setComments] = useState([]);
+  const [showComments, setShowComments] = useState(false);
 
   const handleLikePress = () => {
     setLiked(!liked);
@@ -89,15 +90,22 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.commentSection}>
+        {comments.length > 0 && (
+          <TouchableOpacity onPress={() => setShowComments(!showComments)}>
+          <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
+          </TouchableOpacity>
+        )}
+        {showComments && (
+          <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: username, usertodisplay: commentObj.username })}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: commentObj.username })}>
               <Text style={styles.comment}>
                 <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
+        )}
       </View>
     </View>
   );
@@ -164,6 +172,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     borderColor: 'gray',
+  },
+  toggleCommentsText: {
+    color: '#0173f9',
+    fontWeight: 'bold',
+    marginTop: 5,
   }
 });
 

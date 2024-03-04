@@ -14,6 +14,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
+  const [showComments, setShowComments] = useState(false);
 
   const handleLikePress = async () => {
     try {
@@ -130,27 +131,36 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.commentSection}>
+        {comments.length > 0 && (
+          <TouchableOpacity onPress={() => setShowComments(!showComments)}>
+          <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
+          </TouchableOpacity>
+        )}
+        {showComments && (
+          <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: username, usertodisplay: commentObj.username })}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: commentObj.username })}>
               <Text style={styles.comment}>
                 <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
-        {showCommentInput && (
-          <TextInput
-            style={styles.commentInput}
-            placeholder="Add a comment..."
-            placeholderTextColor="gray"
-            value={comment}
-            onChangeText={setComment}
-            onSubmitEditing={handleCommentSubmit}
-            returnKeyType="send"
-            blurOnSubmit={false}
-          />
-        )}
+        )
+
+        }
+          {showCommentInput && (
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Add a comment..."
+              placeholderTextColor="gray"
+              value={comment}
+              onChangeText={setComment}
+              onSubmitEditing={handleCommentSubmit}
+              returnKeyType="send"
+              blurOnSubmit={false}
+            />
+          )}
       </View>
     </View>
   );
@@ -226,6 +236,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     borderColor: 'gray',
+  },
+  toggleCommentsText: {
+    color: '#0173f9',
+    fontWeight: 'bold',
+    marginTop: 5,
   }
 });
 
