@@ -80,10 +80,12 @@ const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) 
               <Text style={styles.username}>@{usernameToDisplay}</Text>
             </TouchableOpacity>
           )}
-          <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
-          <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
-            <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
-          </TouchableOpacity>
+          <View style={styles.dateLikeContainer}>
+            <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+            <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+              <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -101,28 +103,32 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   media: {
-    width: 200, // Adjusted for consistency
-    height: 200,
+    width: '98%', // This will make the media take the full width of its parent container
+    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
     alignSelf: 'center',
   },
   textContainer: {
     padding: 10,
   },
   description: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'white',
   },
   footerContainer: {
-    marginTop: 5,
+    marginTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  dateLikeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: -2,
   },
   likeButton: {
     marginTop: -20,
     marginBottom: -5,
     marginLeft: 7,
-    marginRight: 7,
     alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
@@ -133,7 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   timestamp: {
-    marginLeft: 170,
+    marginRight: 1,
     marginBottom: -5,
     color: 'white',
   },

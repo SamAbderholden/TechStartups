@@ -356,7 +356,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     padding: 10,
     borderRadius: 5,
-    marginLeft: 10,
     alignItems: 'center',
   },
   uploadText: {
