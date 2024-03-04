@@ -3,19 +3,15 @@ import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity } 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firestore, db } from '../firebase';
 import { doc, onSnapshot, query, collection, where, orderBy, getDoc, updateDoc} from 'firebase/firestore';
-import {ref, getDownloadURL} from 'firebase/storage'
+import {ref, getDownloadURL, uploadBytesResumable} from 'firebase/storage'
 import ProfilePost from '../CustomComponents/ProfilePost';
 import FooterButtons from './FooterButtons';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 
 const ProfileScreen = ({ route }) => {
-  // State hooks
-  const [test, testing] = useState(false);
   const [editable, setEditable] = useState(false);
   const [fetchedPostsProfile, setFetchedPostsProfile] = useState([]);
-  const [isMaxCharReached, setIsMaxCharReached] = useState(false);
-  const MAX_LENGTH = 125;
   const [profileData, setProfileData] = useState({
     instagramHandle: '',
     emailAddress: '',
@@ -23,50 +19,38 @@ const ProfileScreen = ({ route }) => {
     gnarPoints: '',
     profileImageUrl: '',
   });
-
-
-  const handleBioChange = (text) => {
-    // Update the bio in profileData state
-    setProfileData(prevState => ({
-      ...prevState,
-      bio: text
-    }));
-    // Check if the max character limit is reached and set the state
-    setIsMaxCharReached(text.length >= MAX_LENGTH);
-  };
   
-  useEffect(() => {
-    if (isMaxCharReached) {
-      // Trigger the alert when the max character limit is reached
-      alert('Maximum character reached.');
-    }
-  }, [isMaxCharReached]); // Dependency array to re-run the effect when isMaxCharReached changes
 
   useEffect(() => {
-    // Fetch and observe profile information
+    // Assuming firestore, route.params.username, db are defined elsewhere in your component
     const profileRef = doc(firestore, 'profiles', route.params.username);
-    const unsubscribeProfile = onSnapshot(profileRef, async (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
-        const profileImageUrl = data.profileImage ? await getDownloadURL(ref(db, `content/${data.profileImageUrl.substring(profileImageUrl.lastIndexOf('/') + 1)}`)) : '';
+  
+    const unsubscribeProfile = onSnapshot(profileRef, async (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data();
+        
+        // If profileImage is present, extract the filename and fetch the URL
+        let profileImageUrl = '';
+        if (data.profileImage) {
+          profileImageUrl = await getDownloadURL(ref(db, `content/${data.profileImage}`));
+        }
+  
+        // Update state with the new profile data
         setProfileData({
           instagramHandle: data.instagram,
           emailAddress: data.email,
           bio: data.bio,
           gnarPoints: data.gnarPoints,
-          profileImageUrl,
+          profileImageUrl, // Use the fetched or default empty string
         });
-        // Store profile data in AsyncStorage
-        await AsyncStorage.setItem('profileData', JSON.stringify({
-          ...data,
-          profileImageUrl,
-        }));
+
       }
     });
-    return () => {
-      unsubscribeProfile();
-    };
-  }, [profileData]);
+  
+    // Cleanup function to unsubscribe from the profile observer when the component unmounts
+    return () => unsubscribeProfile();
+  }, []); // Empty dependency array means this effect runs only once on mount
+  
   
 
   useEffect(() => {
@@ -75,7 +59,6 @@ const ProfileScreen = ({ route }) => {
       const postsPromises = querySnapshot.docs.map(async (doc) => {
         const postData = doc.data();
         let imageUrl = ''; // Assume no image URL initially
-
         // Fetch the image URL if a filename is provided
         if (postData.filename) {
           imageUrl = await getDownloadURL(ref(db, `content/${postData.filename}`));
@@ -95,14 +78,12 @@ const ProfileScreen = ({ route }) => {
       const sortedPosts = postsWithImages.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
 
       setFetchedPostsProfile(sortedPosts);
-      // Store posts data in AsyncStorage
-      await AsyncStorage.setItem('userPosts', JSON.stringify(sortedPosts));
     });
 
     return () => {
       unsubscribePosts();
     }
-  }, [fetchedPostsProfile])
+  }, [])
   
 
   const handleEditPress = () => {
@@ -119,7 +100,6 @@ const ProfileScreen = ({ route }) => {
       const response = await fetch(fileUri);
       const blob = await response.blob();
       updatedPrevImage = fileUri.substring(fileUri.lastIndexOf('/') + 1);
-      setPrevImage(updatedPrevImage);
       const imageRef = ref(db, `content/${updatedPrevImage}`);
       await uploadBytesResumable(imageRef, blob);
     }
@@ -135,23 +115,21 @@ const ProfileScreen = ({ route }) => {
         await updateDoc(userDocRef, {
           instagram: profileData.instagramHandle,
           email: profileData.emailAddress,
-          profileImage: profileData.profileImageUrl, // Assuming the profile image is stored as a field named 'profileImage'
+          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
           bio: profileData.bio
         });
   
         alert('Profile successfully updated!');
-        fetchProfileData();
       } else {
         // Create a new user profile
         await setDoc(userDocRef, {
           instagram: profileData.instagramHandle,
           email: profileData.emailAddress,
-          profileImage: profileData.profileImageUrl, // Assuming the profile image is stored as a field named 'profileImage'
+          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
           gnarPoints: 0,
           bio: profileData.bio
         });
         alert('Profile successfully updated!');
-        fetchProfileData();
       }
     } catch (error) {
       alert('Error updating/creating profile. Please try again.' + error);
@@ -234,7 +212,7 @@ const ProfileScreen = ({ route }) => {
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
-                value={profileData.instagram}
+                value={profileData.instagramHandle}
                 onChangeText={(text) => setProfileData({...profileData, instagramHandle: text})}
               />
             </View>
