@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef} from 'react';
 import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firestore, db } from '../firebase';
-import { doc, onSnapshot, query, collection, where, orderBy, getDoc, updateDoc} from 'firebase/firestore';
+import { doc, onSnapshot, query, collection, where, orderBy, getDoc, updateDoc, setDoc} from 'firebase/firestore';
 import {ref, getDownloadURL, uploadBytesResumable} from 'firebase/storage'
 import ProfilePost from '../CustomComponents/ProfilePost';
 import FooterButtons from './FooterButtons';
@@ -163,6 +163,7 @@ const ProfileScreen = ({ route }) => {
 
       if (!result.cancelled) {
         setMedia(result); 
+        setProfileData({...profileData, profileImageUrl: result.assets[0].uri});
         console.log("Image/Video uploaded successfully!");
       }
     } catch (error) {
