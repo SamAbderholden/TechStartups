@@ -166,6 +166,7 @@ const ProfileScreen = ({ route }) => {
       usernameToDisplay={item.username}
       username={route.params.username}
       timestamp={item.timestamp}
+      onDelete={fetchPosts}
     />
   );
 

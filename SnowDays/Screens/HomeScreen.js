@@ -4,7 +4,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
-import { getDoc, doc, collection, getDocs, query, orderBy, where } from 'firebase/firestore';
+import { getDoc, doc, collection, getDocs, query, orderBy, where, onSnapshot } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDownloadURL, ref } from "firebase/storage";
 
@@ -15,45 +15,43 @@ const HomeScreen = ({route}) => {
   const [fetchedData, setFetchedData] = useState([]);
   const [latestTimestamp, setLatestTimestamp] = useState(null);
 
-  const fetchPosts = async () => {
-    try {
-      const postsCollectionRef = collection(firestore, 'posts');
-      let q;
-      if (latestTimestamp) {
-        q = query(postsCollectionRef, where('timestamp', '>', latestTimestamp), orderBy('timestamp', 'desc'));
-      } else {
-        q = query(postsCollectionRef, orderBy('timestamp', 'desc'));
-      }
+  useEffect(() => {
+    const postsCollectionRef = collection(firestore, 'posts');
+    const q = query(postsCollectionRef, orderBy('timestamp', 'desc'));
   
-      const querySnapshot = await getDocs(q);
-      const posts = [];
-  
-      for (const doc of querySnapshot.docs) {
+    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+      const postsPromises = querySnapshot.docs.map(async (doc) => {
         const postData = doc.data();
-        const fileName = postData.filename;
-        let imageUrl = "";
+        let imageUrl = ''; // Assume no image URL initially
   
-        if (fileName !== "") {
-          imageUrl = await getDownloadURL(ref(db, `content/${fileName}`));
+        // Check if filename exists and attempt to fetch the image URL only if needed
+        if (postData.filename) {
+          // Attempt to use a cached imageUrl from the existing state if available
+          const existingPost = fetchedPosts.find(p => p.id === doc.id);
+          if (existingPost && existingPost.imageUrl) {
+            imageUrl = existingPost.imageUrl; // Use the cached imageUrl
+          } else {
+            // Fetch new imageUrl since it's either not cached or this is a new post
+            imageUrl = await getDownloadURL(ref(db, `content/${postData.filename}`));
+          }
         }
   
-        posts.push({ id: doc.id, ...postData, imageUrl, username: postData.username, timestamp: postData.timestamp });
-      }
+        return {
+          id: doc.id,
+          ...postData,
+          imageUrl, // Set the imageUrl, whether it was newly fetched or reused from cache
+        };
+      });
   
-      if (posts.length > 0) {
-        setLatestTimestamp(posts[0].timestamp); // Update the latest timestamp with the newest post
-      }
-      setFetchedPosts(prevPosts => [...posts, ...prevPosts]);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchPosts(); // This will fetch new posts based on the latest timestamp
-    }, [latestTimestamp]) // Depends on the latest timestamp to fetch new posts
-  );
+      // Resolve all promises to get the posts with their images
+      const postsWithImages = await Promise.all(postsPromises);
+  
+      // Update the state with the new posts array
+      setFetchedPosts(postsWithImages);
+    });
+  
+    return () => unsubscribe(); // Detach listener when the component unmounts
+  }, [fetchedPosts]);
 
 
   // Function to save fetched posts to AsyncStorage
