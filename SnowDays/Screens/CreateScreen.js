@@ -9,6 +9,9 @@ import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, a
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
   const [media, setMedia] = useState(null); // Add media state
+  const [isMaxCharReached, setIsMaxCharReached] = useState(false);
+  const MAX_LENGTH = 125;
+
   useEffect(() => {
     // Request permission to access the photo library
     (async () => {
@@ -18,6 +21,19 @@ const CreateScreen = ({ route }) => {
       }
     })();
   }, []);
+
+  const handleDescriptionChange = (text) => {
+    setDescription(text);
+    setIsMaxCharReached(text.length >= MAX_LENGTH);
+  };
+  
+  useEffect(() => {
+    if (isMaxCharReached) {
+      // Trigger the alert when the max character limit is reached
+      alert('Maximum character reached.');
+    }
+  }, [isMaxCharReached]); // Dependency array to re-run the effect when isMaxCharReached changes
+
 
   const handleUpload = async () => {
     try {
@@ -81,10 +97,12 @@ const CreateScreen = ({ route }) => {
       </View>
       <TextInput
         style={styles.input}
+        multiline
         placeholder="Description"
         placeholderTextColor="gray" // Ensure placeholder text is visible
         value={description}
-        onChangeText={setDescription}
+        onChangeText={handleDescriptionChange}
+        maxLength={MAX_LENGTH} // Set the max length
       />
       <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
         <Text style={ styles.uploadButtonText }>Upload Photo/Video</Text>
@@ -126,6 +144,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     padding: 10,
+    paddingTop: 10,
+    minHeight: 30,
+    maxHeight: 100,
     marginBottom: 20,
     width: '80%',
     color: 'white', // Ensure text is visible against background

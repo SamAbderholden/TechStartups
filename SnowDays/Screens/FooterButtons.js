@@ -6,6 +6,7 @@ import { FontAwesome } from '@expo/vector-icons';
 const FooterButtons = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const BUTTON_SIZE = 42;
 
   const navigateOrReplace = (screenName) => {
     if (route.name !== screenName) {
@@ -16,13 +17,13 @@ const FooterButtons = () => {
   return (
     <View style={styles.footer}>
       <TouchableOpacity style={styles.footerButton} onPress={() => navigateOrReplace('Home')}>
-        <FontAwesome name="home" size={45} color='#0173f9'/>
+        <FontAwesome name="home" size={BUTTON_SIZE} color='#0173f9'/>
       </TouchableOpacity>
       <TouchableOpacity style={styles.footerButton} onPress={() => navigateOrReplace('Create')}>
-        <FontAwesome name="plus" size={45} color='white'/>
+        <FontAwesome name="plus" size={BUTTON_SIZE} color='white'/>
       </TouchableOpacity>
       <TouchableOpacity style={styles.footerButton} onPress={() => navigateOrReplace('Profile')}>
-        <FontAwesome name="user" size={45} color='#0173f9' />
+        <FontAwesome name="user" size={BUTTON_SIZE} color='#0173f9' />
       </TouchableOpacity>
     </View>
   );
@@ -42,13 +43,14 @@ const styles = StyleSheet.create({
       bottom: 0,
       left: 0,
       right: 0,
-      height: 60,
+      height: 80,
       paddingBottom: 26,
-      backgroundColor: 'black'
+      backgroundColor: 'black',
     },
     footerButton: {
       flexDirection: 'row',
       alignItems: 'center',
+      //marginTop: 5,
     },
   });
   

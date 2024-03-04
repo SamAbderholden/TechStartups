@@ -14,6 +14,8 @@ const ProfileScreen = ({ route }) => {
   const [test, testing] = useState(false);
   const [editable, setEditable] = useState(false);
   const [fetchedPostsProfile, setFetchedPostsProfile] = useState([]);
+  const [isMaxCharReached, setIsMaxCharReached] = useState(false);
+  const MAX_LENGTH = 125;
   const [profileData, setProfileData] = useState({
     instagramHandle: '',
     emailAddress: '',
@@ -21,6 +23,24 @@ const ProfileScreen = ({ route }) => {
     gnarPoints: '',
     profileImageUrl: '',
   });
+
+
+  const handleBioChange = (text) => {
+    // Update the bio in profileData state
+    setProfileData(prevState => ({
+      ...prevState,
+      bio: text
+    }));
+    // Check if the max character limit is reached and set the state
+    setIsMaxCharReached(text.length >= MAX_LENGTH);
+  };
+  
+  useEffect(() => {
+    if (isMaxCharReached) {
+      // Trigger the alert when the max character limit is reached
+      alert('Maximum character reached.');
+    }
+  }, [isMaxCharReached]); // Dependency array to re-run the effect when isMaxCharReached changes
 
   useEffect(() => {
     // Fetch and observe profile information
@@ -354,7 +374,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     padding: 10,
     borderRadius: 5,
-    marginLeft: 10,
     alignItems: 'center',
   },
   uploadText: {

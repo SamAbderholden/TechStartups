@@ -74,21 +74,26 @@ const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) 
       )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
-        <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
-        {usernameToDisplay && (
-          <View style={styles.userNameContainer}>
+        <View style={styles.footerContainer}>
+          {usernameToDisplay && (
             <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: usernameToDisplay, username: username })}>
               <Text style={styles.username}>@{usernameToDisplay}</Text>
             </TouchableOpacity>
+          )}
+          <View style={styles.dateLikeContainer}>
+            <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+            <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+              <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+            </TouchableOpacity>
           </View>
-        )}
-        <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
-          <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
-        </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 };
+
+export default Post;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -98,32 +103,47 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   media: {
-    width: 200, // Adjusted for consistency
-    height: 200,
+    width: '98%', // This will make the media take the full width of its parent container
+    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
     alignSelf: 'center',
   },
   textContainer: {
     padding: 10,
   },
   description: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'white',
+  },
+  footerContainer: {
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateLikeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: -2,
   },
   likeButton: {
     marginTop: -20,
+    marginBottom: -5,
+    marginLeft: 7,
     alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
   },
   username: {
-    marginBottom: -15,
+    marginBottom: -5,
     color: '#0173f9', // The username color
     fontWeight: 'bold',
   },
   timestamp: {
+    marginRight: 1,
+    marginBottom: -5,
     color: 'white',
   },
 
 });
 
-export default Post;
+
