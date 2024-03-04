@@ -74,21 +74,24 @@ const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) 
       )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
-        <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
-        {usernameToDisplay && (
-          <View style={styles.userNameContainer}>
+        <View style={styles.footerContainer}>
+          {usernameToDisplay && (
             <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: usernameToDisplay, username: username })}>
               <Text style={styles.username}>@{usernameToDisplay}</Text>
             </TouchableOpacity>
-          </View>
-        )}
-        <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
-          <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
-        </TouchableOpacity>
+          )}
+          <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+          <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+            <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 };
+
+export default Post;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -109,21 +112,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
   },
+  footerContainer: {
+    marginTop: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   likeButton: {
     marginTop: -20,
+    marginBottom: -5,
+    marginLeft: 7,
+    marginRight: 7,
     alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
   },
   username: {
-    marginBottom: -15,
+    marginBottom: -5,
     color: '#0173f9', // The username color
     fontWeight: 'bold',
   },
   timestamp: {
+    marginLeft: 170,
+    marginBottom: -5,
     color: 'white',
   },
 
 });
 
-export default Post;
+
