@@ -97,7 +97,6 @@ const CreateScreen = ({ route }) => {
       </View>
       <TextInput
         style={styles.input}
-        multiline
         placeholder="Description"
         placeholderTextColor="gray" // Ensure placeholder text is visible
         value={description}

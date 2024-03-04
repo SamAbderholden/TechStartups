@@ -60,6 +60,9 @@ const ProfileScreen = ({ route }) => {
         const postData = doc.data();
         let imageUrl = ''; // Assume no image URL initially
         // Fetch the image URL if a filename is provided
+        if (!postData.timestamp) {
+          return null;
+        }
         if (postData.filename) {
           imageUrl = await getDownloadURL(ref(db, `content/${postData.filename}`));
         }
@@ -77,7 +80,7 @@ const ProfileScreen = ({ route }) => {
       // Optionally, sort the posts by timestamp if needed
       const sortedPosts = postsWithImages.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
 
-      setFetchedPostsProfile(sortedPosts);
+      setFetchedPostsProfile(sortedPosts.filter(post => post !== null));
     });
 
     return () => {
