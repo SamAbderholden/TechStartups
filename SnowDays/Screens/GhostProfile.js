@@ -5,6 +5,7 @@ import { getDoc, doc, getDocs, query, collection, where, onSnapshot } from 'fire
 import FooterButtons from './FooterButtons';
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
+import { FontAwesome } from '@expo/vector-icons';
 
 const GhostProfile = ({ route }) => {
   const userInView = route.params.usertodisplay;
@@ -107,24 +108,25 @@ const GhostProfile = ({ route }) => {
           </View>
           <View style={styles.textFieldsContainer}>
             <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Instagram:</Text>
-              <Text style={styles.textField}>{profileData?.instagramHandle}</Text>
+              <FontAwesome name="instagram" size={28} color="white" />
+              <Text style={styles.textField}>{profileData.instagramHandle}</Text>
             </View>
             <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Email:</Text>
-              <Text style={styles.textField}>{profileData?.emailAddress}</Text>
+              <FontAwesome name="envelope" size={26} color="white" />
+              <Text style={styles.textField}>{profileData.emailAddress}</Text>
             </View>
             <View style={styles.textFieldContainer}>
-              <Text style={styles.label}>Gnar Points:</Text>
-              <Text style={styles.textField}>{profileData?.gnarPoints}</Text>
+              <FontAwesome name="star" size={26} color="white" />
+              <Text style={styles.textField}>Gnar Points: {profileData.gnarPoints ? profileData.gnarPoints.toString() : '0'}</Text>
             </View>
           </View>
         </View>
-        <View style={styles.textFieldContainer}>
-              <Text style={styles.textField}>{profileData?.bio}</Text>
+        <View style={styles.largeTextBoxContainer}>
+          <Text style={styles.largeTextBox}>{profileData.bio}</Text>
         </View>
       </View>
-      <FlatList style={styles.postsContainer}
+      <FlatList
+        style={styles.postsContainer}
         data={userPosts}
         renderItem={renderPost}
         keyExtractor={item => item.id}
@@ -135,9 +137,11 @@ const GhostProfile = ({ route }) => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'black',
   },
   header: {
     flexDirection: 'row',
@@ -149,15 +153,18 @@ const styles = StyleSheet.create({
   },
   username: {
     fontWeight: 'bold',
-    fontSize: 25,
+    fontSize: 34,
+    color: '#0173f9',
   },
-  editBt: {
-    backgroundColor: 'gray',
+  editButton: {
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
+    width: 55,
+    alignItems: 'center',
   },
   edit: {
-    color: 'white',
+    color: 'black',
     fontSize: 16,
   },
   contentContainer: {
@@ -173,6 +180,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   textFieldsContainer: {
+    marginLeft: -6,
     flex: 1,
     flexDirection: 'column',
   },
@@ -180,39 +188,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    marginLeft: 13, // Increase the left margin to push the content to the right
+    // You can also use paddingHorizontal if you want to add padding instead
   },
   label: {
     fontWeight: 'bold',
-    fontSize: 16,
-    marginRight: 10,
+    fontSize: 13,
+    color: 'white',
   },
   textField: {
     flex: 1,
     borderWidth: 1,
     padding: 10,
+    color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
-    marginTop: 20,
+    marginTop: 25,
   },
   largeTextBox: {
     borderWidth: 1,
     padding: 10,
-    minHeight: 100,
-    // Additional styling for large text box
+    minHeight: 50,
+    maxHeight: 100,
+    borderColor: 'white', // Change border color to white
+    color: 'white', // Add this to ensure text inside the box is visible
+    margin: -10,
+    marginBottom: -10,
+    marginTop: -35,
   },
   image: {
     width: 150, // Set the width of the image
     height: 150, // Set the height of the image
     resizeMode: 'cover', // Adjust the resizeMode based on your design needs
+    marginLeft: -5,
   },
   postsContainer: {
     margin: 20,
+    marginBottom: 60
   },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
 });
 
 export default GhostProfile;
