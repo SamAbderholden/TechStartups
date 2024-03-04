@@ -85,6 +85,7 @@ const ProfileScreen = ({ route }) => {
           instagram: instagramHandle,
           email: emailAddress,
           profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
+          bio: bio
         });
   
         alert('Profile successfully updated!');
@@ -96,6 +97,7 @@ const ProfileScreen = ({ route }) => {
           email: emailAddress,
           profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
           gnarPoints: 0,
+          bio: bio
         });
         alert('Profile successfully updated!');
         fetchProfileData();
