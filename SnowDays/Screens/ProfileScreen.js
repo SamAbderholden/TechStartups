@@ -41,7 +41,7 @@ const ProfileScreen = ({ route }) => {
           emailAddress: data.email,
           bio: data.bio,
           gnarPoints: data.gnarPoints,
-          profileImageUrl, // Use the fetched or default empty string
+          profileImageUrl: profileImageUrl, // Use the fetched or default empty string
         });
 
       }
@@ -98,7 +98,7 @@ const ProfileScreen = ({ route }) => {
   const handleSave = async () => {
     // Toggle back to "Edit" mode after saving
     setEditable(false);
-    let updatedPrevImage = ''
+    let updatedPrevImage = profileData.profileImageUrl;
     // Upload new profile image if available
     if (media) {
       const fileUri = media.assets[0].uri;
@@ -127,14 +127,19 @@ const ProfileScreen = ({ route }) => {
         alert('Profile successfully updated!');
       } else {
         // Create a new user profile
-        await setDoc(userDocRef, {
-          instagram: profileData.instagramHandle,
-          email: profileData.emailAddress,
-          profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
-          gnarPoints: 0,
-          bio: profileData.bio
-        });
-        alert('Profile successfully updated!');
+        if(profileData.instagramHandle != '' && profileData.bio != '' && profileData.emailAddress != '' && profileData.profileImageUrl != ''){
+          await setDoc(userDocRef, {
+            instagram: profileData.instagramHandle,
+            email: profileData.emailAddress,
+            profileImage: updatedPrevImage, // Assuming the profile image is stored as a field named 'profileImage'
+            gnarPoints: 0,
+            bio: profileData.bio
+          });
+          alert('Profile successfully updated!');
+        }
+        else{
+          alert('Please fill in all fields!');
+        }
       }
     } catch (error) {
       alert('Error updating/creating profile. Please try again.' + error);
