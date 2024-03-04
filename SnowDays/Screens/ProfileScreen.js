@@ -8,6 +8,7 @@ import FooterButtons from './FooterButtons';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 
+
 const ProfileScreen = ({ route }) => {
   const [editable, setEditable] = useState(false);
   const [fetchedPostsProfile, setFetchedPostsProfile] = useState([]);
@@ -91,6 +92,8 @@ const ProfileScreen = ({ route }) => {
   const handleEditPress = () => {
     setEditable(!editable);
   };
+
+
 
   const handleSave = async () => {
     // Toggle back to "Edit" mode after saving
@@ -195,14 +198,24 @@ const ProfileScreen = ({ route }) => {
         <View style={styles.rowContainer}>
           {/* Image space */}
           <View style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
-          />
+            {editable ? (
+              // Wrap the Image in a TouchableOpacity when editable
+              <TouchableOpacity onPress={handleUpload}>
+                <Image
+                  style={styles.image}
+                  source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Image
+                style={styles.image}
+                source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
+              />
+            )}
             {editable && (
               <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
                 <FontAwesome name="pencil" size={24} color="white" />
-            </TouchableOpacity>
+              </TouchableOpacity>
           )}
           </View>
           {/* Three text fields */}
@@ -331,7 +344,7 @@ const styles = StyleSheet.create({
     color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
-    marginTop: 20,
+    marginTop: 25,
   },
   largeTextBox: {
     borderWidth: 1,
@@ -352,14 +365,15 @@ const styles = StyleSheet.create({
     marginBottom: 60
   },
   uploadButton: {
-    // Adjust padding as needed for the icon to be centered and look good
-    padding: 1,
-    // Keep your borderRadius and backgroundColor or adjust as needed
-    borderRadius: 4,
-    backgroundColor: '#0173f9', // Example background color
-    // Align items to center if not already set
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center', // Add this to center the icon vertically
+    backgroundColor: '#0173f9', // Background color of the button
+    width: 40, // Width of the button
+    height: 40, // Height of the button (make it the same as width for a circle)
+    borderRadius: 20, // Half of the width/height to make it circular
+    // Other styling as needed (e.g., margin, shadow)
+    marginTop: -17,
+    marginLeft: -12,
   },
   
   uploadText: {
