@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firestore, db } from '../firebase';
 import { doc, onSnapshot, query, collection, where, orderBy, getDoc, updateDoc, setDoc} from 'firebase/firestore';
 import {ref, getDownloadURL, uploadBytesResumable} from 'firebase/storage'

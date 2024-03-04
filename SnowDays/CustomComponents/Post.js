@@ -1,16 +1,19 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
-import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc } from 'firebase/firestore';
+import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import {firestore} from '../firebase';
 
-const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) => {
+const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestamp}) => {
   const navigation = useNavigation();
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const videoRef = useRef(null); // Reference to the video for playback control
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [comment, setComment] = useState('');
+  const [comments, setComments] = useState([]);
 
   const handleLikePress = async () => {
     try {
@@ -32,7 +35,44 @@ const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) 
       console.error('Error updating gnarPoints:', error);
     }
   };
+
+  const handleCommentSubmit = async () => {
+    setShowCommentInput(false);
+    
+    // Construct a comment object including the username
+    const commentObj = {
+      text: comment,
+      username: username, // Assuming 'username' holds the username of the current user
+    };
   
+    const postDocRef = doc(firestore, 'posts', id);
+    try {
+      await updateDoc(postDocRef, {
+        comments: arrayUnion(commentObj)
+      });
+      console.log('Comment added to post');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  
+    setComment('');
+  };
+  
+
+  useEffect(() => {
+    const postDocRef = doc(firestore, 'posts', id);
+
+    const unsubscribe = onSnapshot(postDocRef, (doc) => {
+      if (doc.exists()) {
+        const postData = doc.data();
+        setComments(postData.comments || []);
+      } else {
+        console.log("No such document!");
+      }
+    });
+    // Cleanup function to unsubscribe from the snapshot listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
   
 
   const IconComponent = FontAwesome;
@@ -85,8 +125,32 @@ const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) 
             <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
               <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowCommentInput(!showCommentInput)}>
+              <IconComponent name="comment" size={30} color="gray" />
+            </TouchableOpacity>
           </View>
         </View>
+        <View style={styles.commentSection}>
+          {comments.map((commentObj, index) => (
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: username, usertodisplay: commentObj.username })}>
+              <Text style={styles.comment}>
+                <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        {showCommentInput && (
+          <TextInput
+            style={styles.commentInput}
+            placeholder="Add a comment..."
+            placeholderTextColor="gray"
+            value={comment}
+            onChangeText={setComment}
+            onSubmitEditing={handleCommentSubmit}
+            returnKeyType="send"
+            blurOnSubmit={false}
+          />
+        )}
       </View>
     </View>
   );
@@ -143,7 +207,26 @@ const styles = StyleSheet.create({
     marginBottom: -5,
     color: 'white',
   },
-
+  commentInput: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 10,
+    color: 'white',
+    borderRadius: 5,
+  },
+  comment: {
+    color: 'white'
+  },
+  commentUsername: {
+    color: '#0173f9',
+    fontWeight: 'bold',
+  },
+  commentSection: {
+    borderWidth: 1,
+    padding: 5,
+    borderColor: 'gray',
+  }
 });
 
 

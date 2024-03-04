@@ -83,6 +83,7 @@ const HomeScreen = ({route}) => {
   const renderPost = ({ item }) => (
     <Post
       key={item.id}
+      id={item.id}
       imageUrl={item.imageUrl}
       description={item.text}
       usernameToDisplay={item.username}
