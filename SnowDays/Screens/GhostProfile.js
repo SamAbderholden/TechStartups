@@ -226,7 +226,11 @@ const styles = StyleSheet.create({
     margin: 20,
     marginBottom: 60
   },
-
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default GhostProfile;
