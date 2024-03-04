@@ -20,10 +20,14 @@ const HomeScreen = ({route}) => {
     const q = query(postsCollectionRef, orderBy('timestamp', 'desc'));
   
     const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+      console.log("stuff");
       const postsPromises = querySnapshot.docs.map(async (doc) => {
         const postData = doc.data();
+        if (!postData.timestamp) {
+          return null;
+        }
+        console.log(postData);
         let imageUrl = ''; // Assume no image URL initially
-  
         // Check if filename exists and attempt to fetch the image URL only if needed
         if (postData.filename) {
           // Attempt to use a cached imageUrl from the existing state if available
@@ -40,6 +44,7 @@ const HomeScreen = ({route}) => {
           id: doc.id,
           ...postData,
           imageUrl, // Set the imageUrl, whether it was newly fetched or reused from cache
+          timestamp: postData.timestamp
         };
       });
   
@@ -47,11 +52,11 @@ const HomeScreen = ({route}) => {
       const postsWithImages = await Promise.all(postsPromises);
   
       // Update the state with the new posts array
-      setFetchedPosts(postsWithImages);
+      setFetchedPosts(postsWithImages.filter(post => post !== null));
     });
   
     return () => unsubscribe(); // Detach listener when the component unmounts
-  }, [fetchedPosts]);
+  }, []);
 
 
   // Function to save fetched posts to AsyncStorage

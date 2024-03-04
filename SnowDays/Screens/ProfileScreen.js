@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef} from 'react';
 import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firestore, db } from '../firebase';
-import { doc, onSnapshot, query, collection, where, orderBy} from 'firebase/firestore';
+import { doc, onSnapshot, query, collection, where, orderBy, getDoc, updateDoc} from 'firebase/firestore';
 import {ref, getDownloadURL} from 'firebase/storage'
 import ProfilePost from '../CustomComponents/ProfilePost';
 import FooterButtons from './FooterButtons';
@@ -28,7 +28,7 @@ const ProfileScreen = ({ route }) => {
     const unsubscribeProfile = onSnapshot(profileRef, async (doc) => {
       if (doc.exists()) {
         const data = doc.data();
-        const profileImageUrl = data.profileImage ? await getDownloadURL(ref(db, `content/${data.profileImage}`)) : '';
+        const profileImageUrl = data.profileImage ? await getDownloadURL(ref(db, `content/${data.profileImageUrl.substring(profileImageUrl.lastIndexOf('/') + 1)}`)) : '';
         setProfileData({
           instagramHandle: data.instagram,
           emailAddress: data.email,
@@ -92,9 +92,7 @@ const ProfileScreen = ({ route }) => {
   const handleSave = async () => {
     // Toggle back to "Edit" mode after saving
     setEditable(false);
-  
-    let updatedPrevImage = prevImage; // Store the updated prevImage
-  
+
     // Upload new profile image if available
     if (media) {
       const fileUri = media.assets[0].uri;
@@ -107,7 +105,7 @@ const ProfileScreen = ({ route }) => {
     }
   
     const userDocRef = doc(collection(firestore, 'profiles'), route.params.username);
-  
+    
     try {
       // Check if the user profile already exists
       const userDoc = await getDoc(userDocRef);
@@ -136,7 +134,7 @@ const ProfileScreen = ({ route }) => {
         fetchProfileData();
       }
     } catch (error) {
-      alert('Error updating/creating profile. Please try again.');
+      alert('Error updating/creating profile. Please try again.' + error);
     }
   };
 
@@ -216,8 +214,8 @@ const ProfileScreen = ({ route }) => {
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
-                value={profileData.instagramHandle}
-                onChangeText={(text) => setInstagramHandle(text)}
+                value={profileData.instagram}
+                onChangeText={(text) => setProfileData({...profileData, instagramHandle: text})}
               />
             </View>
             <View style={styles.textFieldContainer}>
@@ -229,7 +227,7 @@ const ProfileScreen = ({ route }) => {
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
                 value={profileData.emailAddress}
-                onChangeText={(text) => setEmailAddress(text)}
+                onChangeText={(text) => setProfileData({...profileData, emailAddress: text})}
               />
             </View>
             <View style={styles.textFieldContainer}>
@@ -253,7 +251,7 @@ const ProfileScreen = ({ route }) => {
             placeholderTextColor="grey" // Make sure the placeholder is visible
             autoCapitalize="none"
             value={profileData.bio}
-            onChangeText={(text) => setBio(text)}
+            onChangeText={(text) => setProfileData({...profileData, bio: text})}
           />
         </View>
       </View>
