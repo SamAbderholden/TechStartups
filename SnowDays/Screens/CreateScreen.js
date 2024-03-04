@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
     minHeight: 30,
     maxHeight: 100,
     marginBottom: 20,
+    
     width: '80%',
     color: 'white', // Ensure text is visible against background
   },

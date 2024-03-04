@@ -251,12 +251,9 @@ const ProfileScreen = ({ route }) => {
             </View>
             <View style={styles.textFieldContainer}>
               <FontAwesome name="star" size={26} color="white" />
-              <TextInput
-                style={styles.textField} // Since this field is not editable, you might want to indicate this or leave it empty
-                editable={false}
-                placeholderTextColor="grey" // Make sure the placeholder is visible
-                value={profileData.gnarPoints.toString()}
-              />
+              <Text style={styles.textDisplay}>
+               Gnar Points: {profileData.gnarPoints ? profileData.gnarPoints.toString() : '0'}  
+              </Text>
             </View>
           </View>
         </View>
@@ -327,6 +324,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   textFieldsContainer: {
+    marginLeft: -6,
     flex: 1,
     flexDirection: 'column',
   },
@@ -334,12 +332,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    marginLeft: 25, // Increase the left margin to push the content to the right
+    marginLeft: 13, // Increase the left margin to push the content to the right
     // You can also use paddingHorizontal if you want to add padding instead
   },
   label: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 13,
     color: 'white',
   },
   textField: {
@@ -364,6 +362,7 @@ const styles = StyleSheet.create({
     width: 150, // Set the width of the image
     height: 150, // Set the height of the image
     resizeMode: 'cover', // Adjust the resizeMode based on your design needs
+    marginLeft: -5,
   },
   postsContainer: {
     margin: 20,
@@ -377,13 +376,18 @@ const styles = StyleSheet.create({
     height: 40, // Height of the button (make it the same as width for a circle)
     borderRadius: 20, // Half of the width/height to make it circular
     // Other styling as needed (e.g., margin, shadow)
-    marginTop: -17,
-    marginLeft: -12,
+    marginTop: -19,
+    marginLeft: -18,
   },
-  
+  textDisplay: {
+    color: 'white', // Ensure text is visible
+    marginLeft: 11, // Provide some spacing after the icon
+    fontSize: 12, // Match the font size to your design
+    fontWeight: 'bold',
+  },
   uploadText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 13,
   },
 });
 
