@@ -1,19 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList} from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import FooterButtons from './FooterButtons'; 
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
-import { getDoc, doc, collection, getDocs, query, orderBy, where, onSnapshot } from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDoc, doc, collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { getDownloadURL, ref } from "firebase/storage";
 
 const HomeScreen = ({route}) => {
   const navigation = useNavigation();
   const [resortData, setResortData] = useState({});
   const [fetchedPosts, setFetchedPosts] = useState([]);
-  const [fetchedData, setFetchedData] = useState([]);
-  const [latestTimestamp, setLatestTimestamp] = useState(null);
 
   useEffect(() => {
     const postsCollectionRef = collection(firestore, 'posts');
@@ -59,20 +56,6 @@ const HomeScreen = ({route}) => {
   }, []);
 
 
-  // Function to save fetched posts to AsyncStorage
-  const saveFetchedPosts = async (posts) => {
-    try {
-      await AsyncStorage.setItem('fetchedPosts', JSON.stringify(posts));
-    } catch (error) {
-      console.error('Error saving fetched posts to AsyncStorage:', error);
-    }
-  };
-
-  // Call saveFetchedPosts whenever fetchedPosts state changes
-  useEffect(() => {
-    saveFetchedPosts(fetchedPosts);
-  }, [fetchedPosts]);
-
   const fetchResortData = async (resortName) => {
     try {
       const resortDocRef = doc(firestore, 'resorts', resortName);
@@ -116,7 +99,7 @@ const HomeScreen = ({route}) => {
         <Text style={styles.headerTitle}>SnowDays</Text>
         <TouchableOpacity
           style={styles.resortsButton}     
-          onPress={() => navigation.navigate('Resorts', { resortData: resortData })}
+          onPress={() => navigation.navigate('Resorts', {username: route.params.username, resortData: resortData })}
         >
           <Text style={styles.resortsButtonText}>Resorts</Text>   
         </TouchableOpacity>
@@ -167,7 +150,7 @@ const styles = StyleSheet.create({
   },
   posts: {
     marginTop: 10,
-    marginBottom: 50,
+    marginBottom: 70,
     alignContent: 'center',
   },
 });

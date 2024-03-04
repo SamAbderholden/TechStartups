@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { Text, TextInput, useEffect } from 'react-native';
+import { Text, TextInput } from 'react-native';
 import LoginScreen from './Screens/LoginScreen.js';
 import HomeScreen from './Screens/HomeScreen.js';
 import CreateScreen from './Screens/CreateScreen.js';

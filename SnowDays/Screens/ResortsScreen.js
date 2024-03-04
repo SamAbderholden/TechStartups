@@ -142,7 +142,7 @@ const ResortsScreen = ({route }) => {
           <Text style={styles.headerTitle}>Ski Directory</Text>
           <TouchableOpacity
             style={styles.homeButton}
-            onPress={() => navigation.navigate('Home', { username })}
+            onPress={() => navigation.navigate('Home', { username: route.params.username })}
           >
             <Text style={styles.homeButtonText}>Home</Text>
           </TouchableOpacity>
