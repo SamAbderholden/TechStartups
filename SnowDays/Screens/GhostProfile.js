@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import { getDoc, doc, getDocs, query, collection, where, onSnapshot } from 'firebase/firestore';
 import FooterButtons from './FooterButtons';
@@ -8,8 +8,9 @@ import { firestore, db } from '../firebase';
 
 const GhostProfile = ({ route }) => {
   const userInView = route.params.usertodisplay;
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const [profileData, setProfileData] = useState({
     instagramHandle: '',
@@ -21,37 +22,6 @@ const GhostProfile = ({ route }) => {
   
 
   useEffect(() => {
-    // Assuming firestore, route.params.username, db are defined elsewhere in your component
-    const profileRef = doc(firestore, 'profiles', userInView);
-  
-    const unsubscribeProfile = onSnapshot(profileRef, async (docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const data = docSnapshot.data();
-        
-        // If profileImage is present, extract the filename and fetch the URL
-        let profileImageUrl = '';
-        if (data.profileImage) {
-          profileImageUrl = await getDownloadURL(storageRef(db, `content/${data.profileImage}`));
-        }
-  
-        // Update state with the new profile data
-        setProfileData({
-          instagramHandle: data.instagram,
-          emailAddress: data.email,
-          bio: data.bio,
-          gnarPoints: data.gnarPoints,
-          profileImageUrl, // Use the fetched or default empty string
-        });
-
-      }
-    });
-  
-    // Cleanup function to unsubscribe from the profile observer when the component unmounts
-    return () => unsubscribeProfile();
-  }, []); // Empty dependency array means this effect runs only once on mount
-
-  useEffect(() => {
-
     const fetchUserPosts = async () => {
       const postsQuery = query(collection(firestore, 'posts'), where('username', '==', userInView));
       const querySnapshot = await getDocs(postsQuery);
@@ -70,9 +40,39 @@ const GhostProfile = ({ route }) => {
 
       setUserPosts(posts);
     };
-
-    fetchUserPosts();
+    // Function to fetch profile and posts
+    const fetchData = async () => {
+      setIsLoading(true); // Start loading
+      
+      // Fetch profile data
+      const profileRef = doc(firestore, 'profiles', userInView);
+      const profileSnap = await getDoc(profileRef);
+      if (profileSnap.exists()) {
+        const data = profileSnap.data();
+        let profileImageUrl = '';
+        if (data.profileImage) {
+          profileImageUrl = await getDownloadURL(storageRef(db, `content/${data.profileImage}`));
+        }
+        setProfileData({
+          instagramHandle: data.instagram,
+          emailAddress: data.email,
+          bio: data.bio,
+          gnarPoints: data.gnarPoints,
+          profileImageUrl,
+        });
+      } else {
+        console.log("No such document!");
+      }
+  
+      // Fetch user posts
+      await fetchUserPosts(); // Assuming fetchUserPosts is refactored to an async function without useEffect
+  
+      setIsLoading(false);
+    };
+  
+    fetchData();
   }, [userInView]);
+
 
   const renderPost = ({ item }) => (
     <Post
@@ -85,7 +85,13 @@ const GhostProfile = ({ route }) => {
       timestamp={item.timestamp}
     />
   );
-
+  if(isLoading){
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -201,7 +207,12 @@ const styles = StyleSheet.create({
   },
   postsContainer: {
     margin: 20,
-  }
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default GhostProfile;

@@ -135,7 +135,7 @@ const ProfileScreen = ({ route }) => {
             gnarPoints: 0,
             bio: profileData.bio
           });
-          alert('Profile successfully updated!');
+          alert('Profile successfully created!');
         }
         else{
           alert('Please fill in all fields!');
