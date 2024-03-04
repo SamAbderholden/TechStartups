@@ -3,6 +3,8 @@ import { View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
+import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc } from 'firebase/firestore';
+import {firestore} from '../firebase'
 
 const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) => {
   const navigation = useNavigation();
@@ -10,9 +12,28 @@ const Post = ({ imageUrl, description, usernameToDisplay, username, timestamp}) 
   const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const videoRef = useRef(null); // Reference to the video for playback control
 
-  const handleLikePress = () => {
-    setLiked(!liked);
+  const handleLikePress = async () => {
+    try {
+      setLiked(!liked);
+      const userDocRef = doc(collection(firestore, 'profiles'), usernameToDisplay);
+  
+      // Get the current gnarPoints value
+      const profileDocSnap = await getDoc(userDocRef);
+      const currentGnarPoints = profileDocSnap.exists() ? profileDocSnap.data()?.gnarPoints || 0 : 0;
+  
+      // Update the gnarPoints based on whether the post is liked or unliked
+      const newGnarPoints = liked ? Math.max(currentGnarPoints - 1, 0) : currentGnarPoints + 1;
+  
+      // Update the Firestore document with the new gnarPoints value
+      await updateDoc(userDocRef, { gnarPoints: newGnarPoints });
+  
+      // Update the local state to reflect the change
+    } catch (error) {
+      console.error('Error updating gnarPoints:', error);
+    }
   };
+  
+  
 
   const IconComponent = FontAwesome;
 
