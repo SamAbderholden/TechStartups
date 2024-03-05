@@ -91,7 +91,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
     }
     setIsPlaying(!isPlaying); // Toggle play state
   };
-
+  console.log(timestamp)
   return (
     <View style={styles.container}>
       {/* Header with username and date */}
