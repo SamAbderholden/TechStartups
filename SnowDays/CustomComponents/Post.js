@@ -117,6 +117,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
           </TouchableOpacity>
         ) : (
           <Image
+            resizeMode="cover"
             source={{ uri: imageUrl }}
             style={styles.media}
           />
@@ -132,7 +133,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
                 <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
               </TouchableOpacity>
               <View style={styles.likeNComment}>
-                <TouchableOpacity style={styles.moveThisShitRight} onPress={() => setShowCommentInput(!showCommentInput)}>
+                <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
                   <IconComponent name="comment" size={28} color="gray" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
@@ -144,7 +145,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
 
           {comments.length === 0 && (
             <View style={styles.moveRight}>
-              <TouchableOpacity style={styles.moveThisShitRight} onPress={() => setShowCommentInput(!showCommentInput)}>
+              <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
                 <IconComponent name="comment" size={28} color="gray" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
@@ -190,32 +191,30 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     marginBottom: 20,
     backgroundColor: 'black',
-    borderRadius: 10
+    borderRadius: 10,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: 5,
+    marginTop: 1,
   },
   username: {
-    marginBottom: -5,
     color: '#0173f9', // The username color
     fontWeight: 'bold',
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 20,
   },
   timestamp: {
     marginRight: 1,
-    marginBottom: -5,
     color: 'white',
   },
   media: {
     width: '100%', // This will make the media take the full width of its parent container
     aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
     alignSelf: 'center',
-    borderRadius: 10,
-    borderBottomWidth: 8
+    borderBottomWidth: 8,
+    borderTopWidth: 8
   },
   textContainer: {
     padding: 10,
@@ -249,22 +248,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   commentInput: {
-    marginTop: 10,
-    borderWidth: 1,
+    marginTop: -7,
     borderColor: 'gray',
     padding: 10,
     color: 'white',
-    borderRadius: 5,
+    marginBottom: 3,
   },
   comment: {
-    color: 'white'
+    color: 'white',
   },
   commentUsername: {
     color: '#0173f9',
     fontWeight: 'bold',
   },
   commentSection: {
-    borderWidth: 1,
+    borderTopWidth: 2,
     padding: 10,
     borderColor: 'gray',
   },
@@ -290,10 +288,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 16,
   },
-  moveThisShitRight: {
-    marginRight: 20
+  CommentBubble: {
+    marginRight: 10,
+    marginBottom: -3,
   }
 });
 
