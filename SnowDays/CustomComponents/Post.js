@@ -175,11 +175,14 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     marginBottom: 20,
     backgroundColor: 'black',
+    borderRadius: 10
   },
   media: {
-    width: '98%', // This will make the media take the full width of its parent container
+    width: '100%', // This will make the media take the full width of its parent container
     aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
     alignSelf: 'center',
+    borderRadius: 10,
+    borderBottomWidth: 8
   },
   textContainer: {
     padding: 10,

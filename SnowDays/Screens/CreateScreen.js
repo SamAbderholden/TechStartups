@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import FooterButtons from './FooterButtons';
 import { storageRef, db, firestore} from '../firebase';
@@ -10,6 +10,7 @@ const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
   const [media, setMedia] = useState(null); // Add media state
   const [isMaxCharReached, setIsMaxCharReached] = useState(false);
+  const [loading, setLoading] = useState(false);
   const MAX_LENGTH = 125;
 
   useEffect(() => {
@@ -55,6 +56,7 @@ const CreateScreen = ({ route }) => {
 
 
   const handlePost = async () => {
+    setLoading(true);
     const userDocRef = doc(collection(firestore, 'profiles'), route.params.username);
     const userDoc = await getDoc(userDocRef);
     if(!userDoc.exists()){
@@ -68,7 +70,7 @@ const CreateScreen = ({ route }) => {
       const response = await fetch(fileUri);
       const blob = await response.blob();
       fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
-      const imageRef = ref(db, `content/${fileName}`);
+      const imageRef = await ref(db, `content/${fileName}`);
       await uploadBytesResumable(imageRef, blob);
     }
   
@@ -79,14 +81,28 @@ const CreateScreen = ({ route }) => {
         text: description,
         filename: fileName,
         username: route.params.username,
-        timestamp: serverTimestamp(),
+        timestamp: await serverTimestamp(),
       });
+      setMedia(null);
+      setDescription('');
+      setLoading(false);
       alert('Post successfully added!');
     } catch (error) {
+      setMedia(null);
+      setDescription('');
+      setLoading(false);
       alert('Error adding post. Please try again.');
     }
   };
   
+
+  if(loading){
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
   
 
   return (
@@ -176,5 +192,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black'
   },
 });

@@ -89,7 +89,7 @@ const GhostProfile = ({ route }) => {
   if(isLoading){
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="black" />
+        <ActivityIndicator size="large" color="white" />
       </View>
     );
   }
@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'black'
   },
 });
 
