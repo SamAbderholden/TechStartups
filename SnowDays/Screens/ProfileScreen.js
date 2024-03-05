@@ -288,8 +288,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginTop: 50,
-    marginRight: 30,
-    marginLeft: 30,
+    marginRight: 10,
+    marginLeft: 10,
   },
   rowContainer: {
     flexDirection: 'row',
@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     // Additional styling for image container
     marginRight: 10,
+    marginLeft: 20,
   },
   textFieldsContainer: {
     marginLeft: -6,
@@ -322,9 +323,11 @@ const styles = StyleSheet.create({
     color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
-    marginTop: 25,
+    marginTop: 18,
+
   },
   largeTextBox: {
+    borderRadius: 10,
     borderWidth: 1,
     padding: 10,
     minHeight: 50,
@@ -340,8 +343,9 @@ const styles = StyleSheet.create({
     marginLeft: -5,
   },
   postsContainer: {
-    margin: 20,
-    marginBottom: 60
+    //margin: 20,
+    marginBottom: 60,
+    marginTop:26
   },
   uploadButton: {
     justifyContent: 'center',

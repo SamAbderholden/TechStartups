@@ -37,7 +37,6 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
     try {
       // Delete the post based on the provided id
       await deleteDoc(doc(collection(firestore, 'posts'), id));
-      Alert.alert('Post Deleted', 'The post has been successfully deleted.');
       // Trigger a re-render by changing the forceUpdate state
       setForceUpdate(!forceUpdate);
     } catch (error) {
@@ -84,17 +83,30 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
-        <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
-        <View style={styles.deleteButtonContainer}>
+        <View style={styles.footerContainer}>
+          <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+        
+
+        {comments.length > 0 && (
+          <View style={styles.commentNDelete}>
+            <TouchableOpacity onPress={() => setShowComments(!showComments)}>
+          <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
+          </TouchableOpacity>
+          <View style={styles.deleteButtonContainer}>
           <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
-        {comments.length > 0 && (
-          <TouchableOpacity onPress={() => setShowComments(!showComments)}>
-          <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
-          </TouchableOpacity>
+          </View>
         )}
+        {comments.length == 0 && (
+          <View style={styles.deleteButtonContainer}>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
+            <Text style={styles.deleteButtonText}>Delete</Text>
+          </TouchableOpacity>
+          </View>
+        )}
+        </View>
         {showComments && (
           <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
@@ -104,6 +116,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
               </Text>
             </TouchableOpacity>
           ))}
+    
         </View>
         )}
       </View>
@@ -117,17 +130,23 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     marginBottom: 20,
     backgroundColor: 'black',
+    borderRadius: 10,
   },
   media: {
-    width: 200, // Adjusted for consistency
-    height: 200,
+    width: '100%', // This will make the media take the full width of its parent container
+    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
     alignSelf: 'center',
+    borderBottomWidth: 8,
+    borderTopWidth: 8,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+
   },
   textContainer: {
     padding: 10,
   },
   description: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'white',
   },
   likeButton: {
@@ -169,14 +188,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   commentSection: {
-    borderWidth: 1,
-    padding: 5,
+    //borderTopWidth: 2,
+    padding: 10,
+    marginTop: 10,
     borderColor: 'gray',
   },
   toggleCommentsText: {
     color: '#0173f9',
     fontWeight: 'bold',
     marginTop: 5,
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginRight: -2,
+  },
+  commentNDelete: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 20
   }
 });
 
