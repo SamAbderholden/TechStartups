@@ -54,31 +54,6 @@ const HomeScreen = ({route}) => {
   }, []);
 
 
-  const fetchResortData = async (resortName) => {
-    try {
-      const resortDocRef = doc(firestore, 'resorts', resortName);
-      const resortDocSnapshot = await getDoc(resortDocRef);
-  
-      if (resortDocSnapshot.exists()) {
-        const resortInfo = resortDocSnapshot.data();
-        setResortData(prev => ({...prev, [resortName]: resortInfo}));
-      } else {
-        console.log(`${resortName} document does not exist.`);
-      }
-    } catch (error) {
-      console.error('Error fetching resort data:', error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // Your data fetching logic here
-      const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
-      resorts.forEach(fetchResortData);
-    };
-
-    fetchData();
-  }, []);
 
   const renderPost = ({ item }) => (
     <Post
@@ -98,7 +73,7 @@ const HomeScreen = ({route}) => {
         <Text style={styles.headerTitle}>SnowDays</Text>
         <TouchableOpacity
           style={styles.resortsButton}     
-          onPress={() => navigation.navigate('Resorts', {username: route.params.username, resortData: resortData })}
+          onPress={() => navigation.navigate('Resorts', {username: route.params.username})}
         >
           <Text style={styles.resortsButtonText}>Resorts</Text>   
         </TouchableOpacity>
