@@ -68,7 +68,7 @@ const GhostProfile = ({ route }) => {
       // Fetch user posts
       await fetchUserPosts(); // Assuming fetchUserPosts is refactored to an async function without useEffect
   
-      setIsLoading(false);
+      //setIsLoading(false);
     };
   
     fetchData();
@@ -86,6 +86,11 @@ const GhostProfile = ({ route }) => {
       timestamp={item.timestamp}
     />
   );
+
+  const test = () => {
+    setIsLoading(false);
+  }
+
   if(isLoading){
     return (
       <View style={styles.loaderContainer}>
@@ -104,6 +109,7 @@ const GhostProfile = ({ route }) => {
             <Image
               style={styles.image}
               source={profileData.profileImageUrl ? { uri: profileData.profileImageUrl } : null}
+              onLoad={test}
             />
           </View>
           <View style={styles.textFieldsContainer}>

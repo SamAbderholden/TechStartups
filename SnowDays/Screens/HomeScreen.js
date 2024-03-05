@@ -108,6 +108,7 @@ const HomeScreen = ({route}) => {
         renderItem={renderPost}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.posts}
+        initialNumToRender={10}
       />
       <FooterButtons style={styles.footerButtons}/>
     </View>

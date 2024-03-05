@@ -47,7 +47,7 @@ const CreateScreen = ({ route }) => {
 
       if (!result.cancelled) {
         setMedia(result); 
-        console.log("Image/Video uploaded successfully!");
+        alert("Image/Video uploaded successfully!");
       }
     } catch (error) {
       console.error('Error picking an image or video', error);
