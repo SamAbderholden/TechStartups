@@ -84,7 +84,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         <View style={styles.footerContainer}>
-          <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+          <Text style={styles.timestamp}>{timestamp}</Text>
         
 
         {comments.length > 0 && (
