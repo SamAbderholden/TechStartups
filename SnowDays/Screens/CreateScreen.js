@@ -56,13 +56,13 @@ const CreateScreen = ({ route }) => {
 
 
   const handlePost = async () => {
-    setLoading(true);
     const userDocRef = doc(collection(firestore, 'profiles'), route.params.username);
     const userDoc = await getDoc(userDocRef);
     if(!userDoc.exists()){
       alert("Please navigate to profile and create it before posting!");
       return;
     }
+    setLoading(true);
     let fileName = "";
   
     if (media) {
