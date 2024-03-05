@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { firestore } from '../firebase.js';
-import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove} from 'firebase/firestore';
+import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, onSnapshot} from 'firebase/firestore';
 //import FooterButtons from './FooterButtons'; // Adjust the import path as needed
 
 const ResortsScreen = ({route }) => {
     const navigation = useNavigation();
-    const resortData = route.params.resortData; // Receive the pre-fetched data
+    const [resortData, setResortData] = useState([]) // Receive the pre-fetched data
 
     // State to keep track of users and membership status for each resort
     const [resortUsers, setResortUsers] = useState({
@@ -32,6 +32,35 @@ const ResortsScreen = ({route }) => {
       'Arapahoe Basin': false,
       'Steamboat': false,
     });
+
+    useEffect(() => {
+      const unsubscribeList = []; // To hold unsubscribe functions for each listener
+    
+      const fetchResortData = (resortName) => {
+        const resortDocRef = doc(firestore, 'resorts', resortName);
+    
+        const unsubscribe = onSnapshot(resortDocRef, (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            const resortInfo = docSnapshot.data();
+            setResortData(prev => ({...prev, [resortName]: resortInfo}));
+          } else {
+            console.log(`${resortName} document does not exist.`);
+          }
+        }, (error) => {
+          console.error('Error fetching resort data:', error);
+        });
+    
+        unsubscribeList.push(unsubscribe); // Add unsubscribe function to the list
+      };
+    
+      const resorts = ['Copper', 'Winter Park', 'Eldora', 'Vail', 'Breckenridge', 'Keystone', 'Arapahoe Basin', 'Steamboat'];
+      resorts.forEach(fetchResortData);
+    
+      // Cleanup function to unsubscribe from all listeners when the component unmounts
+      return () => {
+        unsubscribeList.forEach(unsubscribe => unsubscribe());
+      };
+    }, []);
 
     useEffect(() => {
       // Initialize your state here based on the passed resortData
