@@ -81,7 +81,7 @@ const CreateScreen = ({ route }) => {
         text: description,
         filename: fileName,
         username: route.params.username,
-        timestamp: await serverTimestamp(),
+        timestamp: new Date(),
       });
       setMedia(null);
       setDescription('');

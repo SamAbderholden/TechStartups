@@ -84,7 +84,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
-        <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+        <Text style={styles.description}>{timestamp}</Text>
         <View style={styles.deleteButtonContainer}>
           <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
             <Text style={styles.deleteButtonText}>Delete</Text>

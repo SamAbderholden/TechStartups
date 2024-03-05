@@ -101,7 +101,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
             <Text style={styles.username}>@{usernameToDisplay}</Text>
           </TouchableOpacity>
         )}
-        <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+        <Text style={styles.timestamp}>{timestamp}</Text>
       </View>
       {imageUrl !== "" && (
         isVideo(imageUrl) ? (
