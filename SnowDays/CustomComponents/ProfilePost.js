@@ -73,6 +73,11 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
               isLooping
               shouldPlay={isPlaying}
             />
+            {!isPlaying && (
+              <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
+                <FontAwesome name="play" size={60} color="white" />
+              </TouchableOpacity>
+            )}
           </TouchableOpacity>
         ) : (
           <Image
@@ -208,6 +213,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 20
+  },
+  playButton: {
+    position: 'absolute',
+    top: 220,
+    left: 190
   }
 });
 
