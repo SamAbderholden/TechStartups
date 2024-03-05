@@ -94,6 +94,15 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
 
   return (
     <View style={styles.container}>
+      {/* Header with username and date */}
+      <View style={styles.header}>
+        {usernameToDisplay && (
+          <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: usernameToDisplay, username: username })}>
+            <Text style={styles.username}>@{usernameToDisplay}</Text>
+          </TouchableOpacity>
+        )}
+        <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+      </View>
       {imageUrl !== "" && (
         isVideo(imageUrl) ? (
           <TouchableOpacity onPress={handleVideoPress}>
@@ -115,29 +124,38 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
       )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
+        {/* Footer with actions and Show Comments button */}
         <View style={styles.footerContainer}>
-          {usernameToDisplay && (
-            <TouchableOpacity onPress={() => navigation.navigate('GhostProfile', { usertodisplay: usernameToDisplay, username: username })}>
-              <Text style={styles.username}>@{usernameToDisplay}</Text>
-            </TouchableOpacity>
+          {comments.length > 0 && (
+            <View style={styles.moveRightWComments}>
+              <TouchableOpacity onPress={() => setShowComments(!showComments)}>
+                <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
+              </TouchableOpacity>
+              <View style={styles.likeNComment}>
+                <TouchableOpacity style={styles.moveThisShitRight} onPress={() => setShowCommentInput(!showCommentInput)}>
+                  <IconComponent name="comment" size={28} color="gray" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+                  <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+                </TouchableOpacity>
+              </View>
+            </View>
           )}
-          <View style={styles.dateLikeContainer}>
-            <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
-            <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
-              <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setShowCommentInput(!showCommentInput)}>
-              <IconComponent name="comment" size={30} color="gray" />
-            </TouchableOpacity>
-          </View>
+
+          {comments.length === 0 && (
+            <View style={styles.moveRight}>
+              <TouchableOpacity style={styles.moveThisShitRight} onPress={() => setShowCommentInput(!showCommentInput)}>
+                <IconComponent name="comment" size={28} color="gray" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+                <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-        {comments.length > 0 && (
-          <TouchableOpacity onPress={() => setShowComments(!showComments)}>
-          <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
-          </TouchableOpacity>
-        )}
-        {showComments && (
-          <View style={styles.commentSection}>
+      </View>
+      {showComments && (
+        <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
             <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: commentObj.username })}>
               <Text style={styles.comment}>
@@ -146,27 +164,24 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
             </TouchableOpacity>
           ))}
         </View>
-        )
-
-        }
-          {showCommentInput && (
-            <TextInput
-              style={styles.commentInput}
-              placeholder="Add a comment..."
-              placeholderTextColor="gray"
-              value={comment}
-              onChangeText={setComment}
-              onSubmitEditing={handleCommentSubmit}
-              returnKeyType="send"
-              blurOnSubmit={false}
-            />
-          )}
-      </View>
+      )}
+      {/* Comment input */}
+      {showCommentInput && (
+        <TextInput
+          style={styles.commentInput}
+          placeholder="Add a comment..."
+          placeholderTextColor="gray"
+          value={comment}
+          onChangeText={setComment}
+          onSubmitEditing={handleCommentSubmit}
+          returnKeyType="send"
+          blurOnSubmit={false}
+        />
+      )}
     </View>
   );
 };
 
-export default Post;
 
 
 const styles = StyleSheet.create({
@@ -176,6 +191,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: 'black',
     borderRadius: 10
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+  },
+  username: {
+    marginBottom: -5,
+    color: '#0173f9', // The username color
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  timestamp: {
+    marginRight: 1,
+    marginBottom: -5,
+    color: 'white',
   },
   media: {
     width: '100%', // This will make the media take the full width of its parent container
@@ -191,13 +224,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
+  likeCommentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
   footerContainer: {
     marginTop: 8,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between'
+    //padding: 10,
   },
-  dateLikeContainer: {
+  postFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: -2,
@@ -205,20 +244,9 @@ const styles = StyleSheet.create({
   likeButton: {
     marginTop: -20,
     marginBottom: -5,
-    marginLeft: 7,
     alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  username: {
-    marginBottom: -5,
-    color: '#0173f9', // The username color
-    fontWeight: 'bold',
-  },
-  timestamp: {
-    marginRight: 1,
-    marginBottom: -5,
-    color: 'white',
   },
   commentInput: {
     marginTop: 10,
@@ -237,14 +265,39 @@ const styles = StyleSheet.create({
   },
   commentSection: {
     borderWidth: 1,
-    padding: 5,
+    padding: 10,
     borderColor: 'gray',
   },
   toggleCommentsText: {
     color: '#0173f9',
     fontWeight: 'bold',
     marginTop: 5,
+  },
+  likeNComment: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: 50
+  },
+  moveRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  moveRightWComments: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  moveThisShitRight: {
+    marginRight: 20
   }
 });
 
+
+
+export default Post;
 
