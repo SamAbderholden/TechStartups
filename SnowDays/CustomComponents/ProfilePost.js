@@ -84,7 +84,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         <View style={styles.footerContainer}>
-          <Text style={styles.description}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
+          <Text style={styles.timestamp}>{new Date(timestamp.seconds * 1000).toLocaleDateString()}</Text>
         
 
         {comments.length > 0 && (
@@ -107,7 +107,8 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
           </View>
         )}
         </View>
-        {showComments && (
+      </View>
+      {showComments && (
           <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
             <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: commentObj.username })}>
@@ -119,7 +120,6 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
     
         </View>
         )}
-      </View>
     </View>
   );
 };
@@ -149,11 +149,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-  likeButton: {
-    marginTop: -20,
-    alignSelf: 'flex-end',
-    flexDirection: 'row',
-    alignItems: 'center',
+  timestamp: {
+    fontSize: 18,
+    color: 'white',
+    marginTop: 4,
   },
   username: {
     color: '#0173f9', // The username color
@@ -188,9 +187,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   commentSection: {
-    //borderTopWidth: 2,
+    borderTopWidth: 2,
     padding: 10,
-    marginTop: 10,
+    marginTop: 3,
     borderColor: 'gray',
   },
   toggleCommentsText: {
