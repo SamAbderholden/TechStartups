@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react';
-import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { firestore, db } from '../firebase';
 import { doc, onSnapshot, query, collection, where, orderBy, getDoc, updateDoc, setDoc} from 'firebase/firestore';
 import {ref, getDownloadURL, uploadBytesResumable} from 'firebase/storage'
@@ -12,6 +12,7 @@ import { FontAwesome } from '@expo/vector-icons';
 const ProfileScreen = ({ route }) => {
   const [editable, setEditable] = useState(false);
   const [fetchedPostsProfile, setFetchedPostsProfile] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [profileData, setProfileData] = useState({
     instagramHandle: '',
     emailAddress: '',
@@ -95,7 +96,7 @@ const ProfileScreen = ({ route }) => {
 
   const handleSave = async () => {
     setEditable(false);
-  
+    setIsLoading(true);
     let updatedPrevImage = profileData.profileImageFilename; // Use filename for saving
     if (media) {
       const fileUri = media.assets[0].uri;
@@ -124,10 +125,11 @@ const ProfileScreen = ({ route }) => {
         bio: profileData.bio,
         gnarPoints: profileData.gnarPoints
       }, { merge: true });
-  
+      setIsLoading(false);
       alert('Profile successfully updated!');
     } catch (error) {
       console.error("Error updating/creating profile:", error);
+      setIsLoading(false);
       alert('Error updating/creating profile. Please try again.');
     }
   };
@@ -176,6 +178,14 @@ const ProfileScreen = ({ route }) => {
     />
   );
 
+
+  if(isLoading){
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -363,6 +373,12 @@ const styles = StyleSheet.create({
   uploadText: {
     color: 'white',
     fontSize: 13,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black'
   },
 });
 
