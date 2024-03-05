@@ -114,6 +114,11 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
               isLooping
               shouldPlay={isPlaying}
             />
+            {!isPlaying && (
+              <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
+                <FontAwesome name="play" size={60} color="white" />
+              </TouchableOpacity>
+            )}
           </TouchableOpacity>
         ) : (
           <Image
@@ -293,7 +298,12 @@ const styles = StyleSheet.create({
   CommentBubble: {
     marginRight: 10,
     marginBottom: -3,
-  }
+  },
+  playButton: {
+    position: 'absolute',
+    top: 220,
+    left: 190
+  },
 });
 
 
