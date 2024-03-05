@@ -81,7 +81,11 @@ const CreateScreen = ({ route }) => {
         text: description,
         filename: fileName,
         username: route.params.username,
-        timestamp: new Date(),
+        timestamp: new Intl.DateTimeFormat('en-US', {
+          month: '2-digit',
+          day: '2-digit',
+          year: 'numeric',
+        }).format(new Date())
       });
       setMedia(null);
       setDescription('');
