@@ -68,7 +68,7 @@ const GhostProfile = ({ route }) => {
       // Fetch user posts
       await fetchUserPosts(); // Assuming fetchUserPosts is refactored to an async function without useEffect
   
-      //setIsLoading(false);
+      setIsLoading(false);
     };
   
     fetchData();
