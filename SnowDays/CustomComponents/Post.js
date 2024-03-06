@@ -122,7 +122,6 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
           </TouchableOpacity>
         ) : (
           <Image
-            resizeMode="cover"
             source={{ uri: imageUrl }}
             style={styles.media}
           />

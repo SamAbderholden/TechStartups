@@ -79,7 +79,7 @@ const ProfileScreen = ({ route }) => {
       // Optionally, sort the posts by timestamp if needed
       const sortedPosts = postsWithImages.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
 
-      setFetchedPostsProfile(sortedPosts.filter(post => post !== null || post.timestamp != null));
+      setFetchedPostsProfile(sortedPosts.filter(post => post !== null || post.timestamp != null).reverse());
     });
 
     return () => {
