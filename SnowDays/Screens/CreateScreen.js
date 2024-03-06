@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native';
+import React, { useState, useEffect, useRef} from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image} from 'react-native';
+import { Video } from 'expo-av';
 import * as ImagePicker from 'expo-image-picker';
 import FooterButtons from './FooterButtons';
 import { storageRef, db, firestore} from '../firebase';
 import {ref, uploadBytes, uploadBytesResumable} from "firebase/storage";
 import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, addDoc, setDoc, serverTimestamp} from 'firebase/firestore';
+import { FontAwesome } from '@expo/vector-icons';
 
 const CreateScreen = ({ route }) => {
   const [description, setDescription] = useState('');
   const [media, setMedia] = useState(null); // Add media state
   const [isMaxCharReached, setIsMaxCharReached] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef(null); // Reference to the video for playback control
   const MAX_LENGTH = 125;
 
   useEffect(() => {
@@ -98,6 +102,10 @@ const CreateScreen = ({ route }) => {
       alert('Error adding post. Please try again.');
     }
   };
+
+  const isVideo = (url) => {
+    return /\.(mp4|mov)(\?.*)?(#.*)?$/i.test(url);
+  };
   
 
   if(loading){
@@ -107,6 +115,16 @@ const CreateScreen = ({ route }) => {
       </View>
     );
   }
+
+  // Toggle video playback state
+  const handleVideoPress = () => {
+    if (isPlaying) {
+      videoRef.current?.pauseAsync();
+    } else {
+      videoRef.current?.playAsync();
+    }
+    setIsPlaying(!isPlaying); // Toggle play state
+  };
   
 
   return (
@@ -115,6 +133,31 @@ const CreateScreen = ({ route }) => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Create a Post</Text>
       </View>
+      {media != null && (
+        isVideo(media.assets[0].uri) ? (
+          <TouchableOpacity onPress={handleVideoPress}>
+            <Video
+              ref={videoRef}
+              source={{ uri: media.assets[0].uri }}
+              style={styles.media}
+              resizeMode="cover"
+              isLooping
+              shouldPlay={isPlaying}
+            />
+            {!isPlaying && (
+              <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
+                <FontAwesome name="play" size={60} color="white" />
+              </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+        ) : (
+          <Image
+            resizeMode="cover"
+            source={{ uri: media.assets[0].uri }}
+            style={styles.media}
+          />
+        )
+      )}
       <TextInput
         style={styles.input}
         placeholder="Description"
@@ -124,9 +167,8 @@ const CreateScreen = ({ route }) => {
         maxLength={MAX_LENGTH} // Set the max length
       />
       <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
-        <Text style={ styles.uploadButtonText }>Upload Photo/Video</Text>
+          <Text style={ styles.uploadButtonText }>Upload Photo/Video</Text>
       </TouchableOpacity>
-      {/* New Post Button */}
       <TouchableOpacity style={styles.postButton} onPress={() => handlePost()}>
         <Text style={ styles.postButtonText }>Post</Text>
       </TouchableOpacity>
@@ -202,5 +244,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black'
+  },
+  media: {
+    width: '50%', // This will make the media take the full width of its parent container
+    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
+    alignSelf: 'center',
+    borderBottomWidth: 8,
+    borderTopWidth: 8,
+    marginBottom: 30
+  },
+  playButton: {
+    position: 'absolute',
+    top: 100,
+    left: 90
   },
 });

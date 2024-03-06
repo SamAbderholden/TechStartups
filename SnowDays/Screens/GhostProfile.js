@@ -39,7 +39,7 @@ const GhostProfile = ({ route }) => {
         posts.push({ id: doc.id, ...postData, imageUrl, timestamp: postData.timestamp });
       }
 
-      setUserPosts(posts);
+      setUserPosts(posts.reverse());
     };
     // Function to fetch profile and posts
     const fetchData = async () => {
