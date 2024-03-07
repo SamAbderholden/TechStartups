@@ -76,6 +76,9 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
     return () => unsubscribe();
   }, []);
   
+  const handleDeleteCommentPress = async () => {
+
+  }
 
   const IconComponent = FontAwesome;
 
@@ -167,6 +170,13 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
               <Text style={styles.comment}>
                 <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
               </Text>
+              {commentObj.username == username && (
+                <View style={styles.deleteButtonContainer}>
+                <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteCommentPress}>
+                  <Text style={styles.deleteButtonText}>Delete</Text>
+                </TouchableOpacity>
+                </View>
+              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -303,6 +313,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 220,
     left: 190
+  },
+  deleteButtonContainer: {
+    alignItems: 'flex-end',
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    padding: 5,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
