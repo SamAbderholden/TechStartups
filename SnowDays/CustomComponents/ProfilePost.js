@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
-import { collection, deleteDoc, doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
+import { collection, deleteDoc, doc, onSnapshot, updateDoc, arrayRemove, arrayUnion } from 'firebase/firestore';
 import { firestore, db } from '../firebase'; // Import your firebase configurations
 
 const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, onDelete, timestamp }) => {
@@ -12,6 +12,8 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
   const videoRef = useRef(null); // Reference to the video for playback control
   const [comments, setComments] = useState([]);
   const [showComments, setShowComments] = useState(false);
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [comment, setComment] = useState('');
 
   const handleLikePress = () => {
     setLiked(!liked);
@@ -56,6 +58,28 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
+  };
+
+  const handleCommentSubmit = async () => {
+    setShowCommentInput(false);
+    
+    // Construct a comment object including the username
+    const commentObj = {
+      text: comment,
+      username: username, // Assuming 'username' holds the username of the current user
+    };
+  
+    const postDocRef = doc(firestore, 'posts', id);
+    try {
+      await updateDoc(postDocRef, {
+        comments: arrayUnion(commentObj)
+      });
+      console.log('Comment added to post');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  
+    setComment('');
   };
 
   useEffect(() => {
@@ -112,6 +136,9 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
             <TouchableOpacity onPress={() => setShowComments(!showComments)}>
           <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
+                  <IconComponent name="comment" size={28} color="gray" />
+            </TouchableOpacity>
           <View style={styles.deleteButtonContainer}>
           <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
             <Text style={styles.deleteButtonText}>Delete</Text>
@@ -120,10 +147,15 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
           </View>
         )}
         {comments.length == 0 && (
-          <View style={styles.deleteButtonContainer}>
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
-            <Text style={styles.deleteButtonText}>Delete</Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
+                  <IconComponent name="comment" size={28} color="gray" />
+            </TouchableOpacity>
+            <View style={styles.deleteButtonContainer}>
+            <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
+              <Text style={styles.deleteButtonText}>Delete</Text>
+            </TouchableOpacity>
+            </View>
           </View>
         )}
         </View>
@@ -147,6 +179,18 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
     
         </View>
         )}
+      {showCommentInput && (
+        <TextInput
+          style={styles.commentInput}
+          placeholder="Add a comment..."
+          placeholderTextColor="gray"
+          value={comment}
+          onChangeText={setComment}
+          onSubmitEditing={handleCommentSubmit}
+          returnKeyType="send"
+          blurOnSubmit={false}
+        />
+      )}
     </View>
   );
 };
