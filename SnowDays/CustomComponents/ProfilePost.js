@@ -118,7 +118,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       {showComments && (
           <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { username: commentObj.username })}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}>
               <Text style={styles.comment}>
                 <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
               </Text>
