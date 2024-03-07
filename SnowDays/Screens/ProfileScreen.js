@@ -76,10 +76,7 @@ const ProfileScreen = ({ route }) => {
       // Resolve all promises to get posts with their images
       const postsWithImages = await Promise.all(postsPromises);
 
-      // Optionally, sort the posts by timestamp if needed
-      const sortedPosts = postsWithImages.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
-
-      setFetchedPostsProfile(sortedPosts.filter(post => post !== null || post.timestamp != null).reverse());
+      setFetchedPostsProfile(postsWithImages.filter(post => post !== null || post.timestamp != null).reverse());
     });
 
     return () => {
