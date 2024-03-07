@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   inputButton: {
     marginTop: 12, // Space on top of the button
-    marginBottom: 240, // Space on bottom of the button
+    marginBottom: 290, // Space on bottom of the button
     backgroundColor: 'white', // Button background color
     padding: 13,
     borderRadius: 5,

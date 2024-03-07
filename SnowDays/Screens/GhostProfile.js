@@ -212,15 +212,19 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   largeTextBox: {
+    borderRadius: 10,
     borderWidth: 1,
     padding: 10,
-    minHeight: 50,
-    maxHeight: 100,
-    borderColor: 'white', // Change border color to white
-    color: 'white', // Add this to ensure text inside the box is visible
+    minHeight: 20,
+    maxHeight: 50,
+    borderColor: 'white', // Keep the border color white as you have it
+    color: 'white', // Keep the text color white for visibility
     margin: -10,
-    marginBottom: -10,
-    marginTop: -35,
+    fontSize: 16, // Adjust the font size as needed
+    fontWeight: 'normal', // Choose 'bold', 'normal', etc., as desired
+    textAlign: 'left', // You can adjust this to 'center' if you prefer
+    lineHeight: 24, // Adjust the line height for better readability of multiline text
+    // Include any other text styling properties you need
   },
   image: {
     width: 150, // Set the width of the image
