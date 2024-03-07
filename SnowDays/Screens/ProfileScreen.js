@@ -7,7 +7,7 @@ import ProfilePost from '../CustomComponents/ProfilePost';
 import FooterButtons from './FooterButtons';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
-
+const MAX_BIO_LENGTH = 100;
 
 const ProfileScreen = ({ route }) => {
   const [editable, setEditable] = useState(false);
@@ -241,15 +241,22 @@ const ProfileScreen = ({ route }) => {
         </View>
         {/* Large text box */}
         <View style={styles.largeTextBoxContainer}>
-          <TextInput
+        <TextInput
             style={styles.largeTextBox}
             multiline
             editable={editable}
             placeholder="Write your bio or personal message here"
-            placeholderTextColor="grey" // Make sure the placeholder is visible
+            placeholderTextColor="grey"
             autoCapitalize="none"
             value={profileData.bio}
-            onChangeText={(text) => setProfileData({...profileData, bio: text})}
+            onChangeText={(text) => {
+              if (text.length <= MAX_BIO_LENGTH) {
+                setProfileData({...profileData, bio: text});
+              } else if (text.length === MAX_BIO_LENGTH + 1) {
+                // When the user attempts to exceed the limit, alert them
+                alert(`You have reached the maximum character limit of ${MAX_BIO_LENGTH}.`);
+              }
+            }}
           />
         </View>
       </View>
@@ -337,11 +344,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     padding: 10,
-    minHeight: 50,
-    maxHeight: 100,
-    borderColor: 'white', // Change border color to white
-    color: 'white', // Add this to ensure text inside the box is visible
+    minHeight: 20,
+    maxHeight: 70,
+    borderColor: 'white', // Keep the border color white as you have it
+    color: 'white', // Keep the text color white for visibility
     margin: -10,
+    fontSize: 16, // Adjust the font size as needed
+    fontWeight: 'normal', // Choose 'bold', 'normal', etc., as desired
+    textAlign: 'left', // You can adjust this to 'center' if you prefer
+    lineHeight: 24, // Adjust the line height for better readability of multiline text
+    // Include any other text styling properties you need
   },
   image: {
     width: 150, // Set the width of the image
@@ -352,7 +364,7 @@ const styles = StyleSheet.create({
   postsContainer: {
     //margin: 20,
     marginBottom: 60,
-    marginTop:26
+    marginTop:22
   },
   uploadButton: {
     justifyContent: 'center',
