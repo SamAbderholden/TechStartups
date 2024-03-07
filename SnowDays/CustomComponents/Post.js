@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
 import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import {firestore} from '../firebase';
+import { RotateInUpLeft } from 'react-native-reanimated';
 
 const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestamp}) => {
   const navigation = useNavigation();
@@ -162,7 +163,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
       {showComments && (
         <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username })}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}>
               <Text style={styles.comment}>
                 <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
               </Text>
