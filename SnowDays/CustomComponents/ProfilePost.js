@@ -64,21 +64,23 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
     <View style={styles.container}>
       {imageUrl !== "" && (
         isVideo(imageUrl) ? (
-          <TouchableOpacity onPress={handleVideoPress}>
-            <Video
-              ref={videoRef}
-              source={{ uri: imageUrl }}
-              style={styles.media}
-              resizeMode="cover"
-              isLooping
-              shouldPlay={isPlaying}
-            />
+          <View style={styles.videoContainer}>
+            <TouchableOpacity onPress={handleVideoPress} style={{ width: '100%', height: '100%' }}>
+              <Video
+                ref={videoRef}
+                source={{ uri: imageUrl }}
+                style={styles.media}
+                resizeMode="cover"
+                isLooping
+                shouldPlay={isPlaying}
+              />
+            </TouchableOpacity>
             {!isPlaying && (
               <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
                 <FontAwesome name="play" size={60} color="white" />
               </TouchableOpacity>
             )}
-          </TouchableOpacity>
+          </View>
         ) : (
           <Image
             source={{ uri: imageUrl }}
@@ -218,7 +220,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 220,
     left: 190
-  }
+  },
+  videoContainer: {
+    width: '100%', // Take the full width of the parent
+    aspectRatio: 4 / 5, // Keep the aspect ratio of the video
+    alignSelf: 'center',
+    justifyContent: 'center', // Center children vertically
+    alignItems: 'center', // Center children horizontally
+  },
 });
 
 export default ProfilePost;
