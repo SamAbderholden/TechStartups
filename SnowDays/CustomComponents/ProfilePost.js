@@ -64,21 +64,23 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
     <View style={styles.container}>
       {imageUrl !== "" && (
         isVideo(imageUrl) ? (
-          <TouchableOpacity onPress={handleVideoPress}>
-            <Video
-              ref={videoRef}
-              source={{ uri: imageUrl }}
-              style={styles.media}
-              resizeMode="cover"
-              isLooping
-              shouldPlay={isPlaying}
-            />
+          <View style={styles.videoContainer}>
+            <TouchableOpacity onPress={handleVideoPress} style={{ width: '100%', height: '100%' }}>
+              <Video
+                ref={videoRef}
+                source={{ uri: imageUrl }}
+                style={styles.media}
+                resizeMode="cover"
+                isLooping
+                shouldPlay={isPlaying}
+              />
+            </TouchableOpacity>
             {!isPlaying && (
               <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
                 <FontAwesome name="play" size={60} color="white" />
               </TouchableOpacity>
             )}
-          </TouchableOpacity>
+          </View>
         ) : (
           <Image
             source={{ uri: imageUrl }}
@@ -214,11 +216,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20
   },
+  videoContainer: {
+    width: '100%', // Match the width of the media
+    aspectRatio: 4 / 5, // Keep the original aspect ratio of the video
+    alignSelf: 'center', // Center the container
+    position: 'relative', // Needed to position the play button absolutely relative to this container
+  },
   playButton: {
-    position: 'absolute',
-    top: 220,
-    left: 190
-  }
+    position: 'absolute', // Position the play button absolutely to overlay it on the video
+    top: '50%', // Center vertically
+    left: '50%', // Center horizontally
+    transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
+    // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
+  },
 });
 
 export default ProfilePost;
