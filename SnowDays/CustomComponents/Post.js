@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput} from 'react
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
-import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, arrayUnion, onSnapshot, arrayRemove } from 'firebase/firestore';
 import {firestore} from '../firebase';
 import { RotateInUpLeft } from 'react-native-reanimated';
 
@@ -76,9 +76,18 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
     return () => unsubscribe();
   }, []);
   
-  const handleDeleteCommentPress = async () => {
-
-  }
+  const handleDeleteCommentPress = async (commentObj) => {
+    const postDocRef = doc(firestore, 'posts', id);
+    try {
+      // Use arrayRemove with the specific comment object to remove
+      await updateDoc(postDocRef, {
+        comments: arrayRemove(commentObj)
+      });
+      console.log('Comment deleted from post');
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
 
   const IconComponent = FontAwesome;
 
@@ -174,7 +183,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
               </Text>
               {commentObj.username == username && (
                 <View style={styles.deleteButtonContainer}>
-                <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteCommentPress}>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCommentPress(commentObj)}>
                   <Text style={styles.deleteButtonText}>Delete</Text>
                 </TouchableOpacity>
                 </View>
@@ -183,7 +192,6 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
           ))}
         </View>
       )}
-      {/* Comment input */}
       {showCommentInput && (
         <TextInput
           style={styles.commentInput}

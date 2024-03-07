@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
-import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
+import { collection, deleteDoc, doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
 import { firestore, db } from '../firebase'; // Import your firebase configurations
 
 const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, onDelete, timestamp }) => {
@@ -42,6 +42,19 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
     } catch (error) {
       console.error('Error deleting post:', error);
       Alert.alert('Error', 'An error occurred while deleting the post. Please try again.');
+    }
+  };
+
+  const handleDeleteCommentPress = async (commentObj) => {
+    const postDocRef = doc(firestore, 'posts', id);
+    try {
+      // Use arrayRemove with the specific comment object to remove
+      await updateDoc(postDocRef, {
+        comments: arrayRemove(commentObj)
+      });
+      console.log('Comment deleted from post');
+    } catch (error) {
+      console.error('Error deleting comment:', error);
     }
   };
 
@@ -122,6 +135,13 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
               <Text style={styles.comment}>
                 <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
               </Text>
+              {commentObj.username == username && (
+                <View style={styles.deleteButtonContainer}>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCommentPress(commentObj)}>
+                  <Text style={styles.deleteButtonText}>Delete</Text>
+                </TouchableOpacity>
+                </View>
+              )}
             </TouchableOpacity>
           ))}
     
