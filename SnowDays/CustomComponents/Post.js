@@ -105,31 +105,31 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
         <Text style={styles.timestamp}>{timestamp}</Text>
       </View>
       {imageUrl !== "" && (
-        isVideo(imageUrl) ? (
-          <View style={styles.videoContainer}>
-            <TouchableOpacity onPress={handleVideoPress} style={{ width: '100%', height: '100%' }}>
-              <Video
-                ref={videoRef}
-                source={{ uri: imageUrl }}
-                style={styles.media}
-                resizeMode="cover"
-                isLooping
-                shouldPlay={isPlaying}
-              />
-            </TouchableOpacity>
-            {!isPlaying && (
-              <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
-                <FontAwesome name="play" size={60} color="white" />
+          isVideo(imageUrl) ? (
+            <View style={styles.videoContainer}>
+              <TouchableOpacity onPress={handleVideoPress} style={{ width: '100%', height: '100%' }}>
+                <Video
+                  ref={videoRef}
+                  source={{ uri: imageUrl }}
+                  style={styles.media}
+                  resizeMode="cover"
+                  isLooping
+                  shouldPlay={isPlaying}
+                />
               </TouchableOpacity>
-            )}
-          </View>
-        ) : (
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.media}
-          />
-        )
-      )}
+              {!isPlaying && (
+                <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
+                  <FontAwesome name="play" size={60} color="white" />
+                </TouchableOpacity>
+              )}
+            </View>
+          ) : (
+            <Image
+              source={{ uri: imageUrl }}
+              style={styles.media}
+            />
+          )
+        )}
       <View style={styles.textContainer}>
         <Text style={styles.description}>{description}</Text>
         {/* Footer with actions and Show Comments button */}
@@ -301,17 +301,19 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: -3,
   },
-  playButton: {
-    position: 'absolute',
-    top: 220,
-    left: 190
-  },
+
   videoContainer: {
-    width: '100%', // Take the full width of the parent
-    aspectRatio: 4 / 5, // Keep the aspect ratio of the video
-    alignSelf: 'center',
-    justifyContent: 'center', // Center children vertically
-    alignItems: 'center', // Center children horizontally
+    width: '100%', // Match the width of the media
+    aspectRatio: 4 / 5, // Keep the original aspect ratio of the video
+    alignSelf: 'center', // Center the container
+    position: 'relative', // Needed to position the play button absolutely relative to this container
+  },
+  playButton: {
+    position: 'absolute', // Position the play button absolutely to overlay it on the video
+    top: '50%', // Center vertically
+    left: '50%', // Center horizontally
+    transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
+    // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
   },
 });
 
