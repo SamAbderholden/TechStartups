@@ -147,7 +147,7 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
           </View>
         )}
         {comments.length == 0 && (
-          <View>
+          <View style={styles.rowBox}>
             <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
                   <IconComponent name="comment" size={28} color="gray" />
             </TouchableOpacity>
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   deleteButtonContainer: {
-    marginTop: 10,
+    marginTop: 5,
     alignItems: 'flex-end',
   },
   deleteButton: {
@@ -293,6 +293,12 @@ const styles = StyleSheet.create({
     transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
     // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
   },
+  rowBox: {
+    flexDirection: 'row',
+    alignItems: 'cemter',
+    justifyContent: 'center',
+    gap: 10
+  }
 });
 
 export default ProfilePost;
