@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FIREBASE_AUTH } from '../firebase.js';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 const IMAGE_PATH = '../StylingImages/Login.png';
 
 const LoginScreen = ({ navigation }) => {
@@ -31,6 +32,14 @@ const LoginScreen = ({ navigation }) => {
 
   };
 
+  const signUp = async () => {
+    navigation.navigate('SignUp');
+  };
+
+  const handleResetPass = () => {
+    navigation.navigate('ResetPassword');
+  }
+
   return (
       // Parent container that holds everything
       <View style={styles.parentContainer}>
@@ -58,8 +67,16 @@ const LoginScreen = ({ navigation }) => {
                   onChangeText={setPassword}
                   autoCapitalize='none'
               />
-              <TouchableOpacity style={styles.inputButton} onPress={handleLogin}>
-                  <Text style={styles.inputButtonText}>Log In</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.inputButton} onPress={handleLogin}>
+                    <Text style={styles.inputButtonText}>Log In</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.signUpButton} onPress={signUp}>
+                    <Text style={styles.signUpButtonText}>Sign Up</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={styles.ResetPassButton} onPress={handleResetPass}>
+                  <Text style={styles.PassResetButtonText}>Forgot Password?</Text>
               </TouchableOpacity>
           </View>
       </View>
@@ -101,17 +118,48 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#fff', // Input background color
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    
+  },
   inputButton: {
     marginTop: 12, // Space on top of the button
-    marginBottom: 290, // Space on bottom of the button
+    marginBottom: 5, // Space on bottom of the button
+    marginRight: 10, // Space between the buttons
     backgroundColor: 'white', // Button background color
     padding: 13,
     borderRadius: 5,
-    width: '30%', // Full width of the login container
-    alignItems: 'center',
+    flex: 1,
   },
   inputButtonText: {
     color: 'black', // Button text color
+    textAlign: 'center',  //center the text
+  },
+  signUpButton: {
+    marginTop: 12, // Space on top of the button
+    marginBottom: 5, // Space on bottom of the button
+    backgroundColor: 'white', // Button background color
+    padding: 13,
+    borderRadius: 5,
+    flex: 1,
+  },
+  signUpButtonText: {
+    color: 'black', // Button text color
+    textAlign: 'center',  //center the text
+  },
+  ResetPassButton: {
+    marginTop: 5, // Space on top of the button
+    marginBottom: 100, // Space on bottom of the button
+    backgroundColor: 'transparent', // Button background color
+    padding: 0,
+    borderRadius: 5,
+    width: '100%', // Full width of the login container
+    alignItems: 'center',
+    whiteSpace: 'nowrap', // Display text on one line
+  },
+  PassResetButtonText: {
+    color: 'white', // Button text color
   },
 });
 

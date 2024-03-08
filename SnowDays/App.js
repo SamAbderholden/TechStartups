@@ -8,6 +8,8 @@ import CreateScreen from './Screens/CreateScreen.js';
 import ProfileScreen from './Screens/ProfileScreen.js';
 import ResortsScreen from './Screens/ResortsScreen.js';
 import GhostProfile from './Screens/GhostProfile.js';
+import ResetPasswordScreen from './Screens/ResetPassword.js';
+import SignUp from './Screens/SignUp.js';
 
 const Drawer = createDrawerNavigator();
 
@@ -27,6 +29,8 @@ export default function App() {
         <Drawer.Screen name="Profile" component={ProfileScreen} />
         <Drawer.Screen name="Resorts" component={ResortsScreen} />
         <Drawer.Screen name="GhostProfile" component={GhostProfile} />
+        <Drawer.Screen name="ResetPassword" component={ResetPasswordScreen} />
+        <Drawer.Screen name="SignUp" component={SignUp} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
