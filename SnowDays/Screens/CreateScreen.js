@@ -50,7 +50,7 @@ const CreateScreen = ({ route }) => {
         quality: 1,
       });
 
-      if (!result.cancelled) {
+      if (!result.cancelled && result.assets) {
         setMedia(result); 
         alert("Image/Video uploaded successfully!");
       }
@@ -70,7 +70,7 @@ const CreateScreen = ({ route }) => {
     setLoading(true);
     let fileName = "";
   
-    if (media) {
+    if (media && media.assets && media.assets.length > 0) {
       const fileUri = media.assets[0].uri;
       const response = await fetch(fileUri);
       const blob = await response.blob();
