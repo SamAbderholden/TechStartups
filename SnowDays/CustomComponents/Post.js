@@ -123,7 +123,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
                 <Video
                   ref={videoRef}
                   source={{ uri: imageUrl }}
-                  style={styles.media}
+                  style={styles.videoContainer}
                   resizeMode="cover"
                   isLooping
                   shouldPlay={isPlaying}
@@ -239,6 +239,7 @@ const styles = StyleSheet.create({
   timestamp: {
     marginRight: 1,
     color: 'white',
+    fontSize: 18,
   },
   media: {
     width: '100%', // This will make the media take the full width of its parent container
@@ -246,6 +247,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderBottomWidth: 8,
     borderTopWidth: 8
+  },
+  videoContainer: {
+    width: '100%', // Ensure the container takes up 100% of the width
+    aspectRatio: 4 / 5, // Maintain a consistent aspect ratio for videos
+    alignSelf: 'center', // Center the video within its container
+    overflow: 'hidden', // Hide any overflow
+    // Remove any additional padding or margin if previously set
   },
   textContainer: {
     padding: 10,

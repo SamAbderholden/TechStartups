@@ -75,14 +75,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around', // Space around items
   },
   title: {
-    marginTop: 80, // Space on top of the title
+    marginTop: 70, // Space on top of the title
     marginBottom: -20, // Space on bottom of the title
     fontSize: 60,
     color: '#fff', // Title color
     fontWeight: 'bold',
   },
   logo: {
-    marginTop: -15,
+    marginTop: -40,
     marginBottom: -70,
     width: 400,
     height: 370,
