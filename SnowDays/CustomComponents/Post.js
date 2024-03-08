@@ -143,7 +143,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
           )
         )}
       <View style={styles.textContainer}>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.postDescription}>{description}</Text>
         {/* Footer with actions and Show Comments button */}
         <View style={styles.footerContainer}>
           {comments.length > 0 && (
@@ -224,11 +224,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     borderRadius: 10,
   },
+  
+  //items in the header container
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 5,
+    padding: 8,
     marginTop: 1,
   },
   username: {
@@ -241,6 +243,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
   },
+
+
+  // styling for the media
   media: {
     width: '100%', // This will make the media take the full width of its parent container
     aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
@@ -255,30 +260,38 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // Hide any overflow
     // Remove any additional padding or margin if previously set
   },
+  playButton: {
+    position: 'absolute', // Position the play button absolutely to overlay it on the video
+    top: '50%', // Center vertically
+    left: '50%', // Center horizontally
+    transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
+    // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
+  },
   textContainer: {
     padding: 10,
   },
-  description: {
-    fontSize: 21,
+  postDescription: {
+    fontSize: 20,
     color: 'white',
+  },
+  
+
+
+  // action buttons below the postDescription
+  footerContainer: { 
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   likeCommentContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  footerContainer: {
-    marginTop: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-    //borderBottomWidth: 1,
-    //padding: 10,
-  },
-  postFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: -2,
+  CommentBubble: {
+    marginRight: 10,
+    marginBottom: -3,
   },
   likeButton: {
     marginTop: -20,
@@ -312,23 +325,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
   },
-  CommentBubble: {
-    marginRight: 10,
-    marginBottom: -3,
-  },
 
-  videoContainer: {
-    width: '100%', // Match the width of the media
-    aspectRatio: 4 / 5, // Keep the original aspect ratio of the video
-    alignSelf: 'center', // Center the container
-    position: 'relative', // Needed to position the play button absolutely relative to this container
-  },
-  playButton: {
-    position: 'absolute', // Position the play button absolutely to overlay it on the video
-    top: '50%', // Center vertically
-    left: '50%', // Center horizontally
-    transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
-    // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
+
+  // styling for the comments themselves
+  parentCommentSection: {
+    borderTopWidth: 2,
+    color: 'white',
+    flex: 1,
+    paddingRight: 9,
+    paddingLeft: 9,
+    paddingBottom: 4,
+    justifyContent: 'space-between', // This will distribute the space evenly between items
+    gap: 4,
   },
   commentInput: {
     marginTop: -7,
@@ -346,29 +354,11 @@ const styles = StyleSheet.create({
     color: '#0173f9',
     fontWeight: 'bold',
   },
-  commentSection: {
-  },
-  commentSectionWithDelete: {
-  },
   deleteButtonContainer: {
     alignItems: 'flex-end',
   },
-  parentCommentSection: {
-    borderTopWidth: 2,
-    color: 'white',
-    flex: 1,
-    //padding: 9,
-    paddingRight: 9,
-    paddingLeft: 9,
-    paddingBottom: 4,
-    justifyContent: 'space-between', // This will distribute the space evenly between items
-    gap: 4,
-
-  },
-
 
 });
-
 
 
 export default Post;

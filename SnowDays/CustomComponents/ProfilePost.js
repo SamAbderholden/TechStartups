@@ -99,6 +99,12 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.deletePostButton} onPress={handleDeletePress}>
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </TouchableOpacity>
+        <Text style={styles.timestamp}>{timestamp}</Text>
+      </View>
       {imageUrl !== "" && (
         isVideo(imageUrl) ? (
           <View style={styles.videoContainer}>
@@ -126,58 +132,59 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
         )
       )}
       <View style={styles.textContainer}>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.postDescription}>{description}</Text>
         <View style={styles.footerContainer}>
-          <Text style={styles.timestamp}>{timestamp}</Text>
-        
-
         {comments.length > 0 && (
-          <View style={styles.commentNDelete}>
-            <TouchableOpacity onPress={() => setShowComments(!showComments)}>
-          <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
+            <View style={styles.moveRightWComments}>
+              <TouchableOpacity onPress={() => setShowComments(!showComments)}>
+                <Text style={styles.toggleCommentsText}>{showComments ? 'Hide Comments' : 'Show Comments'}</Text>
+              </TouchableOpacity>
+              <View style={styles.likeNComment}>
+                <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
                   <IconComponent name="comment" size={28} color="gray" />
-            </TouchableOpacity>
-          <View style={styles.deleteButtonContainer}>
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
-            <Text style={styles.deleteButtonText}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-          </View>
-        )}
-        {comments.length == 0 && (
-          <View style={styles.rowBox}>
-            <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
-                  <IconComponent name="comment" size={28} color="gray" />
-            </TouchableOpacity>
-            <View style={styles.deleteButtonContainer}>
-            <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePress}>
-              <Text style={styles.deleteButtonText}>Delete</Text>
-            </TouchableOpacity>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+                  <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
+          )}
+
+          {comments.length === 0 && (
+            <View style={styles.moveRight}>
+              <TouchableOpacity style={styles.CommentBubble} onPress={() => setShowCommentInput(!showCommentInput)}>
+                <IconComponent name="comment" size={28} color="gray" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.likeButton} onPress={handleLikePress}>
+                <IconComponent name="thumbs-up" size={30} color={liked ? '#0173f9' : 'gray'} solid={liked} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
       {showComments && (
-          <View style={styles.commentSection}>
-          {comments.map((commentObj, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}>
-              <Text style={styles.comment}>
-                <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
-              </Text>
-              {commentObj.username == username && (
-                <View style={styles.deleteButtonContainer}>
-                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCommentPress(commentObj)}>
-                  <Text style={styles.deleteButtonText}>Delete</Text>
+          <View style={styles.parentCommentSection}>
+            {comments.map((commentObj, index) => (
+              <View key={index} style={styles.parentCommentSectionContainer}>
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}
+                  style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1 }}
+                >
+                  <Text style={styles.comment}>
+                    <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
+                  </Text>
+                  {commentObj.username === username && (
+                    <TouchableOpacity 
+                      onPress={() => handleDeleteCommentPress(commentObj)}
+                      style={styles.deleteButton}
+                    >
+                      <FontAwesome name="times-circle" size={24} color="red" />
+                    </TouchableOpacity>
+                  )}
                 </TouchableOpacity>
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
-    
-        </View>
+              </View>
+            ))}
+          </View>
         )}
       {showCommentInput && (
         <TextInput
@@ -203,53 +210,99 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     borderRadius: 10,
   },
-  media: {
-    width: '100%', // This will make the media take the full width of its parent container
-    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
-    alignSelf: 'center',
-    borderBottomWidth: 8,
-    borderTopWidth: 8,
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
 
-  },
-  textContainer: {
-    padding: 10,
-  },
-  description: {
-    fontSize: 18,
-    color: 'white',
-  },
-  timestamp: {
-    fontSize: 18,
-    color: 'white',
-    marginTop: 4,
-  },
-  username: {
-    color: '#0173f9', // The username color
-    fontWeight: 'bold',
+  //styling for the header items
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 5,
+    marginTop: 1,
   },
   deleteButtonContainer: {
     marginTop: 5,
     alignItems: 'flex-end',
   },
-  deleteButton: {
+  deletePostButton: {
     backgroundColor: 'red',
-    padding: 5,
+    padding: 7,
     borderRadius: 5,
+    marginLeft: 5,
   },
   deleteButtonText: {
     color: 'white',
     fontWeight: 'bold',
   },
-  commentInput: {
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
+  timestamp: {
+    marginRight: 1,
     color: 'white',
-    borderRadius: 5,
+    fontSize: 18,
   },
+
+
+  //styling for the actual media
+  media: {
+    width: '100%', // This will make the media take the full width of its parent container
+    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
+    alignSelf: 'center',
+    borderBottomWidth: 8,
+    borderTopWidth: 8
+  },
+  videoContainer: {
+    width: '100%', // Match the width of the media
+    aspectRatio: 4 / 5, // Keep the original aspect ratio of the video
+    alignSelf: 'center', // Center the container
+    position: 'relative', // Needed to position the play button absolutely relative to this container
+    overflow: 'hidden', // Hide any overflow
+  },
+  playButton: {
+    position: 'absolute', // Position the play button absolutely to overlay it on the video
+    top: '50%', // Center vertically
+    left: '50%', // Center horizontally
+    transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
+    // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
+  },
+  textContainer: {
+    padding: 10,
+  },
+  postDescription: {
+    fontSize: 20,
+    color: 'white',
+  },
+
+  
+
+  //action buttons below the postDescription
+  footerContainer: {
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  likeNComment: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: 50
+  },
+  moveRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  moveRightWComments: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  CommentBubble: {
+    marginRight: 10,
+    marginBottom: -3,
+  },
+
   comment: {
     color: 'white'
   },
@@ -267,38 +320,49 @@ const styles = StyleSheet.create({
     color: '#0173f9',
     fontWeight: 'bold',
     marginTop: 5,
+    fontSize: 18
   },
-  footerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginRight: -2,
-  },
+  
+
   commentNDelete: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 20
   },
-  videoContainer: {
-    width: '100%', // Match the width of the media
-    aspectRatio: 4 / 5, // Keep the original aspect ratio of the video
-    alignSelf: 'center', // Center the container
-    position: 'relative', // Needed to position the play button absolutely relative to this container
+
+  
+
+  //styling for the comment section
+  parentCommentSection: {
+    borderTopWidth: 2,
+    color: 'white',
+    flex: 1,
+    paddingRight: 9,
+    paddingLeft: 9,
+    paddingBottom: 4,
+    justifyContent: 'space-between', // This will distribute the space evenly between items
+    gap: 4,
   },
-  playButton: {
-    position: 'absolute', // Position the play button absolutely to overlay it on the video
-    top: '50%', // Center vertically
-    left: '50%', // Center horizontally
-    transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
-    // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
+  commentInput: {
+    marginTop: -7,
+    borderColor: 'gray',
+    padding: 10,
+    color: 'white',
+    marginBottom: 3,
+    fontSize: 18,
   },
-  rowBox: {
-    flexDirection: 'row',
-    alignItems: 'cemter',
-    justifyContent: 'center',
-    gap: 10
-  }
+  comment: {
+    color: 'white',
+    fontSize: 18,
+  },
+  commentUsername: {
+    color: '#0173f9',
+    fontWeight: 'bold',
+  },
+  deleteButtonContainer: {
+    alignItems: 'flex-end',
+  },
 });
 
 export default ProfilePost;
