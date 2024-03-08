@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
-import { collection, deleteDoc, doc, onSnapshot, updateDoc, arrayRemove, arrayUnion } from 'firebase/firestore';
+import { collection, deleteDoc, doc, onSnapshot, updateDoc, arrayRemove, arrayUnion, getDoc } from 'firebase/firestore';
 import { firestore, db } from '../firebase'; // Import your firebase configurations
 
 const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, onDelete, timestamp }) => {
@@ -15,8 +15,50 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [comment, setComment] = useState('');
 
-  const handleLikePress = () => {
-    setLiked(!liked);
+  useEffect(() => {
+    const checkIfLiked = async () => {
+      const postDocRef = doc(firestore, 'posts', id);
+      const docSnap = await getDoc(postDocRef);
+      if (docSnap.exists()) {
+        const postData = docSnap.data();
+        // Check if the user's username is in the likes array
+        setLiked(postData.likes?.includes(username));
+      }
+    };
+  
+    checkIfLiked();
+  }, []);
+
+  const handleLikePress = async () => {
+    try {
+      setLiked(!liked);
+      const userDocRef = doc(collection(firestore, 'profiles'), username);
+  
+      // Get the current gnarPoints value
+      const profileDocSnap = await getDoc(userDocRef);
+      const currentGnarPoints = profileDocSnap.exists() ? profileDocSnap.data()?.gnarPoints || 0 : 0;
+  
+      // Update the gnarPoints based on whether the post is liked or unliked
+      const newGnarPoints = liked ? Math.max(currentGnarPoints - 1, 0) : currentGnarPoints + 1;
+  
+      // Update the Firestore document with the new gnarPoints value
+      await updateDoc(userDocRef, { gnarPoints: newGnarPoints });
+      const postDocRef = doc(firestore, 'posts', id);
+      if (!liked) {
+        // Add user ID to likes array
+        await updateDoc(postDocRef, {
+          likes: arrayUnion(username)
+        });
+      } else {
+        // Remove user ID from likes array
+        await updateDoc(postDocRef, {
+          likes: arrayRemove(username)
+        });
+      }
+      // Update the local state to reflect the change
+    } catch (error) {
+      console.error('Error updating gnarPoints:', error);
+    }
   };
 
   const IconComponent = FontAwesome;

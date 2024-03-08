@@ -25,6 +25,20 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
     }
   }, [isInView, autoPlay]);
 
+  useEffect(() => {
+    const checkIfLiked = async () => {
+      const postDocRef = doc(firestore, 'posts', id);
+      const docSnap = await getDoc(postDocRef);
+      if (docSnap.exists()) {
+        const postData = docSnap.data();
+        // Check if the user's username is in the likes array
+        setLiked(postData.likes?.includes(username));
+      }
+    };
+  
+    checkIfLiked();
+  }, []);
+
   const handleLikePress = async () => {
     try {
       setLiked(!liked);
@@ -39,7 +53,18 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
   
       // Update the Firestore document with the new gnarPoints value
       await updateDoc(userDocRef, { gnarPoints: newGnarPoints });
-  
+      const postDocRef = doc(firestore, 'posts', id);
+      if (!liked) {
+        // Add user ID to likes array
+        await updateDoc(postDocRef, {
+          likes: arrayUnion(username)
+        });
+      } else {
+        // Remove user ID from likes array
+        await updateDoc(postDocRef, {
+          likes: arrayRemove(username)
+        });
+      }
       // Update the local state to reflect the change
     } catch (error) {
       console.error('Error updating gnarPoints:', error);
