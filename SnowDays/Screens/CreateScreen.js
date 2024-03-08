@@ -14,6 +14,7 @@ const CreateScreen = ({ route }) => {
   const [isMaxCharReached, setIsMaxCharReached] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isInputActive, setIsInputActive] = useState(false);
   const videoRef = useRef(null); // Reference to the video for playback control
   const MAX_LENGTH = 125;
 
@@ -159,12 +160,14 @@ const CreateScreen = ({ route }) => {
         )
       )}
       <TextInput
-        style={styles.input}
+        style={[styles.input, {marginBottom: isInputActive && media ? 100 : 20}]}
         placeholder="Description"
         placeholderTextColor="gray" // Ensure placeholder text is visible
         value={description}
         onChangeText={handleDescriptionChange}
         maxLength={MAX_LENGTH} // Set the max length
+        onFocus={() => setIsInputActive(true)} // Set isInputActive to true when the input is focused
+        onBlur={() => setIsInputActive(false)}
       />
       <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
           <Text style={ styles.uploadButtonText }>Upload Photo/Video</Text>

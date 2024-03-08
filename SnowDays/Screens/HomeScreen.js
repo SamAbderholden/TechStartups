@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import FooterButtons from './FooterButtons'; 
@@ -9,7 +9,6 @@ import { getDownloadURL, ref } from "firebase/storage";
 
 const HomeScreen = ({route}) => {
   const navigation = useNavigation();
-  const [resortData, setResortData] = useState({});
   const [fetchedPosts, setFetchedPosts] = useState([]);
 
   useEffect(() => {
@@ -53,9 +52,17 @@ const HomeScreen = ({route}) => {
     return () => unsubscribe(); // Detach listener when the component unmounts
   }, []);
 
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 75 // Adjust as needed
+  }).current;
 
+  const [viewableItems, setViewableItems] = useState([]);
 
-  const renderPost = ({ item }) => (
+  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+    setViewableItems(viewableItems.map(item => item.key));
+  }, []);
+
+  const renderPost = ({ item, index }) => (
     <Post
       key={item.id}
       id={item.id}
@@ -64,6 +71,8 @@ const HomeScreen = ({route}) => {
       usernameToDisplay={item.username}
       username={route.params.username}
       timestamp={item.timestamp}
+      isInView={viewableItems.includes(item.id)}
+      autoPlay={index === 0}
     />
   );
 
@@ -84,6 +93,8 @@ const HomeScreen = ({route}) => {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.posts}
         initialNumToRender={10}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
       />
       <FooterButtons style={styles.footerButtons}/>
     </View>
