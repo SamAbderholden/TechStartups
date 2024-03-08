@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: '100%', // Ensure the container takes up 100% of the width
-    aspectRatio: 4 / 5, // Maintain a consistent aspect ratio for videos
+    aspectRatio: 11/16, // Maintain a consistent aspect ratio for videos
     alignSelf: 'center', // Center the video within its container
     overflow: 'hidden', // Hide any overflow
     // Remove any additional padding or margin if previously set

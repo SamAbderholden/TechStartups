@@ -9,7 +9,7 @@ import ProfileScreen from './Screens/ProfileScreen.js';
 import ResortsScreen from './Screens/ResortsScreen.js';
 import GhostProfile from './Screens/GhostProfile.js';
 import ResetPasswordScreen from './Screens/ResetPassword.js';
-import SignUp from './Screens/SignUp.js';
+import SignUp from './Screens/SignUpScreen.js';
 
 const Drawer = createDrawerNavigator();
 
