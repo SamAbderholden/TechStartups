@@ -177,18 +177,24 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
       {showComments && (
         <View style={styles.commentSection}>
           {comments.map((commentObj, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}>
-              <Text style={styles.comment}>
-                <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
-              </Text>
-              {commentObj.username == username && (
-                <View style={styles.deleteButtonContainer}>
-                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCommentPress(commentObj)}>
-                  <Text style={styles.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-                </View>
-              )}
-            </TouchableOpacity>
+            <View key={index} style={commentObj.username === username ? styles.commentSectionWithDelete : styles.commentSection}>
+              <TouchableOpacity 
+                onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}
+                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <Text style={styles.comment}>
+                  <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
+                </Text>
+                {commentObj.username === username && (
+                  <TouchableOpacity 
+                    onPress={() => handleDeleteCommentPress(commentObj)}
+                    style={styles.deleteButton}
+                  >
+                    <FontAwesome name="times-circle" size={28} color="red" />
+                  </TouchableOpacity>
+                )}
+              </TouchableOpacity>
+            </View>
           ))}
         </View>
       )}
@@ -258,6 +264,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
+    //borderBottomWidth: 1,
     //padding: 10,
   },
   postFooter: {
@@ -271,25 +278,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  commentInput: {
-    marginTop: -7,
-    borderColor: 'gray',
-    padding: 10,
-    color: 'white',
-    marginBottom: 3,
-  },
-  comment: {
-    color: 'white',
-  },
-  commentUsername: {
-    color: '#0173f9',
-    fontWeight: 'bold',
-  },
-  commentSection: {
-    borderTopWidth: 2,
-    padding: 10,
-    borderColor: 'gray',
   },
   toggleCommentsText: {
     color: '#0173f9',
@@ -333,18 +321,37 @@ const styles = StyleSheet.create({
     transform: [{ translateX: -15 }, { translateY: -30 }], // Adjust the centering based on the button's size
     // Note: Adjust the translate values based on the actual size of your play icon for perfect centering
   },
+  commentInput: {
+    marginTop: -7,
+    borderColor: 'gray',
+    padding: 10,
+    color: 'white',
+    marginBottom: 3,
+  },
+  comment: {
+    color: 'white',
+  },
+  commentUsername: {
+    color: '#0173f9',
+    fontWeight: 'bold',
+  },
+  commentSection: {
+    padding: 5,
+  },
+  commentSectionWithDelete: {
+    marginTop: -10,
+    padding: 5,
+  },
   deleteButtonContainer: {
     alignItems: 'flex-end',
   },
   deleteButton: {
-    backgroundColor: 'red',
-    padding: 5,
-    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30, // Adjust size as needed
+    height: 30, // Adjust size as needed
   },
-  deleteButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
+
 });
 
 
