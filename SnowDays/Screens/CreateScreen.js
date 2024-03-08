@@ -160,7 +160,7 @@ const CreateScreen = ({ route }) => {
         )
       )}
       <TextInput
-        style={[styles.input, {marginBottom: isInputActive && media ? 100 : 20}]}
+        style={[styles.input, {marginBottom: isInputActive && media ? 150 : 20}]}
         placeholder="Description"
         placeholderTextColor="gray" // Ensure placeholder text is visible
         value={description}
