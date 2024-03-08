@@ -12,8 +12,8 @@ const ResetPasswordScreen = () => {
     const handleResetPassword = () => {
         sendPasswordResetEmail(auth,email)
             .then(() => {
+                alert('Password reset email sent, sometimes this email can take a little while.');
                 navigation.navigate('Login');
-                alert('Password reset email sent');
             })
             .catch((error) => {
                 setError(error.message);

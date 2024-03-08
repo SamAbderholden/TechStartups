@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import FooterButtons from './FooterButtons'; 
@@ -9,8 +9,8 @@ import { getDownloadURL, ref } from "firebase/storage";
 
 const HomeScreen = ({route}) => {
   const navigation = useNavigation();
-  const [resortData, setResortData] = useState({});
   const [fetchedPosts, setFetchedPosts] = useState([]);
+  const [prevVisible, setPrevVisible] = useState([]);
 
   useEffect(() => {
     const postsCollectionRef = collection(firestore, 'posts');
@@ -53,9 +53,40 @@ const HomeScreen = ({route}) => {
     return () => unsubscribe(); // Detach listener when the component unmounts
   }, []);
 
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 75 // Adjust as needed
+  }).current;
 
+  const [viewableItems, setViewableItems] = useState([]);
 
-  const renderPost = ({ item }) => (
+  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+    if(navigation.getState().routes[navigation.getState().index].name === 'Home'){
+      const viewableKeys = viewableItems.map(item => item.key);
+      setViewableItems(viewableKeys);
+      setPrevVisible(viewableKeys); // Note: Consider if you really need to update this here
+    }
+  }, [navigation]); // navigation added to dependencies
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('state', () => {
+      const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
+      if (currentRouteName !== 'Home') {
+        // Using functional update to ensure we're working with the latest state
+        setViewableItems(current => {
+          setPrevVisible(current); // Save current viewable items before clearing
+          return [];
+        });
+      } else {
+        // Restoring previous visible items when navigating back to 'Home'
+        setViewableItems(prevVisible);
+      }
+    });
+
+    // Cleanup the listener on component unmount
+    return unsubscribe;
+  }, [navigation, prevVisible]);
+
+  const renderPost = ({ item, index }) => (
     <Post
       key={item.id}
       id={item.id}
@@ -64,6 +95,7 @@ const HomeScreen = ({route}) => {
       usernameToDisplay={item.username}
       username={route.params.username}
       timestamp={item.timestamp}
+      isInView={viewableItems.includes(item.id)}
     />
   );
 
@@ -84,6 +116,8 @@ const HomeScreen = ({route}) => {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.posts}
         initialNumToRender={10}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
       />
       <FooterButtons style={styles.footerButtons}/>
     </View>

@@ -2,20 +2,41 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Video } from 'expo-av'; // Import the Video component
+import { Video } from 'expo-av';
 import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, arrayUnion, onSnapshot, arrayRemove } from 'firebase/firestore';
 import {firestore} from '../firebase';
-import { ScrollView } from 'react-native';
 
-const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestamp}) => {
+const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestamp, isInView}) => {
   const navigation = useNavigation();
   const [liked, setLiked] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const videoRef = useRef(null); // Reference to the video for playback control
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [showComments, setShowComments] = useState(false);
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isInView) {
+        videoRef.current.playAsync();
+      } else {
+        videoRef.current.pauseAsync();
+      }
+    }
+  }, [isInView]);
+
+  useEffect(() => {
+    const checkIfLiked = async () => {
+      const postDocRef = doc(firestore, 'posts', id);
+      const docSnap = await getDoc(postDocRef);
+      if (docSnap.exists()) {
+        const postData = docSnap.data();
+        // Check if the user's username is in the likes array
+        setLiked(postData.likes?.includes(username));
+      }
+    };
+  
+    checkIfLiked();
+  }, []);
 
   const handleLikePress = async () => {
     try {
@@ -31,7 +52,18 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
   
       // Update the Firestore document with the new gnarPoints value
       await updateDoc(userDocRef, { gnarPoints: newGnarPoints });
-  
+      const postDocRef = doc(firestore, 'posts', id);
+      if (!liked) {
+        // Add user ID to likes array
+        await updateDoc(postDocRef, {
+          likes: arrayUnion(username)
+        });
+      } else {
+        // Remove user ID from likes array
+        await updateDoc(postDocRef, {
+          likes: arrayRemove(username)
+        });
+      }
       // Update the local state to reflect the change
     } catch (error) {
       console.error('Error updating gnarPoints:', error);
@@ -95,16 +127,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
     return /\.(mp4|mov)(\?.*)?(#.*)?$/i.test(url);
   };
 
-  // Toggle video playback state
-  const handleVideoPress = () => {
-    if (isPlaying) {
-      videoRef.current?.pauseAsync();
-    } else {
-      videoRef.current?.playAsync();
-    }
-    setIsPlaying(!isPlaying); // Toggle play state
-  };
-  console.log(timestamp)
+
   return (
     <View style={styles.container}>
       {/* Header with username and date */}
@@ -119,21 +142,15 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
       {imageUrl !== "" && (
           isVideo(imageUrl) ? (
             <View style={styles.videoContainer}>
-              <TouchableOpacity onPress={handleVideoPress} style={{ width: '100%', height: '100%' }}>
+              <TouchableOpacity style={{ width: '100%', height: '100%' }}>
                 <Video
                   ref={videoRef}
                   source={{ uri: imageUrl }}
                   style={styles.videoContainer}
                   resizeMode="cover"
                   isLooping
-                  shouldPlay={isPlaying}
                 />
               </TouchableOpacity>
-              {!isPlaying && (
-                <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
-                  <FontAwesome name="play" size={60} color="white" />
-                </TouchableOpacity>
-              )}
             </View>
           ) : (
             <Image
