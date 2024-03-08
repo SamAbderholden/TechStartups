@@ -49,34 +49,36 @@ const SignUp = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Image style={styles.logo} source={require(IMAGE_PATH)} />
             <Text style={styles.title}>Sign Up</Text>
+            <Image style={styles.logo} source={require(IMAGE_PATH)} />
             <TextInput
-                style={styles.input}
-                placeholder="Email"
+                style={styles.inputField}
+                placeholder="Mines Email"
                 value={username}
                 onChangeText={(text) => setUsername(text)}
             />
             <TextInput
-                style={styles.input}
+                style={styles.inputField}
                 placeholder="Password"
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 secureTextEntry
             />
             <TextInput
-                style={styles.input}
+                style={styles.inputField}
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChangeText={(text) => setConfirmPassword(text)}
                 secureTextEntry
             />
-            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-                <Text style={styles.buttonText}>Sign Up</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.buttonText}>Back to Login</Text>
-            </TouchableOpacity>
+            <View style={styles.inputButtonContainer}>
+                <TouchableOpacity style={styles.inputButton} onPress={handleSignUp}>
+                    <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.inputButton} onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.buttonText}>Back to Login</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -92,29 +94,40 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     logo: {
-        width: 150,
-        height: 150,
-        marginBottom: 20,
+        width: 400,
+        height: 370,
+        resizeMode: 'contain',
+        marginBottom: -83,
+        marginTop: -60,
     },
     title: {
-        fontSize: 24,
+        marginTop: -60,
+        fontSize: 60,
         fontWeight: 'bold',
-        marginBottom: 20,
         color: 'white',
     },
-    input: {
-        width: '80%',
-        height: 40,
+    inputField: {
+        width: '70%', // Full width of the login container
+        margin: 7,
         borderWidth: 1,
         borderColor: 'gray',
-        marginBottom: 10,
-        paddingHorizontal: 10,
-        backgroundColor: 'white',
+        padding: 11,
+        borderRadius: 5,
+        marginBottom: 5,
+        marginTop: 5,
+        backgroundColor: '#fff', // Input background color
     },
-    button: {
-        width: '80%',
-        height: 40,
-        backgroundColor: 'blue',
+    inputButtonContainer: {
+        flexDirection: 'row',   
+        marginBottom: 160,
+      },
+    inputButton: {
+        width: '30%',
+        marginTop: 5,
+        marginHorizontal: 8, // Space between buttons
+        padding: 13,
+        borderRadius: 5,
+        backgroundColor: '#0173f9',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 10,

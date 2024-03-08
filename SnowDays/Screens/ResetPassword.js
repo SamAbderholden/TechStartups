@@ -25,7 +25,8 @@ const ResetPasswordScreen = () => {
             <Text style={styles.title}>Reset Password</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder="Mines Email"
+                placeholderTextColor={'gray'}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
             />
@@ -33,7 +34,7 @@ const ResetPasswordScreen = () => {
                 <Text style={styles.buttonText}>Reset Password</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text>Back to Login</Text>
+                <Text style={{color: 'white'}}>Back to Login</Text>
             </TouchableOpacity>
             {error ? <Text style={styles.error}>{error}</Text> : null}
         </View>
@@ -45,6 +46,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'black',
     },
     logo: {
         width: 150,
@@ -52,25 +54,30 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 35,
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: 25,
+        color: 'white'
     },
     input: {
-        width: '80%',
-        height: 40,
+        width: '60%', // Full width of the login container
+        margin: 7,
         borderWidth: 1,
         borderColor: 'gray',
-        marginBottom: 10,
-        paddingHorizontal: 10,
+        padding: 11,
+        borderRadius: 5,
+        marginBottom: 5,
+        marginTop: 5,
+        backgroundColor: '#fff', // Input background color
     },
     button: {
-        width: '80%',
-        height: 40,
-        backgroundColor: 'blue',
-        justifyContent: 'center',
+        marginTop: 6, // Space on top of the button
+        marginBottom: 5,
+        backgroundColor: '#0173f9', // Button background color
+        padding: 13,
+        borderRadius: 5,
+        width: '35%', // Adjust according to the design
         alignItems: 'center',
-        marginBottom: 10,
     },
     buttonText: {
         color: 'white',

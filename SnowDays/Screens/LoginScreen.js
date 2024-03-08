@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginTop: -80,
-    marginBottom: -100,
+    marginBottom: -120,
     width: 400,
     height: 370,
     resizeMode: 'contain',
@@ -109,6 +109,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     padding: 11,
     borderRadius: 5,
+    marginBottom: 5,
+    marginTop: 5,
     backgroundColor: '#fff', // Input background color
   },
   inputButtonContainer: {
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
   },
   inputButton: {
     marginTop: 6, // Space on top of the button
-    backgroundColor: 'white', // Button background color
+    backgroundColor: '#0173f9', // Button background color
     padding: 13,
     borderRadius: 5,
     width: '30%', // Adjust according to the design
@@ -125,11 +127,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 8, // Space between buttons
   },
   inputButtonText: {
-    color: 'black', // Button text color
+    color: 'white', // Button text color
   },
   ResetPassButton: {
     marginTop: 5, // Space on top of the button
-    marginBottom: 270, // Space on bottom of the button
+    marginBottom: 280, // Space on bottom of the button
     backgroundColor: 'transparent', // Button background color
     padding: 0,
     borderRadius: 5,
