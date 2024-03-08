@@ -10,6 +10,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 const HomeScreen = ({route}) => {
   const navigation = useNavigation();
   const [fetchedPosts, setFetchedPosts] = useState([]);
+  const [prevVisible, setPrevVisible] = useState([]);
 
   useEffect(() => {
     const postsCollectionRef = collection(firestore, 'posts');
@@ -59,8 +60,31 @@ const HomeScreen = ({route}) => {
   const [viewableItems, setViewableItems] = useState([]);
 
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
-    setViewableItems(viewableItems.map(item => item.key));
-  }, []);
+    if(navigation.getState().routes[navigation.getState().index].name === 'Home'){
+      const viewableKeys = viewableItems.map(item => item.key);
+      setViewableItems(viewableKeys);
+      setPrevVisible(viewableKeys); // Note: Consider if you really need to update this here
+    }
+  }, [navigation]); // navigation added to dependencies
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('state', () => {
+      const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
+      if (currentRouteName !== 'Home') {
+        // Using functional update to ensure we're working with the latest state
+        setViewableItems(current => {
+          setPrevVisible(current); // Save current viewable items before clearing
+          return [];
+        });
+      } else {
+        // Restoring previous visible items when navigating back to 'Home'
+        setViewableItems(prevVisible);
+      }
+    });
+
+    // Cleanup the listener on component unmount
+    return unsubscribe;
+  }, [navigation, prevVisible]);
 
   const renderPost = ({ item, index }) => (
     <Post
@@ -72,7 +96,6 @@ const HomeScreen = ({route}) => {
       username={route.params.username}
       timestamp={item.timestamp}
       isInView={viewableItems.includes(item.id)}
-      autoPlay={index === 0}
     />
   );
 

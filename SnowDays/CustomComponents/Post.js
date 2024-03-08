@@ -6,7 +6,7 @@ import { Video } from 'expo-av';
 import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, arrayUnion, onSnapshot, arrayRemove } from 'firebase/firestore';
 import {firestore} from '../firebase';
 
-const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestamp, isInView, autoPlay}) => {
+const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestamp, isInView}) => {
   const navigation = useNavigation();
   const [liked, setLiked] = useState(false);
   const videoRef = useRef(null); // Reference to the video for playback control
@@ -14,16 +14,15 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [showComments, setShowComments] = useState(false);
-
   useEffect(() => {
     if (videoRef.current) {
-      if (isInView || autoPlay) {
+      if (isInView) {
         videoRef.current.playAsync();
       } else {
         videoRef.current.pauseAsync();
       }
     }
-  }, [isInView, autoPlay]);
+  }, [isInView]);
 
   useEffect(() => {
     const checkIfLiked = async () => {
