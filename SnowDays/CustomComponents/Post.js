@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Video } from 'expo-av'; // Import the Video component
 import { getDoc, doc, collection, getDocs, query, where, updateDoc, setDoc, arrayUnion, onSnapshot, arrayRemove } from 'firebase/firestore';
 import {firestore} from '../firebase';
-import { RotateInUpLeft } from 'react-native-reanimated';
+import { ScrollView } from 'react-native';
 
 const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestamp}) => {
   const navigation = useNavigation();
@@ -175,29 +175,29 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
         </View>
       </View>
       {showComments && (
-        <View style={styles.commentSection}>
-          {comments.map((commentObj, index) => (
-            <View key={index} style={commentObj.username === username ? styles.commentSectionWithDelete : styles.commentSection}>
-              <TouchableOpacity 
-                onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}
-                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-              >
-                <Text style={styles.comment}>
-                  <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
-                </Text>
-                {commentObj.username === username && (
-                  <TouchableOpacity 
-                    onPress={() => handleDeleteCommentPress(commentObj)}
-                    style={styles.deleteButton}
-                  >
-                    <FontAwesome name="times-circle" size={28} color="red" />
-                  </TouchableOpacity>
-                )}
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      )}
+          <View style={styles.parentCommentSection}>
+            {comments.map((commentObj, index) => (
+              <View key={index} style={styles.parentCommentSectionContainer}>
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('GhostProfile', { usertodisplay: commentObj.username, username: username })}
+                  style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1 }}
+                >
+                  <Text style={styles.comment}>
+                    <Text style={styles.commentUsername}>@{commentObj.username}:</Text> {commentObj.text}
+                  </Text>
+                  {commentObj.username === username && (
+                    <TouchableOpacity 
+                      onPress={() => handleDeleteCommentPress(commentObj)}
+                      style={styles.deleteButton}
+                    >
+                      <FontAwesome name="times-circle" size={24} color="red" />
+                    </TouchableOpacity>
+                  )}
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        )}
       {showCommentInput && (
         <TextInput
           style={styles.commentInput}
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   username: {
     color: '#0173f9', // The username color
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 23,
   },
   timestamp: {
     marginRight: 1,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   description: {
-    fontSize: 18,
+    fontSize: 21,
     color: 'white',
   },
   likeCommentContainer: {
@@ -283,6 +283,7 @@ const styles = StyleSheet.create({
     color: '#0173f9',
     fontWeight: 'bold',
     marginTop: 5,
+    fontSize: 18
   },
   likeNComment: {
     flexDirection: 'row',
@@ -327,30 +328,36 @@ const styles = StyleSheet.create({
     padding: 10,
     color: 'white',
     marginBottom: 3,
+    fontSize: 18,
   },
   comment: {
     color: 'white',
+    fontSize: 18,
   },
   commentUsername: {
     color: '#0173f9',
     fontWeight: 'bold',
   },
   commentSection: {
-    padding: 5,
   },
   commentSectionWithDelete: {
-    marginTop: -10,
-    padding: 5,
   },
   deleteButtonContainer: {
     alignItems: 'flex-end',
   },
-  deleteButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 30, // Adjust size as needed
-    height: 30, // Adjust size as needed
+  parentCommentSection: {
+    borderTopWidth: 2,
+    color: 'white',
+    flex: 1,
+    //padding: 9,
+    paddingRight: 9,
+    paddingLeft: 9,
+    paddingBottom: 4,
+    justifyContent: 'space-between', // This will distribute the space evenly between items
+    gap: 4,
+
   },
+
 
 });
 
