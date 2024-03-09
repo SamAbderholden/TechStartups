@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: '100%', // Match the width of the media
-    aspectRatio: 4 / 5, // Keep the original aspect ratio of the video
+    aspectRatio: 11 / 16, // Keep the original aspect ratio of the video
     alignSelf: 'center', // Center the container
     position: 'relative', // Needed to position the play button absolutely relative to this container
     overflow: 'hidden', // Hide any overflow
