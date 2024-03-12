@@ -84,19 +84,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around', // Space around items
   },
   title: {
-    marginTop: 50, // Space on top of the title
+    marginTop: 80, // Space on top of the title
     marginBottom: 20, // Space on bottom of the title
     fontSize: 60,
     color: '#fff', // Title color
     fontWeight: 'bold',
   },
   logo: {
-    width: 400,
+    marginTop: -20, // Space on top of the logo
+    marginBottom: -30,
+    width: 350,
     height: 370,
     resizeMode: 'contain',
   },
   loginContainer: {
-    marginTop: -20,
     width: '80%', // Width of the login form container
     alignItems: 'center',
   },
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   },
   ResetPassButton: {
     marginTop: 5, // Space on top of the button
-    marginBottom: 280, // Space on bottom of the button
+    marginBottom: 240, // Space on bottom of the button
     backgroundColor: 'transparent', // Button background color
     padding: 0,
     borderRadius: 5,

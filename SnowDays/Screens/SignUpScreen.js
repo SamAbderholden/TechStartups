@@ -50,7 +50,6 @@ const SignUp = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Sign Up</Text>
-            <Image style={styles.logo} source={require(IMAGE_PATH)} />
             <TextInput
                 style={styles.inputField}
                 placeholder="Mines Email"
@@ -93,18 +92,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    logo: {
-        width: 400,
-        height: 370,
-        resizeMode: 'contain',
-        marginBottom: -30,
-        marginTop: -30,
-    },
     title: {
-        marginTop: 1,
         fontSize: 60,
         fontWeight: 'bold',
         color: 'white',
+        marginBottom: 10,
     },
     inputField: {
         width: '70%', // Full width of the login container
@@ -130,10 +122,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#0173f9',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 70,
     },
     buttonText: {
         color: 'white',
+        fontSize: 13,
     },
 
 });
