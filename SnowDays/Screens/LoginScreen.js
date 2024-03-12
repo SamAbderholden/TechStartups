@@ -85,14 +85,12 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 50, // Space on top of the title
-    marginBottom: -20, // Space on bottom of the title
+    marginBottom: 20, // Space on bottom of the title
     fontSize: 60,
     color: '#fff', // Title color
     fontWeight: 'bold',
   },
   logo: {
-    marginTop: -80,
-    marginBottom: -120,
     width: 400,
     height: 370,
     resizeMode: 'contain',

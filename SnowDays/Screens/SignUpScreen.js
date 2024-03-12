@@ -97,11 +97,11 @@ const styles = StyleSheet.create({
         width: 400,
         height: 370,
         resizeMode: 'contain',
-        marginBottom: -83,
-        marginTop: -60,
+        marginBottom: -30,
+        marginTop: -30,
     },
     title: {
-        marginTop: -60,
+        marginTop: 1,
         fontSize: 60,
         fontWeight: 'bold',
         color: 'white',
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     },
     inputButtonContainer: {
         flexDirection: 'row',   
-        marginBottom: 160,
+        marginBottom: 80,
       },
     inputButton: {
         width: '30%',
