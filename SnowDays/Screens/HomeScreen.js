@@ -54,7 +54,7 @@ const HomeScreen = ({route}) => {
   }, []);
 
   const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 75 // Adjust as needed
+    itemVisiblePercentThreshold: 25 // Adjust as needed
   }).current;
 
   const [viewableItems, setViewableItems] = useState([]);
