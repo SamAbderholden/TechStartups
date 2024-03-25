@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import { getDoc, doc, getDocs, query, collection, where, onSnapshot } from 'firebase/firestore';
@@ -11,6 +11,15 @@ const GhostProfile = ({ route }) => {
   const userInView = route.params.usertodisplay;
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewableItems, setViewableItems] = useState([]);
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 25 // Adjust as needed
+  }).current;
+
+  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+    const viewableKeys = viewableItems.map(item => item.key);
+    setViewableItems(viewableKeys);
+  }, []);
 
 
   const [profileData, setProfileData] = useState({
@@ -84,8 +93,9 @@ const GhostProfile = ({ route }) => {
       usernameToDisplay={item.username}
       username={route.params.username}
       timestamp={item.timestamp}
+      isInView={viewableItems.includes(item.id)}
     />
-  );
+  )
 
   const test = () => {
     setIsLoading(false);
@@ -136,7 +146,9 @@ const GhostProfile = ({ route }) => {
         data={userPosts}
         renderItem={renderPost}
         keyExtractor={item => item.id}
-        contentContainerStyle={styles.posts}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        initialNumToRender={5}
       />
       <FooterButtons style={styles.footerButtons} />
     </View>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef, useCallback} from 'react';
 import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { firestore, db } from '../firebase';
 import { doc, onSnapshot, query, collection, where, orderBy, getDoc, updateDoc, setDoc} from 'firebase/firestore';
@@ -21,7 +21,18 @@ const ProfileScreen = ({ route }) => {
     profileImageUrl: '', // Will store the full URL for display
     profileImageFilename: '', // New field to store just the filename
   });
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 25, // Adjust based on your requirement
+  }).current;
   
+  const [viewableItems, setViewableItems] = useState([]);
+
+  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+    // Extract the IDs of viewable items
+    const viewableIds = viewableItems.map(item => item.item.id);
+    setViewableItems(viewableIds);
+  }, []);
 
   useEffect(() => {
     const unsubscribeProfile = onSnapshot(doc(firestore, 'profiles', route.params.username), async (docSnapshot) => {
@@ -172,6 +183,7 @@ const ProfileScreen = ({ route }) => {
       usernameToDisplay={item.username}
       username={route.params.username}
       timestamp={item.timestamp}
+      isInView={viewableItems.includes(item.id)}
     />
   );
 
@@ -265,6 +277,9 @@ const ProfileScreen = ({ route }) => {
         renderItem={renderPost}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.posts}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        initialNumToRender={5}
       />
       <FooterButtons style={styles.footerButtons} />
     </View>
