@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 80, // Space on top of the title
-    marginBottom: 20, // Space on bottom of the title
+    //marginBottom: 20, // Space on bottom of the title
     fontSize: 60,
     color: '#fff', // Title color
     fontWeight: 'bold',
