@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   //styling for the actual media
   media: {
     width: '100%', // This will make the media take the full width of its parent container
-    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
+    aspectRatio: 11/16, // Sets the aspect ratio to 4:5
     alignSelf: 'center',
     borderBottomWidth: 8,
     borderTopWidth: 8
