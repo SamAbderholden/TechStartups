@@ -158,7 +158,7 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
               style={styles.media}
             />
           )
-        )}
+      )}
       <View style={styles.textContainer}>
         <Text style={styles.postDescription}>{description}</Text>
         {/* Footer with actions and Show Comments button */}

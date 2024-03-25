@@ -5,7 +5,7 @@ import { Video } from 'expo-av'; // Import the Video component
 import { collection, deleteDoc, doc, onSnapshot, updateDoc, arrayRemove, arrayUnion, getDoc } from 'firebase/firestore';
 import { firestore, db } from '../firebase'; // Import your firebase configurations
 
-const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, onDelete, timestamp }) => {
+const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, onDelete, timestamp, isInView }) => {
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); // Added for managing play state
   const [forceUpdate, setForceUpdate] = useState(false); // State to force re-render
@@ -28,6 +28,16 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
   
     checkIfLiked();
   }, []);
+
+  useEffect(() => {
+    if (isVideo(imageUrl)) {
+      if (isInView && videoRef.current) {
+        videoRef.current.playAsync();
+      } else if (videoRef.current) {
+        videoRef.current.pauseAsync();
+      }
+    }
+  }, [isInView]);
 
   const handleLikePress = async () => {
     try {
@@ -150,21 +160,13 @@ const ProfilePost = ({ id, imageUrl, description, usernameToDisplay, username, o
       {imageUrl !== "" && (
         isVideo(imageUrl) ? (
           <View style={styles.videoContainer}>
-            <TouchableOpacity onPress={handleVideoPress} style={{ width: '100%', height: '100%' }}>
-              <Video
-                ref={videoRef}
-                source={{ uri: imageUrl }}
-                style={styles.media}
-                resizeMode="cover"
-                isLooping
-                shouldPlay={isPlaying}
-              />
-            </TouchableOpacity>
-            {!isPlaying && (
-              <TouchableOpacity style={styles.playButton} onPress={handleVideoPress}>
-                <FontAwesome name="play" size={60} color="white" />
-              </TouchableOpacity>
-            )}
+            <Video
+              ref={videoRef}
+              source={{ uri: imageUrl }}
+              style={styles.media}
+              resizeMode="cover"
+              isLooping
+            />
           </View>
         ) : (
           <Image
