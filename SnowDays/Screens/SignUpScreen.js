@@ -31,9 +31,6 @@ const SignUp = ({ navigation }) => {
 
         try {
             const response = await createUserWithEmailAndPassword(auth, username, password);
-            console.log(response);
-            alert('Your account has been created! Please log in to continue.');
-            navigation.navigate('Login');
         } catch (e) {
             if (e.code === 'auth/email-already-in-use') {
                 navigation.navigate('Login');
