@@ -2,7 +2,7 @@
   "expo": {
     "name": "SnowDays",
     "slug": "GnarPoints",
-    "version": "1.4.0",
+    "version": "1.5.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -26,6 +26,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "58e246b6-2ae9-4570-a2fa-46936d044b24"
+      }
     }
   }
 }

@@ -287,14 +287,14 @@ const styles = StyleSheet.create({
   //styling for the actual media
   media: {
     width: '100%', // This will make the media take the full width of its parent container
-    aspectRatio: 4 / 5, // Sets the aspect ratio to 4:5
+    aspectRatio: 11/16, // Sets the aspect ratio to 4:5
     alignSelf: 'center',
     borderBottomWidth: 8,
     borderTopWidth: 8
   },
   videoContainer: {
     width: '100%', // Match the width of the media
-    aspectRatio: 4 / 5, // Keep the original aspect ratio of the video
+    aspectRatio: 11 / 16, // Keep the original aspect ratio of the video
     alignSelf: 'center', // Center the container
     position: 'relative', // Needed to position the play button absolutely relative to this container
     overflow: 'hidden', // Hide any overflow
