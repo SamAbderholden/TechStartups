@@ -123,7 +123,7 @@ const HomeScreen = ({route}) => {
         renderItem={renderPost}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.posts}
-        initialNumToRender={10}
+        initialNumToRender={2}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
       />
