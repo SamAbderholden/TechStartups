@@ -103,12 +103,20 @@ const HomeScreen = ({route}) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>SnowDays</Text>
-        <TouchableOpacity
-          style={styles.resortsButton}     
-          onPress={() => navigation.navigate('Resorts', {username: route.params.username})}
-        >
-          <Text style={styles.resortsButtonText}>Resorts</Text>   
-        </TouchableOpacity>
+        <View style={styles.navigationButtons}>
+          <TouchableOpacity
+              style={styles.gearButton}     
+              onPress={() => navigation.navigate('GearPage', {username: route.params.username})} // Adjust 'GearPage' as needed
+            >
+              <Text style={styles.resortsButtonText}>Gear</Text>
+            </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.resortsButton}     
+            onPress={() => navigation.navigate('Resorts', {username: route.params.username})}
+          >
+            <Text style={styles.resortsButtonText}>Resorts</Text>   
+          </TouchableOpacity>
+        </View>
       </View>
       <FlatList style={styles.posts}
         data={fetchedPosts}
@@ -161,5 +169,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 70,
     alignContent: 'center',
+  },
+  navigationButtons: {
+    flexDirection: 'row', // Ensure buttons are laid out in a row
+  },
+  gearButton: {
+    backgroundColor: '#0173f9',
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 8, // Add some space between the buttons
+    alignItems: 'center',
   },
 });
