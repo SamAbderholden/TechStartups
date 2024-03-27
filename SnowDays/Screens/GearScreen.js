@@ -70,12 +70,6 @@ const GearPage = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Gear</Text>
-        <TouchableOpacity
-            style={styles.homeButton}
-            onPress={() => navigation.navigate('Home', { username: route.params.username })}
-          >
-            <Text style={styles.homeButtonText}>Home</Text>
-          </TouchableOpacity>
       </View>
       <FlatList style={styles.postsContainer}
         data={fetchedPosts}
