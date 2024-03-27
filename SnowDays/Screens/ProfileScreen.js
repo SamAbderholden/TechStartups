@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   contentContainer: {
-    marginTop: 50,
+    marginTop: 30,
     marginRight: 10,
     marginLeft: 10,
   },
@@ -356,8 +356,9 @@ const styles = StyleSheet.create({
 
   },
   largeTextBox: {
+    //borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderRadius: 10,
-    borderWidth: 1,
     padding: 10,
     minHeight: 20,
     maxHeight: 70,
@@ -377,9 +378,7 @@ const styles = StyleSheet.create({
     marginLeft: -5,
   },
   postsContainer: {
-    //margin: 20,
-    marginBottom: 60,
-    marginTop:22
+    marginTop: 10,
   },
   uploadButton: {
     justifyContent: 'center',

@@ -6,6 +6,7 @@ import FooterButtons from './FooterButtons';
 import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
 import { FontAwesome } from '@expo/vector-icons';
+import { TextInput } from 'react-native-gesture-handler';
 
 const GhostProfile = ({ route }) => {
   const userInView = route.params.usertodisplay;
@@ -137,10 +138,10 @@ const GhostProfile = ({ route }) => {
             </View>
           </View>
         </View>
-        <View style={styles.largeTextBoxContainer}>
-          <Text style={styles.largeTextBox}>{profileData.bio}</Text>
-        </View>
       </View>
+        <View style={styles.largeTextBoxContainer}>
+          <TextInput style={styles.largeTextBox}>{profileData.bio} </TextInput>
+        </View>
       <FlatList
         style={styles.postsContainer}
         data={userPosts}
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginTop: 60,
+    marginTop: 40,
     marginRight: 30,
     marginLeft: 30,
   },
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   contentContainer: {
-    marginTop: 50,
+    marginTop: 30,
     marginRight: 30,
     marginLeft: 30,
   },
@@ -195,17 +196,17 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     // Additional styling for image container
-    marginRight: 10,
+    marginRight: 5,
   },
   textFieldsContainer: {
-    marginLeft: -6,
+    //marginLeft: -6,
     flex: 1,
     flexDirection: 'column',
   },
   textFieldContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
     marginLeft: 13, // Increase the left margin to push the content to the right
     // You can also use paddingHorizontal if you want to add padding instead
   },
@@ -221,22 +222,23 @@ const styles = StyleSheet.create({
     color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
-    marginTop: 25,
+    marginTop: 12,
+    borderColor: 'white',
   },
   largeTextBox: {
     borderRadius: 10,
-    borderWidth: 1,
+    borderBottomWidth: 1,
     padding: 10,
     minHeight: 20,
-    maxHeight: 50,
+    maxHeight: 70,
+    width: '100%',
     borderColor: 'white', // Keep the border color white as you have it
     color: 'white', // Keep the text color white for visibility
     margin: -10,
     fontSize: 16, // Adjust the font size as needed
     fontWeight: 'normal', // Choose 'bold', 'normal', etc., as desired
-    textAlign: 'left', // You can adjust this to 'center' if you prefer
+    textAlign: 'center', // You can adjust this to 'center' if you prefer
     lineHeight: 24, // Adjust the line height for better readability of multiline text
-    // Include any other text styling properties you need
   },
   image: {
     width: 150, // Set the width of the image
@@ -245,8 +247,7 @@ const styles = StyleSheet.create({
     marginLeft: -5,
   },
   postsContainer: {
-    margin: 20,
-    marginBottom: 60
+    marginTop: 10,
   },
   loaderContainer: {
     flex: 1,
@@ -254,6 +255,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black'
   },
+  
 });
 
 export default GhostProfile;
