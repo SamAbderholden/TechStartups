@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import FooterButtons from './FooterButtons'; 
 import { firestore } from '../firebase.js';
 import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, onSnapshot} from 'firebase/firestore';
 //import FooterButtons from './FooterButtons'; // Adjust the import path as needed
@@ -169,18 +170,13 @@ const ResortsScreen = ({route }) => {
         {/* Header container */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Ski Directory</Text>
-          <TouchableOpacity
-            style={styles.homeButton}
-            onPress={() => navigation.navigate('Home', { username: route.params.username })}
-          >
-            <Text style={styles.homeButtonText}>Home</Text>
-          </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.ScrollContainer}>
           <View style={styles.resortsListContainer}>
             {Object.keys(resortUsers).map((resortName) => renderResortItem(resortName))}
           </View>
         </ScrollView>
+        <FooterButtons/>
       </View>
     );
 };
@@ -221,9 +217,9 @@ const styles = StyleSheet.create({
     width: '100%', // Ensure the ScrollView takes up full width
   },
   resortsListContainer: {
-    marginTop: 20,
     width: '100%', // Ensure the container takes up full width
     alignItems: 'center', // Center the resort containers
+    marginBottom: 200
   },
   resortContainer: {
     backgroundColor: 'white',

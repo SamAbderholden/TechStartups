@@ -47,7 +47,7 @@ const HomeScreen = ({route}) => {
       const postsWithImages = await Promise.all(postsPromises);
   
       // Update the state with the new posts array
-      setFetchedPosts(postsWithImages.filter(post => post !== null));
+      setFetchedPosts(postsWithImages.filter(post => post !== null).filter(post => !post.tag || post.tag != "Gear"));
     });
   
     return () => unsubscribe(); // Detach listener when the component unmounts

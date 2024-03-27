@@ -15,6 +15,7 @@ const CreateScreen = ({ route }) => {
   const [loading, setLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isInputActive, setIsInputActive] = useState(false);
+  const [isGear, setIsGear] = useState(false);
   const videoRef = useRef(null); // Reference to the video for playback control
   const MAX_LENGTH = 125;
 
@@ -40,6 +41,9 @@ const CreateScreen = ({ route }) => {
     }
   }, [isMaxCharReached]); // Dependency array to re-run the effect when isMaxCharReached changes
 
+  const toggleIsGear = () => {
+    setIsGear(!isGear);
+  };
 
   const handleUpload = async () => {
     try {
@@ -86,6 +90,7 @@ const CreateScreen = ({ route }) => {
         text: description,
         filename: fileName,
         username: route.params.username,
+        tag: isGear ? "Gear" : "Content",
         timestamp: new Intl.DateTimeFormat('en-US', {
           month: '2-digit',
           day: '2-digit',
@@ -172,6 +177,14 @@ const CreateScreen = ({ route }) => {
       <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
           <Text style={ styles.uploadButtonText }>Upload Photo/Video</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.gearButton, isGear ? styles.gearButtonActive : styles.gearButtonInactive]}
+        onPress={toggleIsGear}
+      >
+        <Text style={[styles.gearButtonText, isGear ? styles.gearButtonTextActive : styles.gearButtonTextInactive]}>
+          {isGear ? "Tagged as Gear" : "Is This Gear?"}
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.postButton} onPress={() => handlePost()}>
         <Text style={ styles.postButtonText }>Post</Text>
       </TouchableOpacity>
@@ -192,7 +205,6 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     padding: 20,
-    paddingTop: 60, // Adjust for status bar height
     paddingBottom: 50,
     paddingHorizontal: 10,
     backgroundColor: 'black', // Match the container background
@@ -260,5 +272,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 100,
     left: 90
+  },
+  gearButton: {
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+    borderWidth: 1,
+  },
+  gearButtonActive: {
+    backgroundColor: '#0173f9', // A light blue for active/gear tagged
+  },
+  gearButtonInactive: {
+    backgroundColor: 'white', // White for inactive/not gear tagged
+  },
+  gearButtonText: {
+    fontWeight: 'bold',
+    textAlign: 'center', // Center the text
+  },
+  gearButtonTextActive: {
+    color: 'white', // White text for active/gear tagged
+  },
+  gearButtonTextInactive: {
+    color: 'black', // Black text for inactive/not gear tagged
   },
 });
