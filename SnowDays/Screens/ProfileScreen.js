@@ -251,6 +251,7 @@ const ProfileScreen = ({ route }) => {
             </View>
           </View>
         </View>
+      </View>
         {/* Large text box */}
         <View style={styles.largeTextBoxContainer}>
         <TextInput
@@ -271,7 +272,6 @@ const ProfileScreen = ({ route }) => {
             }}
           />
         </View>
-      </View>
       <FlatList style={styles.postsContainer}
         data={fetchedPostsProfile}
         renderItem={renderPost}
@@ -295,9 +295,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginTop: 60,
+    marginTop: 50,
     marginRight: 30,
-    marginLeft: 30,
+    marginLeft: 10,
   },
   username: {
     fontWeight: 'bold',
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   contentContainer: {
-    marginTop: 30,
+    marginTop: 20,
     marginRight: 10,
     marginLeft: 10,
   },
@@ -332,11 +332,11 @@ const styles = StyleSheet.create({
     marginLeft: -6,
     flex: 1,
     flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   textFieldContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
     marginLeft: 13, // Increase the left margin to push the content to the right
     // You can also use paddingHorizontal if you want to add padding instead
   },
@@ -352,8 +352,7 @@ const styles = StyleSheet.create({
     color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
-    marginTop: 18,
-
+    marginTop: 12,
   },
   largeTextBox: {
     //borderTopWidth: 1,
@@ -367,7 +366,7 @@ const styles = StyleSheet.create({
     margin: -10,
     fontSize: 16, // Adjust the font size as needed
     fontWeight: 'normal', // Choose 'bold', 'normal', etc., as desired
-    textAlign: 'left', // You can adjust this to 'center' if you prefer
+    textAlign: 'center', // You can adjust this to 'center' if you prefer
     lineHeight: 24, // Adjust the line height for better readability of multiline text
     // Include any other text styling properties you need
   },

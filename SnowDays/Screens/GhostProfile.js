@@ -166,9 +166,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginTop: 40,
+    marginTop: 50,
     marginRight: 30,
-    marginLeft: 30,
+    marginLeft: 10,
   },
   username: {
     fontWeight: 'bold',
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   contentContainer: {
-    marginTop: 30,
+    marginTop: 20,
     marginRight: 30,
     marginLeft: 30,
   },
@@ -202,11 +202,12 @@ const styles = StyleSheet.create({
     //marginLeft: -6,
     flex: 1,
     flexDirection: 'column',
+    justifyContent: 'space-between',
+
   },
   textFieldContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
     marginLeft: 13, // Increase the left margin to push the content to the right
     // You can also use paddingHorizontal if you want to add padding instead
   },
@@ -222,23 +223,23 @@ const styles = StyleSheet.create({
     color: 'white', // Ensure text is visible against the background
   },
   largeTextBoxContainer: {
-    marginTop: 12,
-    borderColor: 'white',
+    marginTop: 4,
   },
   largeTextBox: {
-    borderRadius: 10,
-    borderBottomWidth: 1,
-    padding: 10,
-    minHeight: 20,
-    maxHeight: 70,
-    width: '100%',
-    borderColor: 'white', // Keep the border color white as you have it
-    color: 'white', // Keep the text color white for visibility
-    margin: -10,
-    fontSize: 16, // Adjust the font size as needed
-    fontWeight: 'normal', // Choose 'bold', 'normal', etc., as desired
-    textAlign: 'center', // You can adjust this to 'center' if you prefer
-    lineHeight: 24, // Adjust the line height for better readability of multiline text
+   //borderTopWidth: 1,
+   borderBottomWidth: 1,
+   borderRadius: 10,
+   padding: 10,
+   minHeight: 20,
+   maxHeight: 70,
+   borderColor: 'white', // Keep the border color white as you have it
+   color: 'white', // Keep the text color white for visibility
+   margin: -10,
+   fontSize: 16, // Adjust the font size as needed
+   fontWeight: 'normal', // Choose 'bold', 'normal', etc., as desired
+   textAlign: 'center', // You can adjust this to 'center' if you prefer
+   lineHeight: 24, // Adjust the line height for better readability of multiline text
+   // Include any other text styling properties you need
   },
   image: {
     width: 150, // Set the width of the image
