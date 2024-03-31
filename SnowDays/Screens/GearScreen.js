@@ -6,6 +6,11 @@ import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
 import { query, collection, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { getDownloadURL, ref } from "firebase/storage";
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+const isSmallScreen = height < 700; // iPhone SE width is 320
 
 const GearPage = ({ route }) => {
   const navigation = useNavigation();
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: isSmallScreen ? 15 : 60, // Adjust the top padding for small screens
     paddingBottom: 4,
     paddingHorizontal: 10,
   },

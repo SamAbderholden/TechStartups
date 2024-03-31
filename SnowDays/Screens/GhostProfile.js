@@ -7,6 +7,11 @@ import Post from '../CustomComponents/Post';
 import { firestore, db } from '../firebase';
 import { FontAwesome } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+const isSmallScreen = height < 700; // iPhone SE width is 320
 
 const GhostProfile = ({ route }) => {
   const userInView = route.params.usertodisplay;
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginTop: 50,
+    paddingTop: isSmallScreen ? 15 : 60, // Adjust the top padding for small screens
     marginRight: 30,
     marginLeft: 10,
   },

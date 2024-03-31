@@ -7,6 +7,11 @@ import ProfilePost from '../CustomComponents/ProfilePost';
 import FooterButtons from './FooterButtons';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+const isSmallScreen = height < 700; // iPhone SE width is 320
 const MAX_BIO_LENGTH = 100;
 
 const ProfileScreen = ({ route }) => {
@@ -295,7 +300,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginTop: 50,
+    paddingTop: isSmallScreen ? 15 : 60, // Adjust the top padding for small screens
     marginRight: 30,
     marginLeft: 10,
   },
