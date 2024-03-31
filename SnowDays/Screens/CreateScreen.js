@@ -45,6 +45,7 @@ const CreateScreen = ({ route }) => {
     setIsGear(!isGear);
   };
 
+
   const handleUpload = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -164,6 +165,16 @@ const CreateScreen = ({ route }) => {
           />
         )
       )}
+      {media && (
+        <TouchableOpacity
+          style={[styles.gearButton, isGear ? styles.gearButtonActive : styles.gearButtonInactive]}
+          onPress={toggleIsGear}
+        >
+          <Text style={[styles.gearButtonText, isGear ? styles.gearButtonTextActive : styles.gearButtonTextInactive]}>
+            {isGear ? "Item Tagged as Gear" : "Tag Item as Gear"}
+          </Text>
+        </TouchableOpacity>
+      )}
       <TextInput
         style={[styles.input, {marginBottom: isInputActive && media ? 150 : 20}]}
         placeholder="Description"
@@ -176,14 +187,6 @@ const CreateScreen = ({ route }) => {
       />
       <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
           <Text style={ styles.uploadButtonText }>Upload Photo/Video</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.gearButton, isGear ? styles.gearButtonActive : styles.gearButtonInactive]}
-        onPress={toggleIsGear}
-      >
-        <Text style={[styles.gearButtonText, isGear ? styles.gearButtonTextActive : styles.gearButtonTextInactive]}>
-          {isGear ? "Tagged as Gear" : "Is This Gear?"}
-        </Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.postButton} onPress={() => handlePost()}>
         <Text style={ styles.postButtonText }>Post</Text>
@@ -203,6 +206,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   header: {
+    marginTop: -60,
     width: '100%',
     padding: 20,
     paddingBottom: 50,
@@ -223,16 +227,16 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     minHeight: 30,
     maxHeight: 100,
-    marginBottom: 20,
     
     width: '80%',
     color: 'white', // Ensure text is visible against background
   },
   uploadButton: {
+    marginTop: -7,
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
-    margin: 10,
+    //margin: 10,
     width: '45%',
     alignItems: 'center',
   },
@@ -244,6 +248,7 @@ const styles = StyleSheet.create({
   postButton: {
     backgroundColor: '#0173f9',
     marginTop: 10,
+    marginBottom: 30,
     padding: 10,
     borderRadius: 5,
     width: '45%',
@@ -266,7 +271,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderBottomWidth: 8,
     borderTopWidth: 8,
-    marginBottom: 30
+    marginBottom: 12
   },
   playButton: {
     position: 'absolute',
@@ -276,7 +281,7 @@ const styles = StyleSheet.create({
   gearButton: {
     padding: 10,
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: 12,
     borderWidth: 1,
   },
   gearButtonActive: {

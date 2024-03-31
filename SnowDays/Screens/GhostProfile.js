@@ -130,7 +130,9 @@ const GhostProfile = ({ route }) => {
             </View>
             <View style={styles.textFieldContainer}>
               <FontAwesome name="envelope" size={26} color="white" />
-              <Text style={styles.textField}>{profileData.emailAddress}</Text>
+              <Text style={styles.textField}>
+                  {profileData.emailAddress ? profileData.emailAddress.split('.')[0] : ''}
+            </Text>
             </View>
             <View style={styles.textFieldContainer}>
               <FontAwesome name="star" size={26} color="white" />
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   textFieldsContainer: {
-    //marginLeft: -6,
+    marginLeft: -10,
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -245,7 +247,7 @@ const styles = StyleSheet.create({
     width: 150, // Set the width of the image
     height: 150, // Set the height of the image
     resizeMode: 'cover', // Adjust the resizeMode based on your design needs
-    marginLeft: -5,
+    marginLeft: -12,
   },
   postsContainer: {
     marginTop: 10,
