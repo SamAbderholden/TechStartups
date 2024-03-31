@@ -81,14 +81,6 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
     };
 
     // Toggle video playback state
-    const handleVideoPress = () => {
-      if (isPlaying) {
-        videoRef.current?.pauseAsync();
-      } else {
-        videoRef.current?.playAsync();
-      }
-      setIsPlaying(!isPlaying); // Toggle play state
-    };
   
     const postDocRef = doc(firestore, 'posts', id);
     try {
@@ -154,7 +146,6 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
         {imageUrl !== "" && (
             isVideo(imageUrl) ? (
               <View style={styles.videoContainer}>
-                <TouchableOpacity onPress={handleVideoPress}>
                   <Video
                     ref={videoRef}
                     source={{ uri: imageUrl }}
@@ -162,7 +153,6 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
                     resizeMode="cover"
                     isLooping
                   />
-                </TouchableOpacity>
               </View>
             ) : (
               <Image
