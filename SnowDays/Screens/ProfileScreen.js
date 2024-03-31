@@ -239,7 +239,7 @@ const ProfileScreen = ({ route }) => {
                 editable={editable}
                 placeholderTextColor="grey" // Make sure the placeholder is visible
                 autoCapitalize='none'
-                value={editable ? profileData.emailAddress : profileData.emailAddress.split('.')[0]}
+                value={profileData.emailAddress}
                 onChangeText={(text) => setProfileData({...profileData, emailAddress: text})}
               />
             </View>
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   textFieldsContainer: {
-    marginLeft: -10,
+    marginLeft: -6,
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
-    fontSize: 12,
+    fontSize: 13,
     color: 'white',
   },
   textField: {
