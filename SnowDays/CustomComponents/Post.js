@@ -79,6 +79,16 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
       text: comment,
       username: username, // Assuming 'username' holds the username of the current user
     };
+
+    // Toggle video playback state
+    const handleVideoPress = () => {
+      if (isPlaying) {
+        videoRef.current?.pauseAsync();
+      } else {
+        videoRef.current?.playAsync();
+      }
+      setIsPlaying(!isPlaying); // Toggle play state
+    };
   
     const postDocRef = doc(firestore, 'posts', id);
     try {
@@ -144,13 +154,15 @@ const Post = ({ id, imageUrl, description, usernameToDisplay, username, timestam
         {imageUrl !== "" && (
             isVideo(imageUrl) ? (
               <View style={styles.videoContainer}>
-                <Video
-                  ref={videoRef}
-                  source={{ uri: imageUrl }}
-                  style={styles.videoContainer}
-                  resizeMode="cover"
-                  isLooping
-                />
+                <TouchableOpacity onPress={handleVideoPress}>
+                  <Video
+                    ref={videoRef}
+                    source={{ uri: imageUrl }}
+                    style={styles.videoContainer}
+                    resizeMode="cover"
+                    isLooping
+                  />
+                </TouchableOpacity>
               </View>
             ) : (
               <Image
