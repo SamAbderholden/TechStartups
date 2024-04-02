@@ -143,17 +143,23 @@ const ResortsScreen = ({route }) => {
     const removeUserFromResort = async (resortName) => {
       try {
         const resortDocRef = doc(firestore, 'resorts', resortName);
-        setResortUsers((prevResortUsers) => ({
-          ...prevResortUsers,
-          [resortName]: prevResortUsers[resortName].filter((user) => user !== route.params.username),
-        }));
-        setMembershipStatus((prevMembershipStatus) => ({
-          ...prevMembershipStatus,
-          [resortName]: false,
-        }));
-        await updateDoc(resortDocRef, {
-          users: arrayRemove(route.params.username),
-        });
+        // Find the user object to remove
+        const userToRemove = resortUsers[resortName].find(user => user.username === route.params.username);
+        if (userToRemove) {
+          // Update local state to reflect the change
+          setResortUsers((prevResortUsers) => ({
+            ...prevResortUsers,
+            [resortName]: prevResortUsers[resortName].filter((user) => user.username !== route.params.username),
+          }));
+          setMembershipStatus((prevMembershipStatus) => ({
+            ...prevMembershipStatus,
+            [resortName]: false,
+          }));
+          // Remove the user object from Firestore
+          await updateDoc(resortDocRef, {
+            users: arrayRemove(userToRemove),
+          });
+        }
       } catch (error) {
         console.error('Error removing user from resort:', error);
       }
