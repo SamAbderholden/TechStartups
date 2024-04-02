@@ -11,7 +11,8 @@ const ResortsScreen = ({route }) => {
     const [resortData, setResortData] = useState([]) // Receive the pre-fetched data
     const [modalVisible, setModalVisible] = useState(false);
     const [drivingModalVisible, setDrivingModalVisible] = useState(false);
-    const [openSeats, setOpenSeats] = useState(null);
+    const [openSeats, setOpenSeats] = useState(0);
+    const [resortChosen, setResortChosen] = useState('');
 
     // State to keep track of users and membership status for each resort
     const [resortUsers, setResortUsers] = useState({
@@ -85,15 +86,21 @@ const ResortsScreen = ({route }) => {
       // This assumes resortData contains all necessary info
       // Adjust according to the actual structure of your data
       if (resortData) {
-        // Process and set your state based on the received data
         Object.keys(resortData).forEach(resortName => {
           const usersArray = resortData[resortName].users || [];
-          // Assuming you have a way to determine membership status, adjust as necessary
-          // For example, if you need the username from route.params
+          
+          // Update resortUsers state with usersArray for the resort
           setResortUsers(prev => ({ ...prev, [resortName]: usersArray }));
+          
+          // Check membership status
+          // Determine if the usersArray contains an object with the username
+          // Assuming route.params.username holds the username to check
+          const isMember = usersArray.some(userObj => userObj.username === route.params.username);
+          
+          // Update membershipStatus state based on isMember value
           setMembershipStatus(prev => ({
             ...prev,
-            [resortName]: usersArray.includes(route.params.username)
+            [resortName]: isMember
           }));
         });
       }
@@ -101,6 +108,7 @@ const ResortsScreen = ({route }) => {
   
     const addUserToResort = async (resortName) => {
       try {
+        setResortChosen(resortName)
         const isUsernameUnique = Object.values(resortUsers).every(
           (resort) => !resort.includes(route.params.username)
         );
@@ -118,7 +126,10 @@ const ResortsScreen = ({route }) => {
             [resortName]: true,
           }));
           await updateDoc(resortDocRef, {
-            users: arrayUnion(route.params.username),
+            users: arrayUnion({
+              username: route.params.username,
+              openSeats: openSeats
+            }),
           });
         } else {
           alert('Username already exists in another resort.');
@@ -148,8 +159,6 @@ const ResortsScreen = ({route }) => {
       }
     };
 
-    
-
 
     const renderResortItem = (resortName) => (
       <View key={resortName} style={styles.resortContainer}>
@@ -169,16 +178,46 @@ const ResortsScreen = ({route }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.userNameContainer}>
-          {resortUsers[resortName].map((user) => (
-            <TouchableOpacity key={`${resortName}-${user}`} onPress={() => navigation.navigate('GhostProfile', { ...route.params, usertodisplay: user })}>
+          {resortUsers[resortName].map(({username, openSeats}) => (
+            <TouchableOpacity key={`${resortName}-${username}`} onPress={() => navigation.navigate('GhostProfile', { ...route.params, usertodisplay: user })}>
               <Text style={styles.userName}>
-                @{user}
+                @{username} {openSeats != 0 && (<Text> {openSeats} open seats!</Text>)}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
       </View>
     );
+
+    const addSeatsToUser = async () => {
+      const resortDocRef = doc(firestore, "resorts", resortChosen);
+      try {
+        const docSnap = await getDoc(resortDocRef);
+        if (docSnap.exists()) {
+          const resortUsers = docSnap.data().users;
+          const updatedUsers = resortUsers.map(user => {
+            if (user.username === route.params.username) {
+              console.log(openSeats);
+              return { username: route.params.username, openSeats: openSeats };
+            }
+            return user;
+          });
+    
+          await updateDoc(resortDocRef, {
+            users: updatedUsers
+          });
+          setOpenSeats(0);
+        }
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
+    }
+
+    useEffect(() => {
+      if (openSeats !== 0) {
+        addSeatsToUser(); 
+      }
+    }, [openSeats]);
     
   
     const renderButtonLabel = (resortName) => {
@@ -249,7 +288,6 @@ const ResortsScreen = ({route }) => {
                     onPress={() => {
                       setOpenSeats(seatCount);
                       setDrivingModalVisible(false);
-                      // seat logic here
                     }}
                   >
                     <Text style={styles.textStyle}>{seatCount}</Text>
