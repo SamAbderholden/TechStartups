@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Modal, StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import FooterButtons from './FooterButtons'; 
 import { firestore } from '../firebase.js';
@@ -9,6 +9,9 @@ import { getDoc, doc, getDocs, collection, updateDoc, arrayUnion, arrayRemove, o
 const ResortsScreen = ({route }) => {
     const navigation = useNavigation();
     const [resortData, setResortData] = useState([]) // Receive the pre-fetched data
+    const [modalVisible, setModalVisible] = useState(false);
+    const [drivingModalVisible, setDrivingModalVisible] = useState(false);
+    const [openSeats, setOpenSeats] = useState(null);
 
     // State to keep track of users and membership status for each resort
     const [resortUsers, setResortUsers] = useState({
@@ -33,6 +36,20 @@ const ResortsScreen = ({route }) => {
       'Arapahoe Basin': false,
       'Steamboat': false,
     });
+
+    const formatDate = (date) => {
+      const today = new Date();
+      const dayOfWeek = today.getDay();
+      const daysUntilSaturday = 6 - dayOfWeek;
+      const daysUntilSunday = 7 - dayOfWeek;
+    
+      const nextSaturday = new Date(today);
+      nextSaturday.setDate(today.getDate() + daysUntilSaturday);
+    
+      const nextSunday = new Date(today);
+      nextSunday.setDate(today.getDate() + daysUntilSunday);
+      return `${nextSaturday.getMonth() + 1}/${nextSaturday.getDate()}-${nextSunday.getMonth()+1}/${nextSunday.getDate()}`;
+    };
 
     useEffect(() => {
       const unsubscribeList = []; // To hold unsubscribe functions for each listener
@@ -90,6 +107,7 @@ const ResortsScreen = ({route }) => {
     
         if (isUsernameUnique) {
           const resortDocRef = doc(firestore, 'resorts', resortName);
+          setModalVisible(true);
           // Update local state to reflect the change
           setResortUsers((prevResortUsers) => ({
             ...prevResortUsers,
@@ -130,6 +148,8 @@ const ResortsScreen = ({route }) => {
       }
     };
 
+    
+
 
     const renderResortItem = (resortName) => (
       <View key={resortName} style={styles.resortContainer}>
@@ -162,20 +182,83 @@ const ResortsScreen = ({route }) => {
     
   
     const renderButtonLabel = (resortName) => {
-      return membershipStatus[resortName] ? 'Leave' : 'Join';
+      return membershipStatus[resortName] ? 'Leave' : 'I\'ll Be There!';
     };
   
     return (
       <View style={styles.container}>
         {/* Header container */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Ski Directory</Text>
+          <Text style={styles.headerTitle}>Skiing Plans?</Text>
+          <Text style={styles.dateText}>
+            {formatDate()}
+          </Text>
         </View>
         <ScrollView contentContainerStyle={styles.ScrollContainer}>
           <View style={styles.resortsListContainer}>
             {Object.keys(resortUsers).map((resortName) => renderResortItem(resortName))}
           </View>
         </ScrollView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Are you driving?</Text>
+              <View style={styles.modalButtonContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    setModalVisible(false);
+                    setDrivingModalVisible(true);
+                  }}
+                >
+                  <Text style={styles.textStyle}>Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.textStyle}>No</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={drivingModalVisible}
+          onRequestClose={() => {
+            setDrivingModalVisible(!drivingModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>How many open seats do you have?</Text>
+              <View style={styles.modalButtonContainer}>
+                {[0, 1, 2, 3, 4, 5].map((seatCount) => (
+                  <TouchableOpacity
+                    key={seatCount}
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => {
+                      setOpenSeats(seatCount);
+                      setDrivingModalVisible(false);
+                      // seat logic here
+                    }}
+                  >
+                    <Text style={styles.textStyle}>{seatCount}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
+        </Modal>
         <FooterButtons/>
       </View>
     );
@@ -236,6 +319,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10, // Add space between header and username list
   },
+  dateText: {
+    color: 'white',
+    fontSize: 20,
+  },
   resortName: {
     color: 'black',
     fontWeight: 'bold',
@@ -263,6 +350,51 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '70%',
+    marginTop: 20,
+  },
+  
 });
 
 
