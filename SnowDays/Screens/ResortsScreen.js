@@ -179,7 +179,7 @@ const ResortsScreen = ({route }) => {
         </View>
         <View style={styles.userNameContainer}>
           {resortUsers[resortName].map(({username, openSeats}) => (
-            <TouchableOpacity key={`${resortName}-${username}`} onPress={() => navigation.navigate('GhostProfile', { ...route.params, usertodisplay: user })}>
+            <TouchableOpacity key={`${resortName}-${username}`} onPress={() => navigation.navigate('GhostProfile', { ...route.params, usertodisplay: username })}>
               <Text style={styles.userName}>
                 @{username} {openSeats != 0 && (<Text> {openSeats} open seats!</Text>)}
               </Text>
