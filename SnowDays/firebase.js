@@ -26,7 +26,7 @@ import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyAR3VRerrILkNa-9PdombecQ2EPfrUTmKs",
+  apiKey: "lol",
 
   authDomain: "snowdays-6446f.firebaseapp.com",
 
